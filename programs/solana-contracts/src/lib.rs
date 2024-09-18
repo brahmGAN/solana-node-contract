@@ -12,8 +12,7 @@ pub mod solana_contracts
         let owner_account = &mut ctx.accounts.owner_account; 
         if owner_account.owner_pubkey == Pubkey::default() 
         {
-            let caller = &ctx.accounts.caller.key();
-            owner_account.owner_pubkey = *caller;
+            owner_account.owner_pubkey = ctx.accounts.caller.key();
         }
         else 
         {
