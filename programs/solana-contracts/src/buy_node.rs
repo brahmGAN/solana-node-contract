@@ -42,17 +42,24 @@ pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, amount:u64) -> Resul
     let buy_node_account = &mut ctx.accounts.buy_node_account;
     if buy_node_account.early_sale_status 
     {
-        // let (pda, bump) = Pubkey::find_program_address(
-        //     &[ctx.accounts.caller.key.as_ref()], 
-        //     &ID,                         
-        // );
+        // Regenerate the PDA
+        let (pda, _bump) = Pubkey::find_program_address(
+            &[ctx.accounts.caller.key.as_ref()], 
+            &ID,
+        );
 
+        // Access the PDA account information
+        let check_pda_account = &ctx.accounts.check_pda_account; 
+
+        // if check_pda_account.key() == pda {
+            
+        // }
         // let pda_exists = match client::get_account(&pda) {
         //     Ok(_account) => true,
         //     Err(_) => false,
         // };
 
-        if 5 > 2 
+        if check_pda_account.key() == pda
         {
             if amount == ( quantity * buy_node_account.node_price) 
             {
@@ -204,6 +211,15 @@ pub struct BuyNodeContext<'info>
         space = size_of::<BuyNode>() + 16
     )]
     pub set_pda_account: Account<'info, BuyNode>,  
+
+    #[account(
+        init,
+        payer = caller,
+        seeds = [caller.key().as_ref()], 
+        bump,
+        space = size_of::<BuyNode>() + 16
+    )]
+    pub check_pda_account: Account<'info, BuyNode>,  
 
     #[account(mut)]
     pub caller: Signer<'info>,

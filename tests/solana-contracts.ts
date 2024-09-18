@@ -3,6 +3,12 @@ import { Program } from "@coral-xyz/anchor";
 import { SolanaContracts } from "../target/types/solana_contracts";
 
 describe("solana-contracts", () => {
+  // First generate the account to initialize as your counter state
+  let counter = anchor.web3.Keypair.generate();
+
+  // Next you get your provider
+  const provider = anchor.AnchorProvider.env();
+
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
 
@@ -10,7 +16,15 @@ describe("solana-contracts", () => {
 
   it("Is initialized!", async () => {
     // Add your test here.
-    const tx = await program.methods.initialize().rpc();
-    console.log("Your transaction signature", tx);
+    // const tx = await program.methods
+    // .initialize()
+    // .accounts({
+    //   owner_account: counter.publicKey,
+    //   caller: provider.publicKey,
+    //   systemProgram: anchor.web3.SystemProgram.programId,
+    // })
+    // .signers([counter])
+    // .rpc();
+    // console.log("Your transaction signature", tx);
   });
 });
