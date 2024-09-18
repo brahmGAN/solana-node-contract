@@ -189,6 +189,11 @@ pub fn get_node_price(ctx: Context<BuyNodeContext>) -> Result<u64>
     Ok(buy_node_account.node_price)
 }
 
+pub fn get_owner(ctx: Context<BuyNodeContext>) -> Result<Pubkey> {
+    let owner_account = &ctx.accounts.owner_account;
+    Ok(owner_account.owner_pubkey)
+}
+
 #[derive(Accounts)] 
 #[instruction(user: Pubkey)]
 pub struct BuyNodeContext<'info> 

@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 pub mod buy_node; 
+use std::mem::size_of;
 
 declare_id!("6kgSdKsaQGrWMVrCgp7RmXX7pnqVnDZ5JDJjTDvC2j62");
 
@@ -10,9 +11,11 @@ pub mod solana_contracts
 
     pub fn initialize(ctx: Context<InitializeContext>) -> Result<()> {
         let owner_account = &mut ctx.accounts.owner_account; 
-        if owner_account.owner_pubkey == Pubkey::default() 
+        if !owner_account.lock
         {
             owner_account.owner_pubkey = ctx.accounts.caller.key();
+            owner_account.lock = true; 
+            println!("bug1");
         }
         else 
         {
@@ -25,8 +28,11 @@ pub mod solana_contracts
 #[derive(Accounts)]
 pub struct InitializeContext<'info> 
 {
-    #[account(init, payer = caller, space = 8 + 32)]
+    #[account(init, payer = caller, space = size_of::<Owner>() + 16)]
     pub owner_account: Account<'info, Owner>, 
+
+    // #[account(init, payer = caller, space = 8 )]
+    // pub lock_account: Account<'info, Lock>, 
 
     #[account(mut)]
     pub caller: Signer<'info>, 
@@ -36,5 +42,6 @@ pub struct InitializeContext<'info>
 #[account]
 pub struct Owner 
 {
-    pub owner_pubkey: Pubkey, 
+    pub owner_pubkey: Pubkey,
+    pub lock:bool
 }

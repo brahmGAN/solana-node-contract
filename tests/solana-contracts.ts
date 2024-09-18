@@ -4,14 +4,16 @@ import { SolanaContracts } from "../target/types/solana_contracts";
 
 describe("solana-contracts", () => {
 
-  // Next you get your provider
   const provider = anchor.AnchorProvider.env();
-
-  // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
 
   const program = anchor.workspace.SolanaContracts as Program<SolanaContracts>;
   let owner_account = anchor.web3.Keypair.generate();
+  let buy_node_account = anchor.web3.Keypair.generate();
+  let set_pda_account = anchor.web3.Keypair.generate();
+  let get_pda_account = anchor.web3.Keypair.generate();
+  let dummy = anchor.web3.Keypair.generate();
+  let funds_handler = anchor.web3.Keypair.generate();
 
   describe("Initialize:",()=>{
     it("Is initialized!", async () => {
@@ -26,5 +28,31 @@ describe("solana-contracts", () => {
         .rpc();
       console.log("Your transaction signature:", tx);
     });
+    it("Should fail", async () => {
+      const tx = await program.methods
+        .initialize()
+        .accounts({ 
+          ownerAccount: dummy.publicKey,
+          caller: provider.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId,
+         })
+        .signers([dummy])
+        .rpc();
+      console.log("Your transaction signature:", tx);
+    });
   });
+
+  // describe("Setter and getter functions:",()=>{
+  //   it("Should set and get funds handler:",async()=>{
+  //     const tx = await program.methods
+  //       .set_funds_handler(funds_handler.publicKey)
+  //       .accounts({ 
+  //         ownerAccount: dummy.publicKey,
+  //         caller: provider.publicKey,
+  //         systemProgram: anchor.web3.SystemProgram.programId,
+  //        })
+  //       .signers([dummy])
+  //       .rpc();
+  //   });
+  // });
 });
