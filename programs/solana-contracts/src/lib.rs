@@ -9,20 +9,20 @@ pub mod solana_contracts
 {
     use super::*;
 
-    pub fn initialize(ctx: Context<InitializeContext>) -> Result<()> {
-        let owner_account = &mut ctx.accounts.owner_account; 
-        if !owner_account.lock
-        {
-            owner_account.owner_pubkey = ctx.accounts.caller.key();
-            owner_account.lock = true; 
-            println!("bug1");
-        }
-        else 
-        {
-            return Err(ProgramError::Custom(0).into());
-        }
-        Ok(())
-    }
+    // pub fn initialize(ctx: Context<InitializeContext>) -> Result<()> {
+    //     let owner_account = &mut ctx.accounts.owner_account; 
+    //     if !owner_account.lock
+    //     {
+    //         owner_account.owner_pubkey = ctx.accounts.caller.key();
+    //         owner_account.lock = true; 
+    //         println!("bug1");
+    //     }
+    //     else 
+    //     {
+    //         return Err(ProgramError::Custom(0).into());
+    //     }
+    //     Ok(())
+    // }
 }
 
 #[derive(Accounts)]
