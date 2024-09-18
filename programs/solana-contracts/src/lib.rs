@@ -6,7 +6,7 @@ use std::mem::size_of;
 declare_id!("6kgSdKsaQGrWMVrCgp7RmXX7pnqVnDZ5JDJjTDvC2j62");
 
 #[program]
-pub mod buy_node_contracts 
+pub mod solana_contracts 
 {
     use super::*;
 

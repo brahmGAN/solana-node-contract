@@ -1,13 +1,13 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { BuyNodeContracts } from "../target/types/buy_node_contracts";
+import { SolanaContracts } from "../target/types/solana_contracts";
 
-describe("solana-contracts", () => {
+describe("Buy node contracts", () => {
 
   const provider = anchor.AnchorProvider.env();
   anchor.setProvider(anchor.AnchorProvider.env());
 
-  const program = anchor.workspace.SolanaContracts as Program<BuyNodeContracts>;
+  const program = anchor.workspace.SolanaContracts as Program<SolanaContracts>;
   let owner_account = anchor.web3.Keypair.generate();
   let buy_node_account = anchor.web3.Keypair.generate();
   let set_pda_account = anchor.web3.Keypair.generate();
