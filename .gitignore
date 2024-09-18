@@ -5,10 +5,4 @@
 node_modules
 test-ledger
 .yarn
-target/debug
-target/deploy
-target/idl
-target/release
-target/sbf-solana-solana
-target/.rustc_info.json
-target/CACHEDIR.TAG
+target
