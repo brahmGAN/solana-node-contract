@@ -15,7 +15,6 @@ describe("solana-contracts", () => {
   const program = anchor.workspace.SolanaContracts as Program<SolanaContracts>;
 
   it("Is initialized!", async () => {
-    // Add your test here.
     // const tx = await program.methods
     // .initialize()
     // .accounts({

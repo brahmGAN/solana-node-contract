@@ -5,8 +5,6 @@ use crate::ID;
 //use solana_client::rpc_client::RpcClient;
 use std::mem::size_of;
 
-
-
 pub fn add_early_sale_addresses(ctx: Context<BuyNodeContext>, addresses: Vec<Pubkey>) -> Result<()>
 {
     let owner_account = &ctx.accounts.owner_account;
@@ -42,13 +40,11 @@ pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, amount:u64) -> Resul
     let buy_node_account = &mut ctx.accounts.buy_node_account;
     if buy_node_account.early_sale_status 
     {
-        // Regenerate the PDA
         let (pda, _bump) = Pubkey::find_program_address(
             &[ctx.accounts.caller.key.as_ref()], 
             &ID,
         );
 
-        // Access the PDA account information
         let check_pda_account = &ctx.accounts.check_pda_account; 
 
         // if check_pda_account.key() == pda {
