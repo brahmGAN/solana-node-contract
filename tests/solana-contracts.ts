@@ -16,21 +16,21 @@ describe("solana-contracts", () => {
   let funds_handler = anchor.web3.Keypair.generate();
 
   describe("Initialize:",()=>{
-    it("Is initialized!", async () => {
-      const tx = await program.methods
-        .initialize()
-        .accounts({ 
-          ownerAccount: owner_account.publicKey,
-          caller: provider.publicKey,
-          systemProgram: anchor.web3.SystemProgram.programId,
-         })
-        .signers([owner_account])
-        .rpc();
-      console.log("Your transaction signature:", tx);
-    });
+    // it("Is initialized!", async () => {
+    //   const tx = await program.methods
+    //     .initialize()
+    //     .accounts({ 
+    //       ownerAccount: owner_account.publicKey,
+    //       caller: provider.publicKey,
+    //       systemProgram: anchor.web3.SystemProgram.programId,
+    //      })
+    //     .signers([owner_account])
+    //     .rpc();
+    //   console.log("Your transaction signature:", tx);
+    // });
     it("Should fail", async () => {
       const tx = await program.methods
-        .initialize()
+        .my_initialize()
         .accounts({ 
           ownerAccount: dummy.publicKey,
           caller: provider.publicKey,

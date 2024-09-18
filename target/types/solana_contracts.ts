@@ -1,7 +1,29 @@
 export type SolanaContracts = {
   "version": "0.1.0",
   "name": "solana_contracts",
-  "instructions": [],
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
   "accounts": [
     {
       "name": "buyNode",
@@ -71,7 +93,29 @@ export type SolanaContracts = {
 export const IDL: SolanaContracts = {
   "version": "0.1.0",
   "name": "solana_contracts",
-  "instructions": [],
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
   "accounts": [
     {
       "name": "buyNode",
