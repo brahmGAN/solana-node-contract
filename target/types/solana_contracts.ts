@@ -575,7 +575,17 @@ export type SolanaContracts = {
           "index": false
         },
         {
-          "name": "tier",
+          "name": "tierNumber",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalNodesBought",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "pendingTierLimit",
           "type": "u64",
           "index": false
         }
@@ -1243,7 +1253,17 @@ export const IDL: SolanaContracts = {
           "index": false
         },
         {
-          "name": "tier",
+          "name": "tierNumber",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalNodesBought",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "pendingTierLimit",
           "type": "u64",
           "index": false
         }

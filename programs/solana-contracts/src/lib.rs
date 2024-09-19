@@ -58,7 +58,7 @@ pub mod solana_contracts
                      ],
                 )?;
 
-                nodes_bought_account.nodes_bought+=1;
+                nodes_bought_account.nodes_bought += 1;
                 tier_account.tier_limit[tier_number as usize] -= 1;         
             }
             else
@@ -79,14 +79,16 @@ pub mod solana_contracts
                      ],
                 )?;
 
-                nodes_bought_account.nodes_bought+=1;
+                nodes_bought_account.nodes_bought += 1;
                 tier_account.tier_limit[tier_number as usize] -= 1;         
             }
         emit!(NodeBought{
             caller: *ctx.accounts.caller.key,
             quantity: quantity,
             amount: amount,
-            tier: tier_number
+            tier_number: tier_number,
+            total_nodes_bought: nodes_bought_account.nodes_bought,
+            pending_tier_limit: tier_account.tier_limit[tier_number as usize] 
         });
         Ok(())
     }
@@ -384,7 +386,9 @@ pub struct NodeBought
     pub caller: Pubkey,
     pub quantity: u64, 
     pub amount: u64,
-    pub tier: u64
+    pub tier_number: u64,
+    pub total_nodes_bought: u64,
+    pub pending_tier_limit: u64
 }
 
 #[event]
