@@ -577,6 +577,16 @@ export type SolanaContracts = {
       "code": 6003,
       "name": "QuantityOutOfBounds",
       "msg": "Quantity is more than the available nodes in the tier!"
+    },
+    {
+      "code": 6004,
+      "name": "EarlySale",
+      "msg": "Not part of early sale!"
+    },
+    {
+      "code": 6005,
+      "name": "IncorrectAmount",
+      "msg": "Incorrect Amount!"
     }
   ]
 };
@@ -1160,6 +1170,16 @@ export const IDL: SolanaContracts = {
       "code": 6003,
       "name": "QuantityOutOfBounds",
       "msg": "Quantity is more than the available nodes in the tier!"
+    },
+    {
+      "code": 6004,
+      "name": "EarlySale",
+      "msg": "Not part of early sale!"
+    },
+    {
+      "code": 6005,
+      "name": "IncorrectAmount",
+      "msg": "Incorrect Amount!"
     }
   ]
 };

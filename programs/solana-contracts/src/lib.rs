@@ -38,61 +38,50 @@ pub mod solana_contracts
         let nodes_bought_account = &mut ctx.accounts.nodes_bought_account;
 
         require!(quantity <= tier_account.tier_limit[tier_number as usize],ErrorCode::QuantityOutOfBounds);
-        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);
-        
-        {    
+        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);   
             if buy_node_account.early_sale_on
             {
-                if buy_node_account.in_early_sale
-                {
-                    if (amount == ( quantity * tier_account.tier_price[tier_number as usize]))
-                        &&
-                        (tier_account.tier_limit[tier_number as usize] > 0)
-                    {
-                        let ix = system_instruction::transfer
-                        (   &ctx.accounts.caller.key(), 
-                            &funds_handler_account.funds_handler.key(),
-                            amount 
-                        );
+                require!(buy_node_account.in_early_sale,ErrorCode::EarlySale);
+                require!(amount == ( quantity * tier_account.tier_price[tier_number as usize]),ErrorCode::IncorrectAmount);
+                require!(tier_account.tier_limit[tier_number as usize] > 0,ErrorCode::TierLimit);
+                let ix = system_instruction::transfer
+                (   &ctx.accounts.caller.key(), 
+                    &funds_handler_account.funds_handler.key(),
+                    amount 
+                );
 
-                        anchor_lang::solana_program::program::invoke
-                        (   &ix, 
-                            &[
-                                ctx.accounts.caller.to_account_info(),
-                                funds_handler_account.to_account_info(),        
-                            ],
-                        )?;
+                anchor_lang::solana_program::program::invoke
+                (   &ix, 
+                    &[
+                        ctx.accounts.caller.to_account_info(),
+                        funds_handler_account.to_account_info(),        
+                     ],
+                )?;
 
-                        nodes_bought_account.nodes_bought+=1;
-                        tier_account.tier_limit[tier_number as usize] -= 1; 
-                    } 
-                }
+                nodes_bought_account.nodes_bought+=1;
+                tier_account.tier_limit[tier_number as usize] -= 1;         
             }
             else
             {
-                if (amount == ( quantity * tier_account.tier_price[tier_number as usize]))
-                        &&
-                        (tier_account.tier_limit[tier_number as usize] > 0)   
-                    {
-                        let ix = system_instruction::transfer
-                        (   &ctx.accounts.caller.key(), 
-                            &funds_handler_account.funds_handler.key(),
-                            amount
-                        );
+                require!(amount == ( quantity * tier_account.tier_price[tier_number as usize]),ErrorCode::IncorrectAmount);
+                require!(tier_account.tier_limit[tier_number as usize] > 0,ErrorCode::TierLimit);
+                let ix = system_instruction::transfer
+                (   &ctx.accounts.caller.key(), 
+                    &funds_handler_account.funds_handler.key(),
+                    amount 
+                );
 
-                        anchor_lang::solana_program::program::invoke
-                        (   &ix, 
-                            &[
-                                ctx.accounts.caller.to_account_info(),
-                                funds_handler_account.to_account_info(),        
-                            ],
-                        )?;
+                anchor_lang::solana_program::program::invoke
+                (   &ix, 
+                    &[
+                        ctx.accounts.caller.to_account_info(),
+                        funds_handler_account.to_account_info(),        
+                     ],
+                )?;
 
-                        nodes_bought_account.nodes_bought += 1;
-                        tier_account.tier_limit[tier_number as usize] -= 1;
-                    } 
+                nodes_bought_account.nodes_bought+=1;
+                tier_account.tier_limit[tier_number as usize] -= 1;         
             }
-        }
         emit!(NodeBought{
             caller: *ctx.accounts.caller.key,
             quantity: quantity,
@@ -411,4 +400,10 @@ pub enum ErrorCode
 
     #[msg("Quantity is more than the available nodes in the tier!")]
     QuantityOutOfBounds, 
+
+    #[msg("Not part of early sale!")]
+    EarlySale, 
+
+    #[msg("Incorrect Amount!")]
+    IncorrectAmount,
 }
