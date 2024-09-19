@@ -85,7 +85,8 @@ pub mod solana_contracts
         emit!(NodeBought{
             caller: *ctx.accounts.caller.key,
             quantity: quantity,
-            amount: amount
+            amount: amount,
+            tier: tier_number
         });
         Ok(())
     }
@@ -97,6 +98,9 @@ pub mod solana_contracts
         require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
         let funds_handler_account = &mut ctx.accounts.funds_handler_account;
         funds_handler_account.funds_handler = new_funds_handler; 
+        emit!(NewFundsHandler{
+            funds_handler: new_funds_handler
+        });
         Ok(())
     }
 
@@ -106,6 +110,9 @@ pub mod solana_contracts
         require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
         let buy_node_account = &mut ctx.accounts.buy_node_account;
         buy_node_account.early_sale_on = sale_type; 
+        emit!(EarlySale{
+            early_sale: sale_type
+        });
         Ok(())
     }
 
@@ -116,6 +123,10 @@ pub mod solana_contracts
         let tier_account = &mut ctx.accounts.tier_account;
         require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);
         tier_account.tier_limit[tier_number as usize] = new_tier_limit;
+        emit!(TierLimit{
+            tier_limit: new_tier_limit,
+            tier_number: tier_number
+        });
         Ok(())
     }
 
@@ -125,6 +136,10 @@ pub mod solana_contracts
         require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
         let tier_account = &mut ctx.accounts.tier_account; 
         tier_account.tier_price[tier_number as usize] = new_price;
+        emit!(TierPrice{
+            tier_price: new_price,
+            tier_number: tier_number
+        });
         Ok(())
     }
 
@@ -356,11 +371,46 @@ pub struct FundsHandler
 }
 
 #[event]
-pub struct NodeBought
+pub struct Initialize
 {
     pub caller: Pubkey,
     pub quantity: u64, 
     pub amount: u64
+}
+
+#[event]
+pub struct NodeBought
+{
+    pub caller: Pubkey,
+    pub quantity: u64, 
+    pub amount: u64,
+    pub tier: u64
+}
+
+#[event]
+pub struct NewFundsHandler
+{
+    pub funds_handler: Pubkey,
+}
+
+#[event]
+pub struct EarlySale
+{
+    pub early_sale: bool,
+}
+
+#[event]
+pub struct TierLimit
+{
+    pub tier_limit: u64,
+    pub tier_number: u64
+}
+
+#[event]
+pub struct TierPrice
+{
+    pub tier_price:u64,
+    pub tier_number: u64
 }
 
 #[error_code]

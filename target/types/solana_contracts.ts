@@ -537,6 +537,26 @@ export type SolanaContracts = {
   ],
   "events": [
     {
+      "name": "Initialize",
+      "fields": [
+        {
+          "name": "caller",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "quantity",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "NodeBought",
       "fields": [
         {
@@ -551,6 +571,61 @@ export type SolanaContracts = {
         },
         {
           "name": "amount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tier",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "NewFundsHandler",
+      "fields": [
+        {
+          "name": "fundsHandler",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "EarlySale",
+      "fields": [
+        {
+          "name": "earlySale",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TierLimit",
+      "fields": [
+        {
+          "name": "tierLimit",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tierNumber",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TierPrice",
+      "fields": [
+        {
+          "name": "tierPrice",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tierNumber",
           "type": "u64",
           "index": false
         }
@@ -1130,6 +1205,26 @@ export const IDL: SolanaContracts = {
   ],
   "events": [
     {
+      "name": "Initialize",
+      "fields": [
+        {
+          "name": "caller",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "quantity",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "amount",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "NodeBought",
       "fields": [
         {
@@ -1144,6 +1239,61 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "amount",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tier",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "NewFundsHandler",
+      "fields": [
+        {
+          "name": "fundsHandler",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "EarlySale",
+      "fields": [
+        {
+          "name": "earlySale",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TierLimit",
+      "fields": [
+        {
+          "name": "tierLimit",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tierNumber",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "TierPrice",
+      "fields": [
+        {
+          "name": "tierPrice",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "tierNumber",
           "type": "u64",
           "index": false
         }
