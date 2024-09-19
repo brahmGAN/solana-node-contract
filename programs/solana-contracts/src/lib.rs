@@ -49,7 +49,6 @@ pub mod solana_contracts
                         &&
                         (tier_account.tier_limit[tier_number as usize] > 0)
                     {
-                        //TODO: store the node count for this address
                         let ix = system_instruction::transfer
                         (   &ctx.accounts.caller.key(), 
                             &funds_handler_account.funds_handler.key(),
