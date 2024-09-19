@@ -28,18 +28,18 @@ describe("Buy node contracts", () => {
         .rpc();
       console.log("Your transaction signature:", tx);
 
-      // const getOwner = await program.methods
-      // .getOwner()
-      // .accounts({ 
-      //   buyNodeAccount:buy_node_account.publicKey,
-      //   ownerAccount:owner_account.publicKey,
-      //   setPdaAccount:set_pda_account.publicKey,
-      //   checkPdaAccount:get_pda_account.publicKey,
-      //   caller: provider.publicKey,
-      //   systemProgram: anchor.web3.SystemProgram.programId,
-      //  })
-      // .signers([buy_node_account])
-      // .rpc();
+      const getOwner = await program.methods
+      .getOwner()
+      .accounts({ 
+        buyNodeAccount:buy_node_account.publicKey,
+        ownerAccount:owner_account.publicKey,
+        setPdaAccount:set_pda_account.publicKey,
+        checkPdaAccount:get_pda_account.publicKey,
+        caller: provider.publicKey,
+        systemProgram: anchor.web3.SystemProgram.programId,
+       })
+      .signers([buy_node_account])
+      .rpc();
     });
     // it("Should fail", async () => {
     //   const tx = await program.methods
