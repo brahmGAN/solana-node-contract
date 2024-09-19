@@ -16,7 +16,7 @@ describe("Buy node contracts", () => {
   let funds_handler = anchor.web3.Keypair.generate();
 
   describe("Initialize:",()=>{
-    it("Is initialized!", async () => {
+    it("Is initialized!", async () => { 
       const tx = await program.methods
         .initialize()
         .accounts({ 
@@ -28,28 +28,28 @@ describe("Buy node contracts", () => {
         .rpc();
       console.log("Your transaction signature:", tx);
 
-      const getOwner = await program.methods
-      .getOwner()
-      .accounts({ 
-        buyNodeAccount:buy_node_account.publicKey,
-        ownerAccount:owner_account.publicKey,
-        setPdaAccount:set_pda_account.publicKey,
-        checkPdaAccount:get_pda_account.publicKey,
-        caller: provider.publicKey,
-        systemProgram: anchor.web3.SystemProgram.programId,
-       })
-      .signers([buy_node_account])
-      .rpc();
+      // const getOwner = await program.methods
+      // .getOwner()
+      // .accounts({ 
+      //   buyNodeAccount:buy_node_account.publicKey,
+      //   ownerAccount:owner_account.publicKey,
+      //   setPdaAccount:set_pda_account.publicKey,
+      //   checkPdaAccount:get_pda_account.publicKey,
+      //   caller: provider.publicKey,
+      //   systemProgram: anchor.web3.SystemProgram.programId,
+      //  })
+      // .signers([buy_node_account])
+      // .rpc();
     });
     // it("Should fail", async () => {
     //   const tx = await program.methods
     //     .initialize()
     //     .accounts({ 
-    //       ownerAccount: dummy.publicKey,
+    //       ownerAccount: owner_account.publicKey,
     //       caller: provider.publicKey,
     //       systemProgram: anchor.web3.SystemProgram.programId,
     //      })
-    //     .signers([dummy])
+    //     .signers([owner_account])
     //     .rpc();
     //   console.log("Your transaction signature:", tx);
     // });

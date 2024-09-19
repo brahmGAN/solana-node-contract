@@ -530,6 +530,13 @@ export type SolanaContracts = {
         }
       ]
     }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "AlreadyInitialized",
+      "msg": "Alreay initialized!"
+    }
   ]
 };
 
@@ -1064,6 +1071,13 @@ export const IDL: SolanaContracts = {
           "index": false
         }
       ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "AlreadyInitialized",
+      "msg": "Alreay initialized!"
     }
   ]
 };

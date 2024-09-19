@@ -12,11 +12,11 @@ pub mod solana_contracts
 
     pub fn initialize(ctx: Context<InitializeContext>) -> Result<()> {
         let owner_account = &mut ctx.accounts.owner_account; 
-        if !owner_account.lock
-        {
+        require! (!owner_account.lock, ErrorCode::AlreadyInitialized);
+        
             owner_account.owner_pubkey = ctx.accounts.caller.key();
             owner_account.lock = true; 
-        }
+        
         Ok(())
     }
 
@@ -268,4 +268,11 @@ pub struct NodeBought
     pub caller: Pubkey,
     pub quantity: u64, 
     pub amount: u64
+}
+
+#[error_code]
+pub enum ErrorCode 
+{
+    #[msg("Alreay initialized!")]
+    AlreadyInitialized
 }
