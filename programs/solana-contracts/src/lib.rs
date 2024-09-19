@@ -94,60 +94,37 @@ pub mod solana_contracts
     pub fn set_funds_handler(ctx: Context<FundsHandlerContext>,new_funds_handler: Pubkey) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        if owner_account.owner_pubkey == ctx.accounts.caller.key()
-        {
-            let funds_handler_account = &mut ctx.accounts.funds_handler_account;
-            funds_handler_account.funds_handler = new_funds_handler; 
-            
-        }
-        else 
-        {
-            return Err(ProgramError::Custom(0).into());
-        }
+        require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
+        let funds_handler_account = &mut ctx.accounts.funds_handler_account;
+        funds_handler_account.funds_handler = new_funds_handler; 
         Ok(())
     }
 
     pub fn set_early_sale_on(ctx: Context<BuyNodeContext>, sale_type: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        if owner_account.owner_pubkey == ctx.accounts.caller.key()
-        {
-            let buy_node_account = &mut ctx.accounts.buy_node_account;
-            buy_node_account.early_sale_on = sale_type; 
-        }
-        else
-        {
-            return Err(ProgramError::Custom(0).into());
-        }
+        require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
+        let buy_node_account = &mut ctx.accounts.buy_node_account;
+        buy_node_account.early_sale_on = sale_type; 
         Ok(())
     }
 
     pub fn set_tier_limit(ctx: Context<TierContext>,new_tier_limit: u64,tier_number: u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        if owner_account.owner_pubkey == ctx.accounts.caller.key()
-        {
-            let tier_account = &mut ctx.accounts.tier_account;
-            if tier_number < 12 && tier_number > 0
-            {
-                tier_account.tier_limit[tier_number as usize] = new_tier_limit;
-            } 
-        }
-        else
-        {
-            return Err(ProgramError::Custom(0).into());
-        }
+        require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
+        let tier_account = &mut ctx.accounts.tier_account;
+        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);
+        tier_account.tier_limit[tier_number as usize] = new_tier_limit;
         Ok(())
     }
 
     pub fn set_tier_price(ctx: Context<TierContext>,new_price:u64,tier_number: u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        if owner_account.owner_pubkey == ctx.accounts.caller.key()
-        {
-            let tier_account = &mut ctx.accounts.tier_account; 
-            tier_account.tier_price[tier_number as usize] = new_price;
-        }
+        require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
+        let tier_account = &mut ctx.accounts.tier_account; 
+        tier_account.tier_price[tier_number as usize] = new_price;
         Ok(())
     }
 
