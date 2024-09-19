@@ -23,7 +23,7 @@ pub mod solana_contracts
         let owner_account = &ctx.accounts.owner_account;
         if owner_account.owner_pubkey == ctx.accounts.caller.key()
         { 
-            for user in addresses 
+            for _user in addresses 
             {
                 let early_sale_account = &mut ctx.accounts.early_sale_account;
                 early_sale_account.in_early_sale = true; 
