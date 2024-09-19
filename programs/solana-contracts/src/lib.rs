@@ -37,50 +37,59 @@ pub mod solana_contracts
         let buy_node_account = &mut ctx.accounts.buy_node_account;
         let tier_account = &mut ctx.accounts.tier_account;
         let funds_handler_account = &ctx.accounts.funds_handler_account;
-        if buy_node_account.early_sale_on 
-        {
-            if buy_node_account.in_early_sale
+
+        if quantity <= tier_account.tier_limit[tier_number as usize] && tier_number < 12 && tier_number > 0
+        {    
+            if buy_node_account.early_sale_on
+            {
+                if buy_node_account.in_early_sale
+                {
+                    if (amount == ( quantity * tier_account.tier_price[tier_number as usize]))
+                        &&
+                        (tier_account.tier_limit[tier_number as usize] > 0)
+                    {
+                        //TODO: store the node count for this address
+                        let ix = system_instruction::transfer
+                        (   &ctx.accounts.caller.key(), 
+                            &funds_handler_account.funds_handler.key(),
+                            amount 
+                        );
+
+                        anchor_lang::solana_program::program::invoke
+                        (   &ix, 
+                            &[
+                                ctx.accounts.caller.to_account_info(),
+                                funds_handler_account.to_account_info(),        
+                            ],
+                        )?;
+
+                        buy_node_account.nodes_bought+=1;
+                    } 
+                }
+            }
+            else
             {
                 if (amount == ( quantity * tier_account.tier_price[tier_number as usize]))
-                    &&
-                    (tier_account.tier_limit[tier_number as usize] > 0)   
-                {
-                    let ix = system_instruction::transfer
-                    (   &ctx.accounts.caller.key(), 
-                        &funds_handler_account.funds_handler.key(),
-                        amount 
-                    );
+                        &&
+                        (tier_account.tier_limit[tier_number as usize] > 0)   
+                    {
+                        let ix = system_instruction::transfer
+                        (   &ctx.accounts.caller.key(), 
+                            &funds_handler_account.funds_handler.key(),
+                            amount
+                        );
 
-                    anchor_lang::solana_program::program::invoke
-                    (   &ix, 
-                        &[
-                            ctx.accounts.caller.to_account_info(),
-                            funds_handler_account.to_account_info(),        
-                        ],
-                    )?;
-                } 
+                        anchor_lang::solana_program::program::invoke
+                        (   &ix, 
+                            &[
+                                ctx.accounts.caller.to_account_info(),
+                                funds_handler_account.to_account_info(),        
+                            ],
+                        )?;
+
+                        buy_node_account.nodes_bought+=1;
+                    } 
             }
-        }
-        else
-        {
-            if (amount == ( quantity * tier_account.tier_price[tier_number as usize]))
-                    &&
-                    (tier_account.tier_limit[tier_number as usize] > 0)   
-                {
-                    let ix = system_instruction::transfer
-                    (   &ctx.accounts.caller.key(), 
-                        &funds_handler_account.funds_handler.key(),
-                        amount
-                    );
-
-                    anchor_lang::solana_program::program::invoke
-                    (   &ix, 
-                        &[
-                            ctx.accounts.caller.to_account_info(),
-                            funds_handler_account.to_account_info(),        
-                        ],
-                    )?;
-                } 
         }
         emit!(NodeBought{
             caller: *ctx.accounts.caller.key,
@@ -128,7 +137,7 @@ pub mod solana_contracts
         if owner_account.owner_pubkey == ctx.accounts.caller.key()
         {
             let tier_account = &mut ctx.accounts.tier_account;
-            if tier_number < 12 && tier_number > 0 
+            if tier_number < 12 && tier_number > 0
             {
                 tier_account.tier_limit[tier_number as usize] = new_tier_limit;
             } 
@@ -330,7 +339,8 @@ pub struct BuyNode
 {
     pub early_sale_on: bool,
     pub total_nodes: u64,
-    pub in_early_sale: bool 
+    pub in_early_sale: bool,
+    pub nodes_bought: u64
 }
 
 #[account]

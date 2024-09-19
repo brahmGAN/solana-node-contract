@@ -452,6 +452,10 @@ export type SolanaContracts = {
           {
             "name": "inEarlySale",
             "type": "bool"
+          },
+          {
+            "name": "nodesBought",
+            "type": "u64"
           }
         ]
       }
@@ -987,6 +991,10 @@ export const IDL: SolanaContracts = {
           {
             "name": "inEarlySale",
             "type": "bool"
+          },
+          {
+            "name": "nodesBought",
+            "type": "u64"
           }
         ]
       }
