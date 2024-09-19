@@ -535,19 +535,6 @@ export type SolanaContracts = {
       }
     }
   ],
-  "types": [
-    {
-      "name": "NotAuthorized",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "AlreadyInitialized"
-          }
-        ]
-      }
-    }
-  ],
   "events": [
     {
       "name": "NodeBought",
@@ -575,6 +562,21 @@ export type SolanaContracts = {
       "code": 6000,
       "name": "AlreadyInitialized",
       "msg": "Alreay initialized!"
+    },
+    {
+      "code": 6001,
+      "name": "NotAuthorized",
+      "msg": "Not Authorized!"
+    },
+    {
+      "code": 6002,
+      "name": "TierLimit",
+      "msg": "Out of tier limits!"
+    },
+    {
+      "code": 6003,
+      "name": "QuantityOutOfBounds",
+      "msg": "Quantity is more than the available nodes in the tier!"
     }
   ]
 };
@@ -1116,19 +1118,6 @@ export const IDL: SolanaContracts = {
       }
     }
   ],
-  "types": [
-    {
-      "name": "NotAuthorized",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "AlreadyInitialized"
-          }
-        ]
-      }
-    }
-  ],
   "events": [
     {
       "name": "NodeBought",
@@ -1156,6 +1145,21 @@ export const IDL: SolanaContracts = {
       "code": 6000,
       "name": "AlreadyInitialized",
       "msg": "Alreay initialized!"
+    },
+    {
+      "code": 6001,
+      "name": "NotAuthorized",
+      "msg": "Not Authorized!"
+    },
+    {
+      "code": 6002,
+      "name": "TierLimit",
+      "msg": "Out of tier limits!"
+    },
+    {
+      "code": 6003,
+      "name": "QuantityOutOfBounds",
+      "msg": "Quantity is more than the available nodes in the tier!"
     }
   ]
 };

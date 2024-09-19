@@ -21,14 +21,12 @@ pub mod solana_contracts
     pub fn add_early_sale_addresses(ctx: Context<EarlySaleContext>, addresses: Vec<Pubkey>) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
-        if owner_account.owner_pubkey == ctx.accounts.caller.key()
-        { 
+        require! (owner_account.owner_pubkey == ctx.accounts.caller.key(), ErrorCode::NotAuthorized);    
             for _user in addresses 
             {
                 let early_sale_account = &mut ctx.accounts.early_sale_account;
                 early_sale_account.in_early_sale = true; 
             }
-        }
         Ok(())  
     }
 
@@ -39,7 +37,9 @@ pub mod solana_contracts
         let funds_handler_account = &ctx.accounts.funds_handler_account;
         let nodes_bought_account = &mut ctx.accounts.nodes_bought_account;
 
-        if quantity <= tier_account.tier_limit[tier_number as usize] && tier_number < 12 && tier_number > 0
+        require!(quantity <= tier_account.tier_limit[tier_number as usize],ErrorCode::QuantityOutOfBounds);
+        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);
+        
         {    
             if buy_node_account.early_sale_on
             {
@@ -64,6 +64,7 @@ pub mod solana_contracts
                         )?;
 
                         nodes_bought_account.nodes_bought+=1;
+                        tier_account.tier_limit[tier_number as usize] -= 1; 
                     } 
                 }
             }
@@ -87,7 +88,8 @@ pub mod solana_contracts
                             ],
                         )?;
 
-                        nodes_bought_account.nodes_bought+=1;
+                        nodes_bought_account.nodes_bought += 1;
+                        tier_account.tier_limit[tier_number as usize] -= 1;
                     } 
             }
         }
@@ -399,12 +401,14 @@ pub struct NodeBought
 pub enum ErrorCode 
 {
     #[msg("Alreay initialized!")]
-    AlreadyInitialized
-}
+    AlreadyInitialized,
 
-#[error_code]
-pub enum NotAuthorized 
-{
     #[msg("Not Authorized!")]
-    AlreadyInitialized
+    NotAuthorized,
+
+    #[msg("Out of tier limits!")]
+    TierLimit, 
+
+    #[msg("Quantity is more than the available nodes in the tier!")]
+    QuantityOutOfBounds, 
 }
