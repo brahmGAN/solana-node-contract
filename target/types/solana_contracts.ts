@@ -8,7 +8,7 @@ export type SolanaContracts = {
         {
           "name": "ownerAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "caller",
@@ -67,51 +67,6 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "buyNode",
-      "accounts": [
-        {
-          "name": "buyNodeAccount",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "caller",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "quantity",
-          "type": "u64"
-        },
-        {
-          "name": "amount",
-          "type": "u64"
-        }
-      ]
-    },
-    {
       "name": "setFundsHandler",
       "docs": [
         "@dev Setter functions"
@@ -152,47 +107,6 @@ export type SolanaContracts = {
         {
           "name": "newFundsHandler",
           "type": "publicKey"
-        }
-      ]
-    },
-    {
-      "name": "setNodeTierLimit",
-      "accounts": [
-        {
-          "name": "buyNodeAccount",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "caller",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "newTierLimit",
-          "type": "u64"
         }
       ]
     },
@@ -238,25 +152,15 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setNodePrice",
+      "name": "setTierLimit",
       "accounts": [
         {
-          "name": "buyNodeAccount",
+          "name": "tierAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -273,7 +177,46 @@ export type SolanaContracts = {
       ],
       "args": [
         {
-          "name": "price",
+          "name": "newTierLimit",
+          "type": "u128"
+        },
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "setTierPrice",
+      "accounts": [
+        {
+          "name": "tierAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newPrice",
+          "type": "u128"
+        },
+        {
+          "name": "tierNumber",
           "type": "u64"
         }
       ]
@@ -319,25 +262,15 @@ export type SolanaContracts = {
       "returns": "publicKey"
     },
     {
-      "name": "getNodeTierLimit",
+      "name": "getTierLimit",
       "accounts": [
         {
-          "name": "buyNodeAccount",
+          "name": "tierAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -352,8 +285,13 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [],
-      "returns": "u64"
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ],
+      "returns": "u128"
     },
     {
       "name": "getEarlySaleStatus",
@@ -393,25 +331,15 @@ export type SolanaContracts = {
       "returns": "bool"
     },
     {
-      "name": "getNodePrice",
+      "name": "getTierPrice",
       "accounts": [
         {
-          "name": "buyNodeAccount",
+          "name": "tierAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -426,8 +354,13 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [],
-      "returns": "u64"
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ],
+      "returns": "u128"
     },
     {
       "name": "getOwner",
@@ -494,16 +427,8 @@ export type SolanaContracts = {
             "type": "publicKey"
           },
           {
-            "name": "nodeTierLimit",
-            "type": "u64"
-          },
-          {
             "name": "earlySaleStatus",
             "type": "bool"
-          },
-          {
-            "name": "nodePrice",
-            "type": "u64"
           }
         ]
       }
@@ -524,6 +449,19 @@ export type SolanaContracts = {
             "type": {
               "vec": "u128"
             }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "NotAuthorized",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "AlreadyInitialized"
           }
         ]
       }
@@ -570,7 +508,7 @@ export const IDL: SolanaContracts = {
         {
           "name": "ownerAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "caller",
@@ -629,51 +567,6 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "buyNode",
-      "accounts": [
-        {
-          "name": "buyNodeAccount",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "caller",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "quantity",
-          "type": "u64"
-        },
-        {
-          "name": "amount",
-          "type": "u64"
-        }
-      ]
-    },
-    {
       "name": "setFundsHandler",
       "docs": [
         "@dev Setter functions"
@@ -714,47 +607,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "newFundsHandler",
           "type": "publicKey"
-        }
-      ]
-    },
-    {
-      "name": "setNodeTierLimit",
-      "accounts": [
-        {
-          "name": "buyNodeAccount",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "caller",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "newTierLimit",
-          "type": "u64"
         }
       ]
     },
@@ -800,25 +652,15 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "setNodePrice",
+      "name": "setTierLimit",
       "accounts": [
         {
-          "name": "buyNodeAccount",
+          "name": "tierAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -835,7 +677,46 @@ export const IDL: SolanaContracts = {
       ],
       "args": [
         {
-          "name": "price",
+          "name": "newTierLimit",
+          "type": "u128"
+        },
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "setTierPrice",
+      "accounts": [
+        {
+          "name": "tierAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "newPrice",
+          "type": "u128"
+        },
+        {
+          "name": "tierNumber",
           "type": "u64"
         }
       ]
@@ -881,25 +762,15 @@ export const IDL: SolanaContracts = {
       "returns": "publicKey"
     },
     {
-      "name": "getNodeTierLimit",
+      "name": "getTierLimit",
       "accounts": [
         {
-          "name": "buyNodeAccount",
+          "name": "tierAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -914,8 +785,13 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [],
-      "returns": "u64"
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ],
+      "returns": "u128"
     },
     {
       "name": "getEarlySaleStatus",
@@ -955,25 +831,15 @@ export const IDL: SolanaContracts = {
       "returns": "bool"
     },
     {
-      "name": "getNodePrice",
+      "name": "getTierPrice",
       "accounts": [
         {
-          "name": "buyNodeAccount",
+          "name": "tierAccount",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "setPdaAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "checkPdaAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -988,8 +854,13 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [],
-      "returns": "u64"
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ],
+      "returns": "u128"
     },
     {
       "name": "getOwner",
@@ -1056,16 +927,8 @@ export const IDL: SolanaContracts = {
             "type": "publicKey"
           },
           {
-            "name": "nodeTierLimit",
-            "type": "u64"
-          },
-          {
             "name": "earlySaleStatus",
             "type": "bool"
-          },
-          {
-            "name": "nodePrice",
-            "type": "u64"
           }
         ]
       }
@@ -1086,6 +949,19 @@ export const IDL: SolanaContracts = {
             "type": {
               "vec": "u128"
             }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "NotAuthorized",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "AlreadyInitialized"
           }
         ]
       }

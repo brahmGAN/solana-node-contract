@@ -48,64 +48,64 @@ pub mod solana_contracts
         Ok(())  
     }
 
-    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, amount:u64) -> Result<()>
-    {
-        let buy_node_account = &mut ctx.accounts.buy_node_account;
-        if buy_node_account.early_sale_status 
-        {
-            let (pda, _bump) = Pubkey::find_program_address(
-                &[ctx.accounts.caller.key.as_ref()], 
-                &ID,
-            );
+    // pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, amount:u64) -> Result<()>
+    // {
+    //     let buy_node_account = &mut ctx.accounts.buy_node_account;
+    //     if buy_node_account.early_sale_status 
+    //     {
+    //         let (pda, _bump) = Pubkey::find_program_address(
+    //             &[ctx.accounts.caller.key.as_ref()], 
+    //             &ID,
+    //         );
 
-            let check_pda_account = &ctx.accounts.check_pda_account; 
+    //         let check_pda_account = &ctx.accounts.check_pda_account; 
 
-            if check_pda_account.key() == pda
-            {
-                if amount == ( quantity * buy_node_account.//node_price) 
-                {
-                    let ix = system_instruction::transfer
-                    (   &ctx.accounts.caller.key(), 
-                        &buy_node_account.funds_handler.key(),
-                        amount
-                    );
+    //         if check_pda_account.key() == pda
+    //         {
+    //             if amount == ( quantity * buy_node_account.//node_price) 
+    //             {
+    //                 let ix = system_instruction::transfer
+    //                 (   &ctx.accounts.caller.key(), 
+    //                     &buy_node_account.funds_handler.key(),
+    //                     amount
+    //                 );
 
-                    anchor_lang::solana_program::program::invoke
-                    (   &ix, 
-                        &[
-                            ctx.accounts.caller.to_account_info(),
-                            buy_node_account.to_account_info(),        
-                        ],
-                    )?;
-                } 
-            }
-        }
-        else
-        {
-            if amount == ( quantity * buy_node_account.//node_price) 
-                {
-                    let ix = system_instruction::transfer
-                    (   &ctx.accounts.caller.key(), 
-                        &buy_node_account.funds_handler.key(), 
-                        amount
-                    );
+    //                 anchor_lang::solana_program::program::invoke
+    //                 (   &ix, 
+    //                     &[
+    //                         ctx.accounts.caller.to_account_info(),
+    //                         buy_node_account.to_account_info(),        
+    //                     ],
+    //                 )?;
+    //             } 
+    //         }
+    //     }
+    //     else
+    //     {
+    //         if amount == ( quantity * buy_node_account.//node_price) 
+    //             {
+    //                 let ix = system_instruction::transfer
+    //                 (   &ctx.accounts.caller.key(), 
+    //                     &buy_node_account.funds_handler.key(), 
+    //                     amount
+    //                 );
 
-                    anchor_lang::solana_program::program::invoke
-                    (   &ix, 
-                        &[
-                            ctx.accounts.caller.to_account_info(),
-                            buy_node_account.to_account_info(),          
-                        ],
-                    )?;
-                } 
-        }
-        emit!(NodeBought{
-            caller: *ctx.accounts.caller.key,
-            quantity: quantity,
-            amount: amount
-        });
-        Ok(())
-    }
+    //                 anchor_lang::solana_program::program::invoke
+    //                 (   &ix, 
+    //                     &[
+    //                         ctx.accounts.caller.to_account_info(),
+    //                         buy_node_account.to_account_info(),          
+    //                     ],
+    //                 )?;
+    //             } 
+    //     }
+    //     emit!(NodeBought{
+    //         caller: *ctx.accounts.caller.key,
+    //         quantity: quantity,
+    //         amount: amount
+    //     });
+    //     Ok(())
+    // }
 
     /// @dev Setter functions
     pub fn set_funds_handler(ctx: Context<BuyNodeContext>,new_funds_handler: Pubkey) -> Result<()>
@@ -139,14 +139,13 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_tier_limit(ctx: Context<TierContext>,new_tier_limit: u64,tier_number: u64) -> Result<()>
+    pub fn set_tier_limit(ctx: Context<TierContext>,new_tier_limit: u128,tier_number: u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         if owner_account.owner_pubkey == ctx.accounts.caller.key()
         {
-            let tier_account = &ctx.accounts.tier_account; 
-            let buy_node_account = &mut ctx.accounts.buy_node_account;
-            buy_node_account.//node_tier_limit = new_tier_limit; 
+            let tier_account = &mut ctx.accounts.tier_account; 
+            tier_account.tier_limit[tier_number as usize] = new_tier_limit; 
         }
         else
         {
@@ -155,14 +154,14 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_//node_price(ctx: Context<BuyNodeContext>,price:u64) -> Result<()>
+    pub fn set_tier_price(ctx: Context<TierContext>,new_price:u128,tier_number: u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        // if owner_account.owner_pubkey == ctx.accounts.caller.key()
-        // {
-            let buy_node_account = &mut ctx.accounts.buy_node_account; 
-            buy_node_account.//node_price = price; 
-        //}
+        if owner_account.owner_pubkey == ctx.accounts.caller.key()
+        {
+            let tier_account = &mut ctx.accounts.tier_account; 
+            tier_account.tier_price[tier_number as usize] = new_price;
+        }
         Ok(())
     }
 
@@ -173,10 +172,10 @@ pub mod solana_contracts
         Ok(buy_node_account.funds_handler)
     }
 
-    pub fn get_//node_tier_limit(ctx: Context<BuyNodeContext>) -> Result<u64>
+    pub fn get_tier_limit(ctx: Context<TierContext>,tier_number: u64) -> Result<u128>
     {
-        let buy_node_account = &ctx.accounts.buy_node_account;
-        Ok(buy_node_account.//node_tier_limit)
+        let tier_account = &ctx.accounts.tier_account;
+        Ok(tier_account.tier_limit[tier_number as usize])
     }
 
     pub fn get_early_sale_status(ctx: Context<BuyNodeContext>) -> Result<bool>
@@ -185,10 +184,10 @@ pub mod solana_contracts
         Ok(buy_node_account.early_sale_status)
     }
 
-    pub fn get_//node_price(ctx: Context<BuyNodeContext>) -> Result<u64>
+    pub fn get_tier_price(ctx: Context<TierContext>,tier_number: u64) -> Result<u128>
     {
-        let buy_node_account = &ctx.accounts.buy_node_account;
-        Ok(buy_node_account.//node_price)
+        let tier_account = &ctx.accounts.tier_account;
+        Ok(tier_account.tier_price[tier_number as usize])
     }
 
     pub fn get_owner(ctx: Context<BuyNodeContext>) -> Result<Pubkey> {
@@ -267,7 +266,7 @@ pub struct TierContext<'info>
     #[account(
         init, 
         payer = caller, 
-        seeds = [b"tier_account"], 
+        seeds = [b"tier_account",caller.key.as_ref()], 
         bump,space = size_of::<Tier>() + 16
     )]
     pub tier_account: Account<'info,Tier>,
@@ -305,5 +304,12 @@ pub struct NodeBought
 pub enum ErrorCode 
 {
     #[msg("Alreay initialized!")]
+    AlreadyInitialized
+}
+
+#[error_code]
+pub enum NotAuthorized 
+{
+    #[msg("Not Authorized!")]
     AlreadyInitialized
 }
