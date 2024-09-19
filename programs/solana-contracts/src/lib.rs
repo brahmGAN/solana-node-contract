@@ -1,5 +1,5 @@
 use anchor_lang::{prelude::*, solana_program::{program::invoke_signed, system_instruction}};
-//use solana_sdk::client; 
+//use solana_sdk::client;
 //use solana_client::rpc_client::RpcClient;
 use std::mem::size_of;
 
@@ -35,8 +35,8 @@ pub mod solana_contracts
                     &system_instruction::create_account(
                         &ctx.accounts.caller.key, 
                         &pda.key(), 
-                        69,
-                        69,
+                        1000000000,
+                        10000,
                         &ID 
                     ),
                     &[
@@ -251,10 +251,6 @@ pub struct BuyNodeContext<'info>
     #[account(mut)]
     pub caller: Signer<'info>,
     pub system_program: Program<'info,System>,
-
-    #[account(mut)]
-    /// CHECK: This account is used to receive SOL.
-    pub program_account: AccountInfo<'info>
 }
 
 #[account]

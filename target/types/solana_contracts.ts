@@ -55,11 +55,6 @@ export type SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [
@@ -102,11 +97,6 @@ export type SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -156,11 +146,6 @@ export type SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [
@@ -201,11 +186,6 @@ export type SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -248,11 +228,6 @@ export type SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [
@@ -293,11 +268,6 @@ export type SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -343,11 +313,6 @@ export type SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [],
@@ -384,11 +349,6 @@ export type SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -427,11 +387,6 @@ export type SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [],
@@ -469,11 +424,6 @@ export type SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [],
@@ -510,11 +460,6 @@ export type SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -645,11 +590,6 @@ export const IDL: SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [
@@ -692,11 +632,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -746,11 +681,6 @@ export const IDL: SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [
@@ -791,11 +721,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -838,11 +763,6 @@ export const IDL: SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [
@@ -883,11 +803,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -933,11 +848,6 @@ export const IDL: SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [],
@@ -974,11 +884,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
@@ -1017,11 +922,6 @@ export const IDL: SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [],
@@ -1059,11 +959,6 @@ export const IDL: SolanaContracts = {
           "name": "systemProgram",
           "isMut": false,
           "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
-          "isSigner": false
         }
       ],
       "args": [],
@@ -1100,11 +995,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "systemProgram",
           "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "programAccount",
-          "isMut": true,
           "isSigner": false
         }
       ],
