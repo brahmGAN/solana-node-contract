@@ -1,6 +1,4 @@
 use anchor_lang::{prelude::*, solana_program::{program::invoke_signed, system_instruction}};
-//use solana_sdk::client;
-//use solana_client::rpc_client::RpcClient;
 use std::mem::size_of;
 
 declare_id!("6kgSdKsaQGrWMVrCgp7RmXX7pnqVnDZ5JDJjTDvC2j62");
@@ -64,7 +62,7 @@ pub mod solana_contracts
 
             if check_pda_account.key() == pda
             {
-                if amount == ( quantity * buy_node_account.node_price) 
+                if amount == ( quantity * buy_node_account.//node_price) 
                 {
                     let ix = system_instruction::transfer
                     (   &ctx.accounts.caller.key(), 
@@ -84,7 +82,7 @@ pub mod solana_contracts
         }
         else
         {
-            if amount == ( quantity * buy_node_account.node_price) 
+            if amount == ( quantity * buy_node_account.//node_price) 
                 {
                     let ix = system_instruction::transfer
                     (   &ctx.accounts.caller.key(), 
@@ -126,21 +124,6 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_node_tier_limit(ctx: Context<BuyNodeContext>,new_tier_limit: u64) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account; 
-        if owner_account.owner_pubkey == ctx.accounts.caller.key()
-        {
-            let buy_node_account = &mut ctx.accounts.buy_node_account;
-            buy_node_account.node_tier_limit = new_tier_limit; 
-        }
-        else
-        {
-            return Err(ProgramError::Custom(0).into());
-        }
-        Ok(())
-    }
-
     pub fn set_early_sale_status(ctx: Context<BuyNodeContext>, sale_type: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
@@ -156,18 +139,30 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_node_price(ctx: Context<BuyNodeContext>,price:u64) -> Result<()>
+    pub fn set_tier_limit(ctx: Context<TierContext>,new_tier_limit: u64,tier_number: u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         if owner_account.owner_pubkey == ctx.accounts.caller.key()
         {
-            let buy_node_account = &mut ctx.accounts.buy_node_account; 
-            buy_node_account.node_price = price; 
+            let tier_account = &ctx.accounts.tier_account; 
+            let buy_node_account = &mut ctx.accounts.buy_node_account;
+            buy_node_account.//node_tier_limit = new_tier_limit; 
         }
         else
         {
             return Err(ProgramError::Custom(0).into());
         }
+        Ok(())
+    }
+
+    pub fn set_//node_price(ctx: Context<BuyNodeContext>,price:u64) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account; 
+        // if owner_account.owner_pubkey == ctx.accounts.caller.key()
+        // {
+            let buy_node_account = &mut ctx.accounts.buy_node_account; 
+            buy_node_account.//node_price = price; 
+        //}
         Ok(())
     }
 
@@ -178,10 +173,10 @@ pub mod solana_contracts
         Ok(buy_node_account.funds_handler)
     }
 
-    pub fn get_node_tier_limit(ctx: Context<BuyNodeContext>) -> Result<u64>
+    pub fn get_//node_tier_limit(ctx: Context<BuyNodeContext>) -> Result<u64>
     {
         let buy_node_account = &ctx.accounts.buy_node_account;
-        Ok(buy_node_account.node_tier_limit)
+        Ok(buy_node_account.//node_tier_limit)
     }
 
     pub fn get_early_sale_status(ctx: Context<BuyNodeContext>) -> Result<bool>
@@ -190,10 +185,10 @@ pub mod solana_contracts
         Ok(buy_node_account.early_sale_status)
     }
 
-    pub fn get_node_price(ctx: Context<BuyNodeContext>) -> Result<u64>
+    pub fn get_//node_price(ctx: Context<BuyNodeContext>) -> Result<u64>
     {
         let buy_node_account = &ctx.accounts.buy_node_account;
-        Ok(buy_node_account.node_price)
+        Ok(buy_node_account.//node_price)
     }
 
     pub fn get_owner(ctx: Context<BuyNodeContext>) -> Result<Pubkey> {
@@ -205,7 +200,13 @@ pub mod solana_contracts
 #[derive(Accounts)]
 pub struct InitializeContext<'info> 
 {
-    #[account(init, payer = caller, space = size_of::<Owner>() + 16)]
+    #[account(
+        init, 
+        payer = caller, 
+        seeds = [caller.key.as_ref()], 
+        bump,
+        space = size_of::<Owner>() + 16
+    )]
     pub owner_account: Account<'info, Owner>,  
 
     #[account(mut)]
@@ -257,9 +258,39 @@ pub struct BuyNodeContext<'info>
 pub struct BuyNode
 {
     pub funds_handler: Pubkey,
-    pub node_tier_limit: u64,
     pub early_sale_status: bool,
-    pub node_price: u64
+}
+
+#[derive(Accounts)]
+pub struct TierContext<'info>
+{
+    #[account(
+        init, 
+        payer = caller, 
+        seeds = [b"tier_account"], 
+        bump,space = size_of::<Tier>() + 16
+    )]
+    pub tier_account: Account<'info,Tier>,
+
+    #[account(
+        init, 
+        payer = caller, 
+        seeds = [caller.key.as_ref()], 
+        bump,
+        space = size_of::<Owner>() + 16
+    )]
+    pub owner_account: Account<'info, Owner>,  
+
+    #[account(mut)]
+    pub caller: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
+#[account]
+pub struct Tier
+{
+    pub tier_limit: Vec<u128>,
+    pub tier_price: Vec<u128>
 }
 
 #[event]

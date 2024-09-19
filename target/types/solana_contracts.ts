@@ -507,6 +507,26 @@ export type SolanaContracts = {
           }
         ]
       }
+    },
+    {
+      "name": "tier",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "tierLimit",
+            "type": {
+              "vec": "u128"
+            }
+          },
+          {
+            "name": "tierPrice",
+            "type": {
+              "vec": "u128"
+            }
+          }
+        ]
+      }
     }
   ],
   "events": [
@@ -1046,6 +1066,26 @@ export const IDL: SolanaContracts = {
           {
             "name": "nodePrice",
             "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "tier",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "tierLimit",
+            "type": {
+              "vec": "u128"
+            }
+          },
+          {
+            "name": "tierPrice",
+            "type": {
+              "vec": "u128"
+            }
           }
         ]
       }
