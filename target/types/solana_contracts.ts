@@ -60,6 +60,11 @@ export type SolanaContracts = {
       "name": "buyNode",
       "accounts": [
         {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "buyNodeAccount",
           "isMut": true,
           "isSigner": false
@@ -75,7 +80,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerAccount",
+          "name": "nodesBoughtAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -143,6 +148,11 @@ export type SolanaContracts = {
       "name": "setEarlySaleOn",
       "accounts": [
         {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "buyNodeAccount",
           "isMut": true,
           "isSigner": false
@@ -158,7 +168,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerAccount",
+          "name": "nodesBoughtAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -316,6 +326,11 @@ export type SolanaContracts = {
       "name": "getEarlySaleOn",
       "accounts": [
         {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "buyNodeAccount",
           "isMut": true,
           "isSigner": false
@@ -331,7 +346,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerAccount",
+          "name": "nodesBoughtAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -385,6 +400,11 @@ export type SolanaContracts = {
       "name": "getOwner",
       "accounts": [
         {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "buyNodeAccount",
           "isMut": true,
           "isSigner": false
@@ -400,7 +420,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerAccount",
+          "name": "nodesBoughtAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -417,6 +437,28 @@ export type SolanaContracts = {
       ],
       "args": [],
       "returns": "publicKey"
+    },
+    {
+      "name": "getTotalNodesOwned",
+      "accounts": [
+        {
+          "name": "nodesBoughtAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [],
+      "returns": "u64"
     }
   ],
   "accounts": [
@@ -599,6 +641,11 @@ export const IDL: SolanaContracts = {
       "name": "buyNode",
       "accounts": [
         {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "buyNodeAccount",
           "isMut": true,
           "isSigner": false
@@ -614,7 +661,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerAccount",
+          "name": "nodesBoughtAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -682,6 +729,11 @@ export const IDL: SolanaContracts = {
       "name": "setEarlySaleOn",
       "accounts": [
         {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "buyNodeAccount",
           "isMut": true,
           "isSigner": false
@@ -697,7 +749,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerAccount",
+          "name": "nodesBoughtAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -855,6 +907,11 @@ export const IDL: SolanaContracts = {
       "name": "getEarlySaleOn",
       "accounts": [
         {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "buyNodeAccount",
           "isMut": true,
           "isSigner": false
@@ -870,7 +927,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerAccount",
+          "name": "nodesBoughtAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -924,6 +981,11 @@ export const IDL: SolanaContracts = {
       "name": "getOwner",
       "accounts": [
         {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "buyNodeAccount",
           "isMut": true,
           "isSigner": false
@@ -939,7 +1001,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerAccount",
+          "name": "nodesBoughtAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -956,6 +1018,28 @@ export const IDL: SolanaContracts = {
       ],
       "args": [],
       "returns": "publicKey"
+    },
+    {
+      "name": "getTotalNodesOwned",
+      "accounts": [
+        {
+          "name": "nodesBoughtAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "caller",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [],
+      "returns": "u64"
     }
   ],
   "accounts": [

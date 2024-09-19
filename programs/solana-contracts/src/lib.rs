@@ -37,6 +37,7 @@ pub mod solana_contracts
         let buy_node_account = &mut ctx.accounts.buy_node_account;
         let tier_account = &mut ctx.accounts.tier_account;
         let funds_handler_account = &ctx.accounts.funds_handler_account;
+        let nodes_bought_account = &mut ctx.accounts.nodes_bought_account;
 
         if quantity <= tier_account.tier_limit[tier_number as usize] && tier_number < 12 && tier_number > 0
         {    
@@ -63,7 +64,7 @@ pub mod solana_contracts
                             ],
                         )?;
 
-                        buy_node_account.nodes_bought+=1;
+                        nodes_bought_account.nodes_bought+=1;
                     } 
                 }
             }
@@ -87,7 +88,7 @@ pub mod solana_contracts
                             ],
                         )?;
 
-                        buy_node_account.nodes_bought+=1;
+                        nodes_bought_account.nodes_bought+=1;
                     } 
             }
         }
@@ -189,6 +190,11 @@ pub mod solana_contracts
         let owner_account = &ctx.accounts.owner_account;
         Ok(owner_account.owner_pubkey)
     }
+
+    pub fn get_total_nodes_owned(ctx: Context<GetNodeContext>) -> Result<u64> {
+        let nodes_bought_account = &ctx.accounts.nodes_bought_account;
+        Ok(nodes_bought_account.nodes_bought)
+    }
 }
 
 #[derive(Accounts)]
@@ -241,6 +247,15 @@ pub struct BuyNodeContext<'info>
     #[account(
         init, 
         payer = caller, 
+        seeds = [caller.key.as_ref()], 
+        bump,
+        space = size_of::<Owner>() + 16
+    )]
+    pub owner_account: Account<'info, Owner>, 
+
+    #[account(
+        init, 
+        payer = caller, 
         seeds = [b"buy_node_account"], 
         bump,
         space = size_of::<BuyNode>() + 16
@@ -266,11 +281,11 @@ pub struct BuyNodeContext<'info>
     #[account(
         init, 
         payer = caller, 
-        seeds = [caller.key.as_ref()], 
+        seeds = [caller.key().to_string().as_bytes()], 
         bump,
-        space = size_of::<Owner>() + 16
+        space = size_of::<BuyNode>() + 16
     )]
-    pub owner_account: Account<'info, Owner>, 
+    pub nodes_bought_account: Account<'info, BuyNode>, 
 
     #[account(mut)]
     pub caller: Signer<'info>,
@@ -321,6 +336,23 @@ pub struct TierContext<'info>
         space = size_of::<Owner>() + 16
     )]
     pub owner_account: Account<'info, Owner>,  
+
+    #[account(mut)]
+    pub caller: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
+#[derive(Accounts)]
+pub struct GetNodeContext<'info>
+{
+    #[account(
+        init, 
+        payer = caller, 
+        seeds = [caller.key.as_ref()], 
+        bump,
+        space = size_of::<BuyNode>() + 16
+    )]
+    pub nodes_bought_account: Account<'info, BuyNode>,
 
     #[account(mut)]
     pub caller: Signer<'info>,
