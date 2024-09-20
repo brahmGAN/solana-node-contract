@@ -43,7 +43,6 @@ pub mod solana_contracts
             {
                 require!(buy_node_account.in_early_sale,ErrorCode::EarlySale);
                 require!(amount == ( quantity * tier_account.tier_price[tier_number as usize]),ErrorCode::IncorrectAmount);
-                require!(tier_account.tier_limit[tier_number as usize] > 0,ErrorCode::TierLimit);
                 let ix = system_instruction::transfer
                 (   &ctx.accounts.caller.key(), 
                     &funds_handler_account.funds_handler.key(),
@@ -307,7 +306,7 @@ pub struct TierContext<'info>
     #[account(
         init, 
         payer = caller, 
-        seeds = [b"tier_account",caller.key.as_ref()], 
+        seeds = [b"tier_account"], 
         bump,space = size_of::<Tier>() + 16
     )]
     pub tier_account: Account<'info,Tier>,
