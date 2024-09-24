@@ -249,7 +249,7 @@ pub struct BuyNodeContext<'info>
     #[account(
         init, 
         payer = caller, 
-        seeds = [b"buy_node_account"], 
+        seeds = [caller.key.as_ref()], 
         bump,
         space = size_of::<BuyNode>() + 16
     )]
