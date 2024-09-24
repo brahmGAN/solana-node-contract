@@ -22,11 +22,21 @@ pub mod solana_contracts
     {
         let owner_account = &ctx.accounts.owner_account;
         require! (owner_account.owner_pubkey == ctx.accounts.caller.key(), ErrorCode::NotAuthorized);    
-            for _user in addresses 
-            {
-                let early_sale_account = &mut ctx.accounts.early_sale_account;
-                early_sale_account.in_early_sale = true; 
-            }
+        for address in addresses {
+            let early_sale_account = BuyNode::create(
+                CpiContext::new(
+                    ctx.accounts.system_program.to_account_info(),
+                    BuyNode::create_accounts {
+                        payer: ctx.accounts.caller.to_account_info(),
+                        new_account: ctx.accounts.early_sale_account.to_account_info(),
+                    },
+                ),
+                address,
+            )?;
+
+            early_sale_account.in_early_sale = true;
+        }
+
         Ok(())  
     }
 
@@ -414,6 +424,47 @@ pub struct TierPrice
 {
     pub tier_price:u64,
     pub tier_number: u64
+}
+
+impl BuyNode {
+    pub fn create<'info>(
+        ctx: CpiContext<'_, '_, '_, 'info, BuyNode::create_accounts<'info>>,
+        user: Pubkey,
+    ) -> Result<Account<'info, Self>> {
+        let seeds = &[
+            user.as_ref(),
+        ];
+        let (pda, bump) = Pubkey::find_program_address(seeds, ctx.program_id);
+        let full_seeds = &[
+            user.as_ref(),
+            &[bump],
+        ];
+
+        let space = 8 + 1 + 32; // discriminator + bool + Pubkey
+
+        create_account(
+            CpiContext::new_with_signer(
+                ctx.accounts.system_program.to_account_info(),
+                BuyNode::create_accounts {
+                    payer: ctx.accounts.payer,
+                    new_account: ctx.accounts.new_account,
+                },
+                &[full_seeds],
+            ),
+            space,
+            ctx.program_id,
+        )?;
+
+        let account = Account::try_from(&ctx.accounts.new_account)?;
+        Ok(account)
+    }
+
+    pub struct create_accounts<'info> {
+        #[account(mut)]
+        pub payer: AccountInfo<'info>,
+        #[account(mut)]
+        pub new_account: AccountInfo<'info>,
+    }
 }
 
 #[error_code]
