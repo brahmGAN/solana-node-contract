@@ -13,15 +13,19 @@ pub mod solana_contracts
         let owner_account = &mut ctx.accounts.owner_account;
         let owner_init_account = &mut ctx.accounts.owner_init_account; 
         require! (!owner_init_account.owner_initialized, ErrorCode::AlreadyInitialized);
-        owner_account.owner_pubkey = ctx.accounts.caller.key();
+        owner_account.owner_pubkey = ctx.accounts.payer.key();
         owner_init_account.owner_initialized = true; 
+        msg!("initialize: owner pda");
+        emit!(OwnerEvent{
+            owner: owner_account.owner_pubkey.key()
+        });
         Ok(())
     }
 
     pub fn add_early_sale_addresses(ctx: Context<AddEarlySaleContext>, addresses: Vec<Pubkey>) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
-        require! (owner_account.owner_pubkey == ctx.accounts.caller.key(), ErrorCode::NotAuthorized);    
+        require! (owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
             for user in addresses 
             {
                 let in_early_sale_account = &mut ctx.accounts.in_early_sale_account;
@@ -30,75 +34,75 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, amount:u64,tier_number: u64) -> Result<()>
-    {
-        let tier_limit_account = &mut ctx.accounts.tier_limit_account; 
-        let early_sale_status_account = &ctx.accounts.early_sale_status_account; 
-        let tier_price_account = &ctx.accounts.tier_price_account;
-        let in_early_sale_account = &ctx.accounts.in_early_sale_account;
-        let total_nodes_held_account = &mut ctx.accounts.total_nodes_held_account; 
-        let funds_handler_account = &ctx.accounts.funds_handler_account;
+    // pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, amount:u64,tier_number: u64) -> Result<()>
+    // {
+    //     let tier_limit_account = &mut ctx.accounts.tier_limit_account; 
+    //     let early_sale_status_account = &ctx.accounts.early_sale_status_account; 
+    //     let tier_price_account = &ctx.accounts.tier_price_account;
+    //     let in_early_sale_account = &ctx.accounts.in_early_sale_account;
+    //     let total_nodes_held_account = &mut ctx.accounts.total_nodes_held_account; 
+    //     let funds_handler_account = &ctx.accounts.funds_handler_account;
 
-        require!(quantity <= tier_limit_account.tier_limit[tier_number as usize],ErrorCode::QuantityOutOfBounds);
-        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);   
-            if early_sale_status_account.early_sale_status
-            {
-                require!(in_early_sale_account.in_early_sale,ErrorCode::EarlySale);
-                require!(amount == ( quantity * tier_price_account.tier_price[tier_number as usize]),ErrorCode::IncorrectAmount);
-                let ix = system_instruction::transfer
-                (   &ctx.accounts.caller.key(), 
-                    &funds_handler_account.funds_handler.key(),
-                    amount 
-                );
+    //     require!(quantity <= tier_limit_account.tier_limit[tier_number as usize],ErrorCode::QuantityOutOfBounds);
+    //     require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);   
+    //         if early_sale_status_account.e arly_sale_status
+    //         {
+    //             require!(in_early_sale_account.in_early_sale,ErrorCode::EarlySale);
+    //             require!(amount == ( quantity * tier_price_account.tier_price[tier_number as usize]),ErrorCode::IncorrectAmount);
+    //             let ix = system_instruction::transfer
+    //             (   &ctx.accounts.payer.key(), 
+    //                 &funds_handler_account.funds_handler.key(),
+    //                 amount 
+    //             );
 
-                anchor_lang::solana_program::program::invoke
-                (   &ix, 
-                    &[
-                        ctx.accounts.caller.to_account_info(),
-                        funds_handler_account.to_account_info(),        
-                     ],
-                )?;
+    //             anchor_lang::solana_program::program::invoke
+    //             (   &ix, 
+    //                 &[
+    //                     ctx.accounts.payer.to_account_info(),
+    //                     funds_handler_account.to_account_info(),        
+    //                  ],
+    //             )?;
 
-                total_nodes_held_account.total_nodes_held += 1;
-                tier_limit_account.tier_limit[tier_number as usize] -= 1;         
-            }
-            else
-            {
-                require!(amount == ( quantity * tier_price_account.tier_price[tier_number as usize]),ErrorCode::IncorrectAmount);
-                require!(tier_limit_account.tier_limit[tier_number as usize] > 0,ErrorCode::TierLimit);
-                let ix = system_instruction::transfer
-                (   &ctx.accounts.caller.key(), 
-                    &funds_handler_account.funds_handler.key(),
-                    amount 
-                );
+    //             total_nodes_held_account.total_nodes_held += 1;
+    //             tier_limit_account.tier_limit[tier_number as usize] -= 1;         
+    //         }
+    //         else
+    //         {
+    //             require!(amount == ( quantity * tier_price_account.tier_price[tier_number as usize]),ErrorCode::IncorrectAmount);
+    //             require!(tier_limit_account.tier_limit[tier_number as usize] > 0,ErrorCode::TierLimit);
+    //             let ix = system_instruction::transfer
+    //             (   &ctx.accounts.payer.key(), 
+    //                 &funds_handler_account.funds_handler.key(),
+    //                 amount 
+    //             );
 
-                anchor_lang::solana_program::program::invoke
-                (   &ix, 
-                    &[
-                        ctx.accounts.caller.to_account_info(),
-                        funds_handler_account.to_account_info(),        
-                     ],
-                )?;
+    //             anchor_lang::solana_program::program::invoke
+    //             (   &ix, 
+    //                 &[
+    //                     ctx.accounts.payer.to_account_info(),
+    //                     funds_handler_account.to_account_info(),        
+    //                  ],
+    //             )?;
 
-                total_nodes_held_account.total_nodes_held += 1;
-                tier_limit_account.tier_limit[tier_number as usize] -= 1;         
-            }
-        emit!(NodeBoughtEvent{
-            caller: *ctx.accounts.caller.key,
-            quantity: quantity,
-            amount: amount,
-            tier_number: tier_number,
-            total_nodes_held: total_nodes_held_account.total_nodes_held,
-            pending_tier_limit: tier_limit_account.tier_limit[tier_number as usize] 
-        });
-        Ok(())
-    }
+    //             total_nodes_held_account.total_nodes_held += 1;
+    //             tier_limit_account.tier_limit[tier_number as usize] -= 1;         
+    //         }
+    //     emit!(NodeBoughtEvent{
+    //         payer: *ctx.accounts.payer.key,
+    //         quantity: quantity,
+    //         amount: amount,
+    //         tier_number: tier_number,
+    //         total_nodes_held: total_nodes_held_account.total_nodes_held,
+    //         pending_tier_limit: tier_limit_account.tier_limit[tier_number as usize] 
+    //     });
+    //     Ok(())
+    // }
 
     /// @dev Setter functions
     pub fn set_funds_handler(ctx: Context<SetFundsHandlerContext>,new_funds_handler: Pubkey) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let funds_handler_account = &mut ctx.accounts.funds_handler_account;
         funds_handler_account.funds_handler = new_funds_handler; 
         emit!(FundsHandlerEvent{
@@ -110,7 +114,7 @@ pub mod solana_contracts
     pub fn set_early_sale_status(ctx: Context<SetEarlySaleContext>, sale_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let early_sale_status_account = &mut ctx.accounts.early_sale_status_account;
         early_sale_status_account.early_sale_status = sale_status; 
         emit!(EarlySaleStatusEvent{
@@ -122,7 +126,7 @@ pub mod solana_contracts
     pub fn set_tier_limit(ctx: Context<SetTierLimitContext>,new_tier_limit: u64,tier_number: u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let tier_limit_account = &mut ctx.accounts.tier_limit_account;
         require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);
         tier_limit_account.tier_limit[tier_number as usize] = new_tier_limit;
@@ -136,7 +140,7 @@ pub mod solana_contracts
     pub fn set_tier_price(ctx: Context<SetTierPriceContext>,new_price:u64,tier_number: u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.caller.key(),ErrorCode::NotAuthorized);
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let tier_price_account = &mut ctx.accounts.tier_price_account; 
         tier_price_account.tier_price[tier_number as usize] = new_price;
         emit!(TierPriceEvent{
@@ -208,17 +212,17 @@ pub mod solana_contracts
 pub struct InitializeContext<'info> 
 {
     #[account(
-        init, 
-        payer = caller, 
+        init_if_needed, 
+        payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 16
+        space = size_of::<Owner>() + 32
     )]
     pub owner_account: Account<'info, Owner>,
 
     #[account(
         init, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"owner_init_account"], 
         bump,
         space = size_of::<OwnerInit>() + 16
@@ -226,7 +230,7 @@ pub struct InitializeContext<'info>
     pub owner_init_account: Account<'info, OwnerInit>,  
 
     #[account(mut)]
-    pub caller: Signer<'info>, 
+    pub payer: Signer<'info>, 
     pub system_program: Program<'info, System>, 
 }
 
@@ -236,7 +240,7 @@ pub struct AddEarlySaleContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"owner"], 
         bump,
         space = size_of::<Owner>() + 16
@@ -245,7 +249,7 @@ pub struct AddEarlySaleContext<'info>
 
     #[account(
         init_if_needed,
-        payer = caller,
+        payer = payer,
         seeds = [user.key().as_ref()], 
         bump,
         space = size_of::<InEarlySale>() + 16
@@ -253,78 +257,78 @@ pub struct AddEarlySaleContext<'info>
     pub in_early_sale_account: Account<'info, InEarlySale>, 
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
-#[derive(Accounts)] 
-pub struct BuyNodeContext<'info> 
-{
-    #[account(
-        init_if_needed, 
-        payer = caller, 
-        seeds = [b"tier_limit_account"], 
-        bump,
-        space = size_of::<TierLimit>() + 16
-    )]
-    pub tier_limit_account: Account<'info,TierLimit>,
+// #[derive(Accounts)] 
+// pub struct BuyNodeContext<'info> 
+// {
+//     #[account(
+//         init_if_needed, 
+//         payer = payer, 
+//         seeds = [b"tier_limit_account"], 
+//         bump,
+//         space = size_of::<TierLimit>() + 16
+//     )]
+//     pub tier_limit_account: Account<'info,TierLimit>,
 
-    #[account(
-        init_if_needed, 
-        payer = caller, 
-        seeds = [b"early_sale_status_account"], 
-        bump,
-        space = size_of::<EarlySaleStatus>() + 16
-    )]
-    pub early_sale_status_account: Account<'info, EarlySaleStatus>, 
+//     #[account(
+//         init_if_needed, 
+//         payer = payer, 
+//         seeds = [b"early_sale_status_account"], 
+//         bump,
+//         space = size_of::<EarlySaleStatus>() + 16
+//     )]
+//     pub early_sale_status_account: Account<'info, EarlySaleStatus>, 
 
-    #[account(
-        init_if_needed, 
-        payer = caller, 
-        seeds = [b"tier_price_account"], 
-        bump,
-        space = size_of::<TierPrice>() + 16
-    )]
-    pub tier_price_account: Account<'info,TierPrice>,
+//     #[account(
+//         init_if_needed, 
+//         payer = payer, 
+//         seeds = [b"tier_price_account"], 
+//         bump,
+//         space = size_of::<TierPrice>() + 16
+//     )]
+//     pub tier_price_account: Account<'info,TierPrice>,
 
-    #[account(
-        init_if_needed,
-        payer = caller,
-        seeds = [caller.key().as_ref()], 
-        bump,
-        space = size_of::<InEarlySale>() + 16
-    )]
-    pub in_early_sale_account: Account<'info, InEarlySale>,
+//     #[account(
+//         init_if_needed,
+//         payer = payer,
+//         seeds = [payer.key().as_ref()], 
+//         bump,
+//         space = size_of::<InEarlySale>() + 16
+//     )]
+//     pub in_early_sale_account: Account<'info, InEarlySale>,
 
-    #[account(
-        init_if_needed,
-        payer = caller,
-        seeds = [caller.key.as_ref()], 
-        bump,
-        space = size_of::<TotalNodesHeld>() + 16
-    )]
-    pub total_nodes_held_account: Account<'info, TotalNodesHeld>,
+//     #[account(
+//         init_if_needed,
+//         payer = payer,
+//         seeds = [payer.key.as_ref()], 
+//         bump,
+//         space = size_of::<TotalNodesHeld>() + 16
+//     )]
+//     pub total_nodes_held_account: Account<'info, TotalNodesHeld>,
 
-    #[account(
-        init_if_needed, 
-        payer = caller, 
-        seeds = [b"funds_handler_account"], 
-        bump,
-        space = size_of::<FundsHandler>() + 16
-    )]
-    pub funds_handler_account: Account<'info,FundsHandler>,
+//     #[account(
+//         init_if_needed, 
+//         payer = payer, 
+//         seeds = [b"funds_handler_account"], 
+//         bump,
+//         space = size_of::<FundsHandler>() + 16
+//     )]
+//     pub funds_handler_account: Account<'info,FundsHandler>,
 
-    #[account(mut)]
-    pub caller: Signer<'info>,
-    pub system_program: Program<'info,System>,
-}
+//     #[account(mut)]
+//     pub payer: Signer<'info>,
+//     pub system_program: Program<'info,System>,
+// }
 
 #[derive(Accounts)]
 pub struct SetFundsHandlerContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"funds_handler_account"], 
         bump,
         space = size_of::<FundsHandler>() + 16
@@ -333,7 +337,7 @@ pub struct SetFundsHandlerContext<'info>
 
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"owner"], 
         bump,
         space = size_of::<Owner>() + 16
@@ -341,7 +345,7 @@ pub struct SetFundsHandlerContext<'info>
     pub owner_account: Account<'info, Owner>,  
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -350,7 +354,7 @@ pub struct SetEarlySaleContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"owner"], 
         bump,
         space = size_of::<Owner>() + 16
@@ -359,7 +363,7 @@ pub struct SetEarlySaleContext<'info>
 
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"early_sale_status_account"], 
         bump,
         space = size_of::<EarlySaleStatus>() + 16
@@ -367,7 +371,7 @@ pub struct SetEarlySaleContext<'info>
     pub early_sale_status_account: Account<'info, EarlySaleStatus>,    
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -376,7 +380,7 @@ pub struct SetTierLimitContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"owner"], 
         bump,
         space = size_of::<Owner>() + 16
@@ -385,7 +389,7 @@ pub struct SetTierLimitContext<'info>
 
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"tier_limit_account"], 
         bump,
         space = size_of::<TierLimit>() + 16
@@ -393,7 +397,7 @@ pub struct SetTierLimitContext<'info>
     pub tier_limit_account: Account<'info,TierLimit>,
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -402,7 +406,7 @@ pub struct SetTierPriceContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"owner"], 
         bump,
         space = size_of::<Owner>() + 16
@@ -411,7 +415,7 @@ pub struct SetTierPriceContext<'info>
 
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"tier_price_account"], 
         bump,
         space = size_of::<TierPrice>() + 16
@@ -419,7 +423,7 @@ pub struct SetTierPriceContext<'info>
     pub tier_price_account: Account<'info,TierPrice>,
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -428,7 +432,7 @@ pub struct GetFundsHandlerContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"funds_handler_account"], 
         bump,
         space = size_of::<FundsHandler>() + 16
@@ -436,7 +440,7 @@ pub struct GetFundsHandlerContext<'info>
     pub funds_handler_account: Account<'info,FundsHandler>,
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -445,7 +449,7 @@ pub struct GetEarlySaleStatusContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"early_sale_status_account"], 
         bump,
         space = size_of::<EarlySaleStatus>() + 16
@@ -453,7 +457,7 @@ pub struct GetEarlySaleStatusContext<'info>
     pub early_sale_status_account: Account<'info, EarlySaleStatus>,
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -462,7 +466,7 @@ pub struct GetTierLimitContext<'info>
 { 
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"tier_limit_account"], 
         bump,
         space = size_of::<TierLimit>() + 16
@@ -470,7 +474,7 @@ pub struct GetTierLimitContext<'info>
     pub tier_limit_account: Account<'info,TierLimit>,
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -479,7 +483,7 @@ pub struct GetTierPriceContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"tier_limit_account"], 
         bump,
         space = size_of::<TierPrice>() + 16
@@ -487,7 +491,7 @@ pub struct GetTierPriceContext<'info>
     pub tier_price_account: Account<'info,TierPrice>,
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -496,15 +500,15 @@ pub struct GetOwnerContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
+        payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 16
+        space = size_of::<Owner>() + 32
     )]
     pub owner_account: Account<'info, Owner>,  
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -513,15 +517,15 @@ pub struct GetTotalNodesHeldContext<'info>
 {
     #[account(
         init_if_needed, 
-        payer = caller, 
-        seeds = [caller.key.as_ref()], 
+        payer = payer, 
+        seeds = [payer.key.as_ref()], 
         bump,
         space = size_of::<TotalNodesHeld>() + 16
     )]
     pub nodes_bought_account: Account<'info, TotalNodesHeld>,
 
     #[account(mut)]
-    pub caller: Signer<'info>,
+    pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
 
@@ -592,7 +596,7 @@ pub struct DiscountCode
 #[event]
 pub struct NodeBoughtEvent
 {
-    pub caller: Pubkey,
+    pub payer: Pubkey,
     pub quantity: u64, 
     pub amount: u64,
     pub tier_number: u64,

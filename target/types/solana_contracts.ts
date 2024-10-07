@@ -16,7 +16,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -42,7 +42,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -58,65 +58,6 @@ export type SolanaContracts = {
           "type": {
             "vec": "publicKey"
           }
-        }
-      ]
-    },
-    {
-      "name": "buyNode",
-      "accounts": [
-        {
-          "name": "tierLimitAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "earlySaleStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tierPriceAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "inEarlySaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "totalNodesHeldAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fundsHandlerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "caller",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "quantity",
-          "type": "u64"
-        },
-        {
-          "name": "amount",
-          "type": "u64"
-        },
-        {
-          "name": "tierNumber",
-          "type": "u64"
         }
       ]
     },
@@ -137,7 +78,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -168,7 +109,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -199,7 +140,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -234,7 +175,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -267,7 +208,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -288,7 +229,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -309,7 +250,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -335,7 +276,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -361,7 +302,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -382,7 +323,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -528,7 +469,7 @@ export type SolanaContracts = {
       "name": "NodeBoughtEvent",
       "fields": [
         {
-          "name": "caller",
+          "name": "payer",
           "type": "publicKey",
           "index": false
         },
@@ -682,7 +623,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -708,7 +649,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -724,65 +665,6 @@ export const IDL: SolanaContracts = {
           "type": {
             "vec": "publicKey"
           }
-        }
-      ]
-    },
-    {
-      "name": "buyNode",
-      "accounts": [
-        {
-          "name": "tierLimitAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "earlySaleStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tierPriceAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "inEarlySaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "totalNodesHeldAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fundsHandlerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "caller",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "quantity",
-          "type": "u64"
-        },
-        {
-          "name": "amount",
-          "type": "u64"
-        },
-        {
-          "name": "tierNumber",
-          "type": "u64"
         }
       ]
     },
@@ -803,7 +685,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -834,7 +716,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -865,7 +747,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -900,7 +782,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -933,7 +815,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -954,7 +836,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -975,7 +857,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -1001,7 +883,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -1027,7 +909,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -1048,7 +930,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "caller",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
         },
@@ -1194,7 +1076,7 @@ export const IDL: SolanaContracts = {
       "name": "NodeBoughtEvent",
       "fields": [
         {
-          "name": "caller",
+          "name": "payer",
           "type": "publicKey",
           "index": false
         },
