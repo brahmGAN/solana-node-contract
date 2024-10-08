@@ -129,6 +129,7 @@ describe("solana-contracts", () => {
         console.log("Tx1 events:", tx.events);
         console.log("Tx2 events:", tx2.events);
         console.log("Off Chain PDA:",owner_account_pda.toString());
+        console.log("Tx2 raw:", tx2);
   
     });
 

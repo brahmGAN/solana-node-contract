@@ -1,4 +1,4 @@
-use anchor_lang::{prelude::*, solana_program::system_instruction};
+use anchor_lang::{prelude::*};
 use std::mem::size_of;
 
 declare_id!("6kgSdKsaQGrWMVrCgp7RmXX7pnqVnDZ5JDJjTDvC2j62");
@@ -13,12 +13,15 @@ pub mod solana_contracts
         let owner_account = &mut ctx.accounts.owner_account;
         let owner_init_account = &mut ctx.accounts.owner_init_account; 
         require! (!owner_init_account.owner_initialized, ErrorCode::AlreadyInitialized);
+        msg!("Before:owner:initialize: {}",owner_account.owner_pubkey);
         owner_account.owner_pubkey = ctx.accounts.payer.key();
+        msg!("Before:owner init status:initialize: {}",owner_init_account.owner_initialized);
         owner_init_account.owner_initialized = true; 
-        msg!("initialize: owner pda");
         emit!(OwnerEvent{
             owner: owner_account.owner_pubkey.key()
         });
+        msg!("After:owner:initialize: {}",owner_account.owner_pubkey);
+        msg!("After:owner init status:initialize: {}",owner_init_account.owner_initialized);
         Ok(())
     }
 
@@ -26,7 +29,7 @@ pub mod solana_contracts
     {
         let owner_account = &ctx.accounts.owner_account;
         require! (owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
-            for user in addresses 
+            for _user in addresses 
             {
                 let in_early_sale_account = &mut ctx.accounts.in_early_sale_account;
                 in_early_sale_account.in_early_sale = true; 
@@ -191,10 +194,15 @@ pub mod solana_contracts
 
     pub fn get_owner(ctx: Context<GetOwnerContext>) -> Result<()> 
     {
-        let owner_account = &ctx.accounts.owner_account;
+        msg!("Bug1");
+        let owner_account = &mut ctx.accounts.owner_account;
+        msg!("Bug2");
+        msg!("owner:getOwner: {}",owner_account.owner_pubkey);
+        msg!("Bug3");
         emit!(OwnerEvent{
             owner: owner_account.owner_pubkey.key()
         });
+        msg!("Bug4");
         Ok(())
     }
 
@@ -212,7 +220,7 @@ pub mod solana_contracts
 pub struct InitializeContext<'info> 
 {
     #[account(
-        init_if_needed, 
+        init, 
         payer = payer, 
         seeds = [b"owner"], 
         bump,
@@ -505,11 +513,11 @@ pub struct GetOwnerContext<'info>
         bump,
         space = size_of::<Owner>() + 32
     )]
-    pub owner_account: Account<'info, Owner>,  
+    pub owner_account: Account<'info, Owner>, 
 
     #[account(mut)]
-    pub payer: Signer<'info>,
-    pub system_program: Program<'info,System>,
+    pub payer: Signer<'info>, 
+    pub system_program: Program<'info, System>, 
 }
 
 #[derive(Accounts)]
