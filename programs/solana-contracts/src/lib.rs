@@ -107,9 +107,10 @@ pub mod solana_contracts
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let funds_handler_account = &mut ctx.accounts.funds_handler_account;
-        funds_handler_account.funds_handler = new_funds_handler; 
+        funds_handler_account.funds_handler = new_funds_handler;
+        msg!("New funds handler:{}",funds_handler_account.funds_handler.key()); 
         emit!(FundsHandlerEvent{
-            funds_handler: new_funds_handler
+            funds_handler: funds_handler_account.funds_handler.key()
         });
         Ok(())
     }
@@ -157,6 +158,7 @@ pub mod solana_contracts
     pub fn get_funds_handler(ctx: Context<GetFundsHandlerContext>) -> Result<()>
     {
         let funds_handler_account = &ctx.accounts.funds_handler_account;
+        msg!("Funds handler:{}",funds_handler_account.funds_handler.key());
         emit!(FundsHandlerEvent{
             funds_handler: funds_handler_account.funds_handler.key()
         });
@@ -166,6 +168,7 @@ pub mod solana_contracts
     pub fn get_early_sale_status(ctx: Context<GetEarlySaleStatusContext>) -> Result<()>
     {
         let early_sale_status_account = &ctx.accounts.early_sale_status_account;
+        msg!("Early sale status:{}",early_sale_status_account.early_sale_status);
         emit!(EarlySaleStatusEvent{
             early_sale_status: early_sale_status_account.early_sale_status
         }); 
@@ -175,6 +178,7 @@ pub mod solana_contracts
     pub fn get_tier_limit(ctx: Context<GetTierLimitContext>,tier_number: u64) -> Result<()>
     {
         let tier_limit_account = &ctx.accounts.tier_limit_account;
+        msg!("Tier limit:{}\nTier number:{}",tier_limit_account.tier_limit[tier_number as usize],tier_number);
         emit!(TierLimitEvent{
             tier_limit: tier_limit_account.tier_limit[tier_number as usize],
             tier_number: tier_number
@@ -185,6 +189,7 @@ pub mod solana_contracts
     pub fn get_tier_price(ctx: Context<GetTierPriceContext>,tier_number: u64) -> Result<()>
     {
         let tier_price_account = &ctx.accounts.tier_price_account;
+        msg!("Tier price:{}\nTier number:{}",tier_price_account.tier_price[tier_number as usize],tier_number);
         emit!(TierPriceEvent{
             tier_price: tier_price_account.tier_price[tier_number as usize],
             tier_number: tier_number
@@ -194,21 +199,18 @@ pub mod solana_contracts
 
     pub fn get_owner(ctx: Context<GetOwnerContext>) -> Result<()> 
     {
-        msg!("Bug1");
         let owner_account = &mut ctx.accounts.owner_account;
-        msg!("Bug2");
         msg!("owner:getOwner: {}",owner_account.owner_pubkey);
-        msg!("Bug3");
         emit!(OwnerEvent{
             owner: owner_account.owner_pubkey.key()
         });
-        msg!("Bug4");
         Ok(())
     }
 
     pub fn get_total_nodes_held(ctx: Context<GetTotalNodesHeldContext>) -> Result<()> 
     {
         let nodes_bought_account = &ctx.accounts.nodes_bought_account;
+        msg!("Total nodes held:{}",nodes_bought_account.total_nodes_held);
         emit!(TotalNodesHeldEvent{
             total_nodes_held: nodes_bought_account.total_nodes_held
         });
@@ -598,9 +600,6 @@ pub struct DiscountCode
 }
 
 //EVENTS
-
-
-
 #[event]
 pub struct NodeBoughtEvent
 {

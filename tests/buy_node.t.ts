@@ -25,7 +25,7 @@
 //           systemProgram: anchor.web3.SystemProgram.programId,
 //          })
 //         .signers([owner_account])
-//         .rpc();
+//         .simulate();
 //       console.log("Your transaction signature:", tx);
 
 //       // const getOwner = await program.methods
@@ -39,7 +39,7 @@
 //       //   systemProgram: anchor.web3.SystemProgram.programId,
 //       //  })
 //       // .signers([buy_node_account])
-//       // .rpc();
+//       // .simulate();
 //     });
 //     // it("Should fail", async () => {
 //     //   const tx = await program.methods
@@ -50,7 +50,7 @@
 //     //       systemProgram: anchor.web3.SystemProgram.programId,
 //     //      })
 //     //     .signers([owner_account])
-//     //     .rpc();
+//     //     .simulate();
 //     //   console.log("Your transaction signature:", tx);
 //     // });
 //   });
@@ -65,9 +65,8 @@
 //   //         systemProgram: anchor.web3.SystemProgram.programId,
 //   //        })
 //   //       .signers([dummy])
-//   //       .rpc();
+//   //       .simulate();
 //   //   });
-//   // });
 // });
 
 
@@ -100,6 +99,14 @@ describe("solana-contracts", () => {
     contract.programId
   );
 
+  const [funds_handler_account,bump3] =  PublicKey.findProgramAddressSync(
+    [Buffer.from("funds_handler_account")], 
+    contract.programId
+  );
+
+  let funds_handler = anchor.web3.Keypair.generate();
+
+
   describe("Initialize:",()=>{
     it("Should initialize", async () => {
       const tx = await contract.methods
@@ -130,7 +137,22 @@ describe("solana-contracts", () => {
         console.log("Tx2 events:", tx2.events);
         console.log("Off Chain PDA:",owner_account_pda.toString());
         console.log("Tx2 raw:", tx2);
-  
+         
+        const tx3 = await contract.methods
+        .setFundsHandler(funds_handler.publicKey)
+        .accounts({ 
+          fundsHandlerAccount: funds_handler_account,
+          ownerAccount: owner_account_pda,
+          payer: payer.publicKey, 
+          systemProgram: anchor.web3.SystemProgram.programId,
+         })
+        .signers([payer.payer])
+        .simulate();
+        const events1 = tx3.events;
+        const setFundsHandlerEvent = events1.find(event => event.name === "FundsHandlerEvent");
+        console.log("Funds Handler:", setFundsHandlerEvent.data.fundsHandler.toString());
+        console.log("Tx3 events:", tx3.events);
+        console.log("Tx3 raw:", tx3);
     });
 
     // it("Should check owner", async()=>{
