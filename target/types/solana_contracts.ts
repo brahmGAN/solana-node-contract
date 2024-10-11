@@ -29,7 +29,7 @@ export type SolanaContracts = {
       "args": []
     },
     {
-      "name": "addEarlySaleAddresses",
+      "name": "addWhitelistAddresses",
       "accounts": [
         {
           "name": "ownerAccount",
@@ -37,7 +37,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "inEarlySaleAccount",
+          "name": "whitelistAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -54,10 +54,8 @@ export type SolanaContracts = {
       ],
       "args": [
         {
-          "name": "addresses",
-          "type": {
-            "vec": "publicKey"
-          }
+          "name": "user",
+          "type": "publicKey"
         }
       ]
     },
@@ -319,6 +317,27 @@ export type SolanaContracts = {
       "accounts": [
         {
           "name": "nodesBoughtAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "getWhitelistUser",
+      "accounts": [
+        {
+          "name": "whitelistAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -636,7 +655,7 @@ export const IDL: SolanaContracts = {
       "args": []
     },
     {
-      "name": "addEarlySaleAddresses",
+      "name": "addWhitelistAddresses",
       "accounts": [
         {
           "name": "ownerAccount",
@@ -644,7 +663,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "inEarlySaleAccount",
+          "name": "whitelistAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -661,10 +680,8 @@ export const IDL: SolanaContracts = {
       ],
       "args": [
         {
-          "name": "addresses",
-          "type": {
-            "vec": "publicKey"
-          }
+          "name": "user",
+          "type": "publicKey"
         }
       ]
     },
@@ -926,6 +943,27 @@ export const IDL: SolanaContracts = {
       "accounts": [
         {
           "name": "nodesBoughtAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "getWhitelistUser",
+      "accounts": [
+        {
+          "name": "whitelistAccount",
           "isMut": true,
           "isSigner": false
         },

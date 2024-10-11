@@ -25,15 +25,12 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn add_early_sale_addresses(ctx: Context<AddEarlySaleContext>, addresses: Vec<Pubkey>) -> Result<()>
+    pub fn add_whitelist_addresses(ctx: Context<AddWhitelistContext>, user:Pubkey) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
         require! (owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
-            for user in addresses 
-            {
-                let in_early_sale_account = &mut ctx.accounts.in_early_sale_account;
-                in_early_sale_account.in_early_sale = true; 
-            }
+        let whitelist_account = &mut ctx.accounts.whitelist_account;
+        whitelist_account.in_early_sale = true; 
         Ok(())
     }
 
@@ -42,7 +39,7 @@ pub mod solana_contracts
     //     let tier_limit_account = &mut ctx.accounts.tier_limit_account; 
     //     let early_sale_status_account = &ctx.accounts.early_sale_status_account; 
     //     let tier_price_account = &ctx.accounts.tier_price_account;
-    //     let in_early_sale_account = &ctx.accounts.in_early_sale_account;
+    //     let whitelist_account = &ctx.accounts.whitelist_account;
     //     let total_nodes_held_account = &mut ctx.accounts.total_nodes_held_account; 
     //     let funds_handler_account = &ctx.accounts.funds_handler_account;
 
@@ -50,7 +47,7 @@ pub mod solana_contracts
     //     require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);   
     //         if early_sale_status_account.e arly_sale_status
     //         {
-    //             require!(in_early_sale_account.in_early_sale,ErrorCode::EarlySale);
+    //             require!(whitelist_account.in_early_sale,ErrorCode::EarlySale);
     //             require!(amount == ( quantity * tier_price_account.tier_price[tier_number as usize]),ErrorCode::IncorrectAmount);
     //             let ix = system_instruction::transfer
     //             (   &ctx.accounts.payer.key(), 
@@ -217,6 +214,30 @@ pub mod solana_contracts
         });
         Ok(())
     }
+
+    pub fn get_whitelist_user(ctx: Context<GetWhitelistContext>) -> Result<()>
+    {
+        let whitelist_account = &mut ctx.accounts.whitelist_account;
+        msg!("Get in early sale,{}",whitelist_account.in_early_sale); 
+        Ok(())
+    }
+}
+
+#[derive(Accounts)]
+pub struct GetWhitelistContext<'info>
+{
+    #[account(
+        init_if_needed,
+        payer = payer, 
+        seeds = [payer.key().as_ref()],
+        bump,
+        space = size_of::<InEarlySale>() + 16
+    )]
+    pub whitelist_account: Account<'info,InEarlySale>, 
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
 }
 
 #[derive(Accounts)]
@@ -247,7 +268,7 @@ pub struct InitializeContext<'info>
 
 #[derive(Accounts)]
 #[instruction(user: Pubkey)]
-pub struct AddEarlySaleContext<'info>
+pub struct AddWhitelistContext<'info>
 {
     #[account(
         init_if_needed, 
@@ -265,7 +286,7 @@ pub struct AddEarlySaleContext<'info>
         bump,
         space = size_of::<InEarlySale>() + 16
     )]
-    pub in_early_sale_account: Account<'info, InEarlySale>, 
+    pub whitelist_account: Account<'info, InEarlySale>, 
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -309,7 +330,7 @@ pub struct AddEarlySaleContext<'info>
 //         bump,
 //         space = size_of::<InEarlySale>() + 16
 //     )]
-//     pub in_early_sale_account: Account<'info, InEarlySale>,
+//     pub whitelist_account: Account<'info, InEarlySale>,
 
 //     #[account(
 //         init_if_needed,
