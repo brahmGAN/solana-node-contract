@@ -60,6 +60,112 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "discountCode",
+      "docs": [
+        "@dev Add and remove a discount code by switching the boolean"
+      ],
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "discountCodeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "discountCode",
+          "type": "string"
+        },
+        {
+          "name": "discountCodeStatus",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "buyNode",
+      "accounts": [
+        {
+          "name": "tierLimitAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "earlySaleStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tierPriceAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "totalNodesHeldAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "discountCodeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "quantity",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        },
+        {
+          "name": "discountCode",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "setFundsHandler",
       "docs": [
         "@dev Setter functions"
@@ -353,6 +459,32 @@ export type SolanaContracts = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "getDiscountCode",
+      "accounts": [
+        {
+          "name": "discountCodeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "discountCode",
+          "type": "string"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -423,9 +555,7 @@ export type SolanaContracts = {
         "fields": [
           {
             "name": "tierLimit",
-            "type": {
-              "vec": "u64"
-            }
+            "type": "u64"
           }
         ]
       }
@@ -437,23 +567,7 @@ export type SolanaContracts = {
         "fields": [
           {
             "name": "tierPrice",
-            "type": {
-              "vec": "u64"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "discountTierPrice",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "discountTierPrice",
-            "type": {
-              "vec": "u64"
-            }
+            "type": "u64"
           }
         ]
       }
@@ -686,6 +800,112 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
+      "name": "discountCode",
+      "docs": [
+        "@dev Add and remove a discount code by switching the boolean"
+      ],
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "discountCodeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "discountCode",
+          "type": "string"
+        },
+        {
+          "name": "discountCodeStatus",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "buyNode",
+      "accounts": [
+        {
+          "name": "tierLimitAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "earlySaleStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tierPriceAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "totalNodesHeldAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "discountCodeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "quantity",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        },
+        {
+          "name": "discountCode",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "setFundsHandler",
       "docs": [
         "@dev Setter functions"
@@ -979,6 +1199,32 @@ export const IDL: SolanaContracts = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "getDiscountCode",
+      "accounts": [
+        {
+          "name": "discountCodeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "discountCode",
+          "type": "string"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -1049,9 +1295,7 @@ export const IDL: SolanaContracts = {
         "fields": [
           {
             "name": "tierLimit",
-            "type": {
-              "vec": "u64"
-            }
+            "type": "u64"
           }
         ]
       }
@@ -1063,23 +1307,7 @@ export const IDL: SolanaContracts = {
         "fields": [
           {
             "name": "tierPrice",
-            "type": {
-              "vec": "u64"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "discountTierPrice",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "discountTierPrice",
-            "type": {
-              "vec": "u64"
-            }
+            "type": "u64"
           }
         ]
       }
