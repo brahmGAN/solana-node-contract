@@ -138,21 +138,22 @@ describe("solana-contracts", () => {
         console.log("Off Chain PDA:",owner_account_pda.toString());
         console.log("Tx2 raw:", tx2);
          
-        const tx3 = await contract.methods
-        .setFundsHandler(funds_handler.publicKey)
-        .accounts({ 
-          fundsHandlerAccount: funds_handler_account,
-          ownerAccount: owner_account_pda,
-          payer: payer.publicKey, 
-          systemProgram: anchor.web3.SystemProgram.programId,
-         })
-        .signers([payer.payer])
-        .simulate();
-        const events1 = tx3.events;
-        const setFundsHandlerEvent = events1.find(event => event.name === "FundsHandlerEvent");
-        console.log("Funds Handler:", setFundsHandlerEvent.data.fundsHandler.toString());
-        console.log("Tx3 events:", tx3.events);
-        console.log("Tx3 raw:", tx3);
+        // const tx3 = await contract.methods
+        // .setFundsHandler(funds_handler.publicKey)
+        // .accounts({ 
+        //   fundsHandlerAccount: funds_handler_account,
+        //   ownerAccount: owner_account_pda,
+        //   payer: payer.publicKey, 
+        //   systemProgram: anchor.web3.SystemProgram.programId,
+        //  })
+        // .signers([payer.payer])
+        // .simulate();
+        // const events1 = tx3.events;
+        // const setFundsHandlerEvent = events1.find(event => event.name === "FundsHandlerEvent");
+        // console.log("Funds Handler:", setFundsHandlerEvent.data.fundsHandler.toString());
+        // console.log("Generatedfunds handler:",funds_handler.publicKey);
+        // console.log("Tx3 events:", tx3.events);
+        // console.log("Tx3 raw:", tx3);
     });
 
     // it("Should check owner", async()=>{

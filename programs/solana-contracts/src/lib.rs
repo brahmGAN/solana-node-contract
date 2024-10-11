@@ -1,4 +1,4 @@
-use anchor_lang::{prelude::*};
+use anchor_lang::{prelude::*, solana_program::system_instruction};
 use std::mem::size_of;
 
 declare_id!("6kgSdKsaQGrWMVrCgp7RmXX7pnqVnDZ5JDJjTDvC2j62");
@@ -29,7 +29,7 @@ pub mod solana_contracts
     {
         let owner_account = &ctx.accounts.owner_account;
         require! (owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
-            for _user in addresses 
+            for user in addresses 
             {
                 let in_early_sale_account = &mut ctx.accounts.in_early_sale_account;
                 in_early_sale_account.in_early_sale = true; 
@@ -105,7 +105,8 @@ pub mod solana_contracts
     pub fn set_funds_handler(ctx: Context<SetFundsHandlerContext>,new_funds_handler: Pubkey) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        msg!("owner:Set funds handler: {}",owner_account.owner_pubkey);
+        require!(owner_account.owner_pubkey.key() == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let funds_handler_account = &mut ctx.accounts.funds_handler_account;
         funds_handler_account.funds_handler = new_funds_handler;
         msg!("New funds handler:{}",funds_handler_account.funds_handler.key()); 
@@ -278,7 +279,7 @@ pub struct AddEarlySaleContext<'info>
 //         init_if_needed, 
 //         payer = payer, 
 //         seeds = [b"tier_limit_account"], 
-//         bump,
+//         bump
 //         space = size_of::<TierLimit>() + 16
 //     )]
 //     pub tier_limit_account: Account<'info,TierLimit>,
