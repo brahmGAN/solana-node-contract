@@ -152,7 +152,7 @@ export type SolanaContracts = {
           "type": "u64"
         },
         {
-          "name": "amount",
+          "name": "amounts",
           "type": "u64"
         },
         {
@@ -166,41 +166,10 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setFundsHandler",
+      "name": "setEarlySaleStatus",
       "docs": [
         "@dev Setter functions"
       ],
-      "accounts": [
-        {
-          "name": "fundsHandlerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "newFundsHandler",
-          "type": "publicKey"
-        }
-      ]
-    },
-    {
-      "name": "setEarlySaleStatus",
       "accounts": [
         {
           "name": "ownerAccount",
@@ -301,31 +270,10 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "getFundsHandler",
+      "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
       ],
-      "accounts": [
-        {
-          "name": "fundsHandlerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "getEarlySaleStatus",
       "accounts": [
         {
           "name": "earlySaleStatusAccount",
@@ -568,18 +516,6 @@ export type SolanaContracts = {
           {
             "name": "tierPrice",
             "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "fundsHandler",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "fundsHandler",
-            "type": "publicKey"
           }
         ]
       }
@@ -892,7 +828,7 @@ export const IDL: SolanaContracts = {
           "type": "u64"
         },
         {
-          "name": "amount",
+          "name": "amounts",
           "type": "u64"
         },
         {
@@ -906,41 +842,10 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "setFundsHandler",
+      "name": "setEarlySaleStatus",
       "docs": [
         "@dev Setter functions"
       ],
-      "accounts": [
-        {
-          "name": "fundsHandlerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "newFundsHandler",
-          "type": "publicKey"
-        }
-      ]
-    },
-    {
-      "name": "setEarlySaleStatus",
       "accounts": [
         {
           "name": "ownerAccount",
@@ -1041,31 +946,10 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "getFundsHandler",
+      "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
       ],
-      "accounts": [
-        {
-          "name": "fundsHandlerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "getEarlySaleStatus",
       "accounts": [
         {
           "name": "earlySaleStatusAccount",
@@ -1308,18 +1192,6 @@ export const IDL: SolanaContracts = {
           {
             "name": "tierPrice",
             "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "fundsHandler",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "fundsHandler",
-            "type": "publicKey"
           }
         ]
       }

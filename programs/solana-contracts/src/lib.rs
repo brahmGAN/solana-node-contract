@@ -44,20 +44,25 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64,amounts:u64, tier_number: u64, discount_code: String) -> Result<()>
+    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, amounts:u64, tier_number: u64, discount_code: String) -> Result<()>
     {
         let tier_limit_account = &mut ctx.accounts.tier_limit_account; 
         let early_sale_status_account = &ctx.accounts.early_sale_status_account; 
         let tier_price_account = &ctx.accounts.tier_price_account;
         let whitelist_account = &ctx.accounts.whitelist_account;
-        let total_nodes_held_account = &mut ctx.accounts.total_nodes_held_account; 
-        let funds_handler_account = &ctx.accounts.funds_handler_account;
+        let total_nodes_held_account = &mut ctx.accounts.total_nodes_held_account;
         let discount_code_account = &ctx.accounts.discount_code_account;
-        let amount = &mut amounts;
+        let discount:u64; 
+        let amount:u64;
 
         if discount_code_account.discount_code == true 
         {
-            amount = (amount * 10) / 100; 
+            discount = (amounts * 10) / 100;
+            amount = discount; 
+        }
+        else
+        {
+            amount = amounts;
         }
 
         require!(quantity <= tier_limit_account.tier_limit,ErrorCode::QuantityOutOfBounds);
@@ -68,7 +73,7 @@ pub mod solana_contracts
                 require!(amount == ( quantity * tier_price_account.tier_price),ErrorCode::IncorrectAmount);
                 let ix = system_instruction::transfer
                 (   &ctx.accounts.payer.key(), 
-                    &funds_handler_account.funds_handler.key(),
+                    &ctx.accounts.funds_handler_account.key(), 
                     amount 
                 );
 
@@ -76,7 +81,7 @@ pub mod solana_contracts
                 (   &ix, 
                     &[
                         ctx.accounts.payer.to_account_info(),
-                        funds_handler_account.to_account_info(),        
+                        ctx.accounts.funds_handler_account.to_account_info(), 
                      ],
                 )?;
 
@@ -89,7 +94,7 @@ pub mod solana_contracts
                 require!(tier_limit_account.tier_limit > 0,ErrorCode::TierLimit);
                 let ix = system_instruction::transfer
                 (   &ctx.accounts.payer.key(), 
-                    &funds_handler_account.funds_handler.key(),
+                    &ctx.accounts.funds_handler_account.key(), 
                     amount 
                 );
 
@@ -97,7 +102,7 @@ pub mod solana_contracts
                 (   &ix, 
                     &[
                         ctx.accounts.payer.to_account_info(),
-                        funds_handler_account.to_account_info(),        
+                        ctx.accounts.funds_handler_account.to_account_info(),        
                      ],
                 )?;
 
@@ -116,20 +121,6 @@ pub mod solana_contracts
     }
 
     /// @dev Setter functions
-    pub fn set_funds_handler(ctx: Context<SetFundsHandlerContext>,new_funds_handler: Pubkey) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account; 
-        msg!("owner:Set funds handler: {}",owner_account.owner_pubkey);
-        require!(owner_account.owner_pubkey.key() == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
-        let funds_handler_account = &mut ctx.accounts.funds_handler_account;
-        funds_handler_account.funds_handler = new_funds_handler;
-        msg!("New funds handler:{}",funds_handler_account.funds_handler.key()); 
-        emit!(FundsHandlerEvent{
-            funds_handler: funds_handler_account.funds_handler.key()
-        });
-        Ok(())
-    }
-
     pub fn set_early_sale_status(ctx: Context<SetEarlySaleContext>, sale_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
@@ -170,15 +161,6 @@ pub mod solana_contracts
     }
 
     /// @dev Getter functions 
-    pub fn get_funds_handler(ctx: Context<GetFundsHandlerContext>) -> Result<()>
-    {
-        let funds_handler_account = &ctx.accounts.funds_handler_account;
-        msg!("Funds handler:{}",funds_handler_account.funds_handler.key());
-        emit!(FundsHandlerEvent{
-            funds_handler: funds_handler_account.funds_handler.key()
-        });
-        Ok(())
-    }
 
     pub fn get_early_sale_status(ctx: Context<GetEarlySaleStatusContext>) -> Result<()>
     {
@@ -393,14 +375,8 @@ pub struct BuyNodeContext<'info>
     )]
     pub total_nodes_held_account: Account<'info, TotalNodesHeld>,
 
-    #[account(
-        init_if_needed, 
-        payer = payer, 
-        seeds = [b"funds_handler_account"], 
-        bump,
-        space = size_of::<FundsHandler>() + 16
-    )]
-    pub funds_handler_account: Account<'info,FundsHandler>,
+    #[account(mut)]
+    pub funds_handler_account: SystemAccount<'info>,
 
     #[account(
         init_if_needed, 
@@ -410,32 +386,6 @@ pub struct BuyNodeContext<'info>
         space = size_of::<DiscountCode>() + 16
     )]
     pub discount_code_account: Account<'info,DiscountCode>,
-
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    pub system_program: Program<'info,System>,
-}
-
-#[derive(Accounts)]
-pub struct SetFundsHandlerContext<'info>
-{
-    #[account(
-        init_if_needed, 
-        payer = payer, 
-        seeds = [b"funds_handler_account"], 
-        bump,
-        space = size_of::<FundsHandler>() + 16
-    )]
-    pub funds_handler_account: Account<'info,FundsHandler>,
-
-    #[account(
-        init_if_needed, 
-        payer = payer, 
-        seeds = [b"owner"], 
-        bump,
-        space = size_of::<Owner>() + 16
-    )]
-    pub owner_account: Account<'info, Owner>,  
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -516,23 +466,6 @@ pub struct SetTierPriceContext<'info>
         space = size_of::<TierPrice>() + 16
     )]
     pub tier_price_account: Account<'info,TierPrice>,
-
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    pub system_program: Program<'info,System>,
-}
-
-#[derive(Accounts)]
-pub struct GetFundsHandlerContext<'info>
-{
-    #[account(
-        init_if_needed, 
-        payer = payer, 
-        seeds = [b"funds_handler_account"], 
-        bump,
-        space = size_of::<FundsHandler>() + 16
-    )]
-    pub funds_handler_account: Account<'info,FundsHandler>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -684,12 +617,6 @@ pub struct TierLimit
 pub struct TierPrice
 {
     pub tier_price: u64
-}
-
-#[account]
-pub struct FundsHandler
-{
-    pub funds_handler: Pubkey
 }
 
 #[account] 
