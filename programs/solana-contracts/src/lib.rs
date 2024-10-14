@@ -13,15 +13,13 @@ pub mod solana_contracts
         let owner_account = &mut ctx.accounts.owner_account;
         let owner_init_account = &mut ctx.accounts.owner_init_account; 
         require! (!owner_init_account.owner_initialized, ErrorCode::AlreadyInitialized);
-        msg!("Before:owner:initialize: {}",owner_account.owner_pubkey);
         owner_account.owner_pubkey = ctx.accounts.payer.key();
-        msg!("Before:owner init status:initialize: {}",owner_init_account.owner_initialized);
         owner_init_account.owner_initialized = true; 
         emit!(OwnerEvent{
             owner: owner_account.owner_pubkey.key()
         });
-        msg!("After:owner:initialize: {}",owner_account.owner_pubkey);
-        msg!("After:owner init status:initialize: {}",owner_init_account.owner_initialized);
+        msg!("Owner:initialize: {}",owner_account.owner_pubkey);
+        msg!("Owner init status: {}",owner_init_account.owner_initialized);
         Ok(())
     }
 
@@ -30,7 +28,8 @@ pub mod solana_contracts
         let owner_account = &ctx.accounts.owner_account;
         require! (owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
         let whitelist_account = &mut ctx.accounts.whitelist_account;
-        whitelist_account.in_early_sale = true; 
+        whitelist_account.in_early_sale = true;
+        msg!("White list address: in early sale:{}",whitelist_account.in_early_sale); 
         Ok(())
     }
 
@@ -41,6 +40,7 @@ pub mod solana_contracts
         require! (owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized); 
         let discount_code_account = &mut ctx.accounts.discount_code_account; 
         discount_code_account.discount_code = discount_code_status;
+        msg!("Discount code status:{}",discount_code_account.discount_code);
         Ok(())
     }
 
@@ -52,63 +52,69 @@ pub mod solana_contracts
         let whitelist_account = &ctx.accounts.whitelist_account;
         let total_nodes_held_account = &mut ctx.accounts.total_nodes_held_account;
         let discount_code_account = &ctx.accounts.discount_code_account;
-        let discount:u64; 
         let amount:u64;
+        let final_tier_price:u64;
 
         if discount_code_account.discount_code == true 
         {
-            discount = (amounts * 10) / 100;
-            amount = discount; 
+            amount = (amounts * 10) / 100;
+            final_tier_price =  (tier_price_account.tier_price * 10 ) / 100; 
         }
         else
         {
             amount = amounts;
+            final_tier_price = tier_price_account.tier_price;
         }
 
+        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit); 
         require!(quantity <= tier_limit_account.tier_limit,ErrorCode::QuantityOutOfBounds);
-        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);   
-            if early_sale_status_account.early_sale_status
-            {
-                require!(whitelist_account.in_early_sale,ErrorCode::EarlySale);
-                require!(amount == ( quantity * tier_price_account.tier_price),ErrorCode::IncorrectAmount);
-                let ix = system_instruction::transfer
-                (   &ctx.accounts.payer.key(), 
-                    &ctx.accounts.funds_handler_account.key(), 
-                    amount 
-                );
+        // ALERT! THIS WON'T WORK IF THE DISCOUNT CODE IS ACTIVATED! THE LHS WILL BE SMALLER THAN THE RHS AS IT'S DISCOUNTED PRICE! 
+        // SET THE VALUE OF `quantity * tier_price_account.tier_price` LOCALLY IN BOTH THE if AND else BLOCK AND USE THAT IN THE BELOW REQUIRE STATEMENT
+        require!(amount == (quantity * final_tier_price),ErrorCode::IncorrectAmount);  
+        //require!(&ctx.accounts.payer.lamports() >= amount);
+        if early_sale_status_account.early_sale_status
+        {
+            require!(whitelist_account.in_early_sale,ErrorCode::EarlySale);
+            let ix = system_instruction::transfer
+            (   
+                &ctx.accounts.payer.key(), 
+                &ctx.accounts.funds_handler_account.key(), 
+                amount 
+            );
 
-                anchor_lang::solana_program::program::invoke
-                (   &ix, 
-                    &[
-                        ctx.accounts.payer.to_account_info(),
-                        ctx.accounts.funds_handler_account.to_account_info(), 
-                     ],
-                )?;
+            anchor_lang::solana_program::program::invoke
+            (   
+                &ix, 
+                &[
+                    ctx.accounts.payer.to_account_info(),
+                    ctx.accounts.funds_handler_account.to_account_info(), 
+                 ],
+            )?;
 
-                total_nodes_held_account.total_nodes_held += 1;
-                tier_limit_account.tier_limit -= 1;         
-            }
-            else
-            {
-                require!(amount == ( quantity * tier_price_account.tier_price),ErrorCode::IncorrectAmount);
-                require!(tier_limit_account.tier_limit > 0,ErrorCode::TierLimit);
-                let ix = system_instruction::transfer
-                (   &ctx.accounts.payer.key(), 
-                    &ctx.accounts.funds_handler_account.key(), 
-                    amount 
-                );
+            total_nodes_held_account.total_nodes_held += 1;
+            tier_limit_account.tier_limit -= 1;         
+        }
+        else
+        {
+            let ix = system_instruction::transfer
+            (   
+                &ctx.accounts.payer.key(), 
+                &ctx.accounts.funds_handler_account.key(), 
+                amount 
+            );
 
-                anchor_lang::solana_program::program::invoke
-                (   &ix, 
-                    &[
-                        ctx.accounts.payer.to_account_info(),
-                        ctx.accounts.funds_handler_account.to_account_info(),        
-                     ],
-                )?;
+            anchor_lang::solana_program::program::invoke
+            (   
+                &ix, 
+                &[
+                    ctx.accounts.payer.to_account_info(),
+                    ctx.accounts.funds_handler_account.to_account_info(),        
+                 ],
+            )?;
 
-                total_nodes_held_account.total_nodes_held += 1;
-                tier_limit_account.tier_limit -= 1;         
-            }
+            total_nodes_held_account.total_nodes_held += 1;
+            tier_limit_account.tier_limit -= 1;         
+        }
         emit!(NodeBoughtEvent{
             payer: *ctx.accounts.payer.key,
             quantity: quantity,
@@ -214,19 +220,20 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn get_whitelist_user(ctx: Context<GetWhitelistContext>) -> Result<()>
-    {
-        let whitelist_account = &mut ctx.accounts.whitelist_account;
-        msg!("Get in early sale,{}",whitelist_account.in_early_sale); 
-        Ok(())
-    }
-
     pub fn get_discount_code(ctx: Context<GetDiscountCodeContext>, discount_code: String) -> Result<()>
     {
         let discount_code_account = &ctx.accounts.discount_code_account;
         msg!("Discount code status:{}", discount_code_account.discount_code);
         Ok(())
     }
+
+    pub fn get_whitelist_user(ctx: Context<GetWhitelistContext>) -> Result<()>
+    {
+        let whitelist_account = &mut ctx.accounts.whitelist_account;
+        msg!("Get in early sale,{}",whitelist_account.in_early_sale); 
+        Ok(())
+    }
+    
 }
 
 #[derive(Accounts)]
@@ -237,7 +244,7 @@ pub struct GetWhitelistContext<'info>
         payer = payer, 
         seeds = [payer.key().as_ref()],
         bump,
-        space = size_of::<InEarlySale>() + 16
+        space = size_of::<InEarlySale>() + 8
     )]
     pub whitelist_account: Account<'info,InEarlySale>, 
 
@@ -254,7 +261,7 @@ pub struct InitializeContext<'info>
         payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 32
+        space = size_of::<Owner>() + 8
     )]
     pub owner_account: Account<'info, Owner>,
 
@@ -263,7 +270,7 @@ pub struct InitializeContext<'info>
         payer = payer, 
         seeds = [b"owner_init_account"], 
         bump,
-        space = size_of::<OwnerInit>() + 16
+        space = size_of::<OwnerInit>() + 8
     )]
     pub owner_init_account: Account<'info, OwnerInit>,  
 
@@ -281,7 +288,7 @@ pub struct AddWhitelistContext<'info>
         payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 16
+        space = size_of::<Owner>() + 8
     )]
     pub owner_account: Account<'info, Owner>,  
 
@@ -290,7 +297,7 @@ pub struct AddWhitelistContext<'info>
         payer = payer,
         seeds = [user.key().as_ref()], 
         bump,
-        space = size_of::<InEarlySale>() + 16
+        space = size_of::<InEarlySale>() + 8
     )]
     pub whitelist_account: Account<'info, InEarlySale>, 
 
@@ -308,7 +315,7 @@ pub struct DiscountCodeContext<'info>
         payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 16
+        space = size_of::<Owner>() + 8
     )]
     pub owner_account: Account<'info, Owner>,  
 
@@ -317,7 +324,7 @@ pub struct DiscountCodeContext<'info>
         payer = payer,
         seeds = [discount_code.as_bytes()],
         bump,
-        space = size_of::<DiscountCode>() + 16
+        space = size_of::<DiscountCode>() + 8
     )]
     pub discount_code_account: Account<'info,DiscountCode>,
 
@@ -335,7 +342,7 @@ pub struct BuyNodeContext<'info>
         payer = payer, 
         seeds = [&tier_number.to_le_bytes()], 
         bump,
-        space = size_of::<TierLimit>() + 16
+        space = size_of::<TierLimit>() + 8
     )]
     pub tier_limit_account: Account<'info,TierLimit>,
 
@@ -344,7 +351,7 @@ pub struct BuyNodeContext<'info>
         payer = payer, 
         seeds = [b"early_sale_status_account"], 
         bump,
-        space = size_of::<EarlySaleStatus>() + 16
+        space = size_of::<EarlySaleStatus>() + 8
     )]
     pub early_sale_status_account: Account<'info, EarlySaleStatus>, 
 
@@ -353,7 +360,7 @@ pub struct BuyNodeContext<'info>
         payer = payer, 
         seeds = [&tier_number.to_le_bytes()], 
         bump,
-        space = size_of::<TierPrice>() + 16
+        space = size_of::<TierPrice>() + 8
     )]
     pub tier_price_account: Account<'info,TierPrice>,
 
@@ -362,7 +369,7 @@ pub struct BuyNodeContext<'info>
         payer = payer,
         seeds = [payer.key().as_ref()], 
         bump,
-        space = size_of::<InEarlySale>() + 16
+        space = size_of::<InEarlySale>() + 8
     )]
     pub whitelist_account: Account<'info, InEarlySale>,
 
@@ -371,7 +378,7 @@ pub struct BuyNodeContext<'info>
         payer = payer,
         seeds = [payer.key.as_ref()], 
         bump,
-        space = size_of::<TotalNodesHeld>() + 16
+        space = size_of::<TotalNodesHeld>() + 8
     )]
     pub total_nodes_held_account: Account<'info, TotalNodesHeld>,
 
@@ -383,7 +390,7 @@ pub struct BuyNodeContext<'info>
         payer = payer,
         seeds = [discount_code.as_bytes()],
         bump,
-        space = size_of::<DiscountCode>() + 16
+        space = size_of::<DiscountCode>() + 8
     )]
     pub discount_code_account: Account<'info,DiscountCode>,
 
@@ -400,7 +407,7 @@ pub struct SetEarlySaleContext<'info>
         payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 16
+        space = size_of::<Owner>() + 8
     )]
     pub owner_account: Account<'info, Owner>,
 
@@ -409,7 +416,7 @@ pub struct SetEarlySaleContext<'info>
         payer = payer, 
         seeds = [b"early_sale_status_account"], 
         bump,
-        space = size_of::<EarlySaleStatus>() + 16
+        space = size_of::<EarlySaleStatus>() + 8
     )]
     pub early_sale_status_account: Account<'info, EarlySaleStatus>,    
 
@@ -427,7 +434,7 @@ pub struct SetTierLimitContext<'info>
         payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 16
+        space = size_of::<Owner>() + 8
     )]
     pub owner_account: Account<'info, Owner>,  
 
@@ -436,7 +443,7 @@ pub struct SetTierLimitContext<'info>
         payer = payer, 
         seeds = [&tier_number.to_le_bytes()], 
         bump,
-        space = size_of::<TierLimit>() + 16
+        space = size_of::<TierLimit>() + 8
     )]
     pub tier_limit_account: Account<'info,TierLimit>,
 
@@ -454,7 +461,7 @@ pub struct SetTierPriceContext<'info>
         payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 16
+        space = size_of::<Owner>() + 8
     )]
     pub owner_account: Account<'info, Owner>,  
 
@@ -463,7 +470,7 @@ pub struct SetTierPriceContext<'info>
         payer = payer, 
         seeds = [&tier_number.to_le_bytes()], 
         bump,
-        space = size_of::<TierPrice>() + 16
+        space = size_of::<TierPrice>() + 8
     )]
     pub tier_price_account: Account<'info,TierPrice>,
 
@@ -480,7 +487,7 @@ pub struct GetEarlySaleStatusContext<'info>
         payer = payer, 
         seeds = [b"early_sale_status_account"], 
         bump,
-        space = size_of::<EarlySaleStatus>() + 16
+        space = size_of::<EarlySaleStatus>() + 8
     )]
     pub early_sale_status_account: Account<'info, EarlySaleStatus>,
 
@@ -498,7 +505,7 @@ pub struct GetTierLimitContext<'info>
         payer = payer, 
         seeds = [&tier_number.to_le_bytes()], 
         bump,
-        space = size_of::<TierLimit>() + 16
+        space = size_of::<TierLimit>() + 8
     )]
     pub tier_limit_account: Account<'info,TierLimit>,
 
@@ -516,7 +523,7 @@ pub struct GetTierPriceContext<'info>
         payer = payer, 
         seeds = [&tier_number.to_le_bytes()], 
         bump,
-        space = size_of::<TierPrice>() + 16
+        space = size_of::<TierPrice>() + 8
     )]
     pub tier_price_account: Account<'info,TierPrice>,
 
@@ -533,7 +540,7 @@ pub struct GetOwnerContext<'info>
         payer = payer, 
         seeds = [b"owner"], 
         bump,
-        space = size_of::<Owner>() + 32
+        space = size_of::<Owner>() + 8
     )]
     pub owner_account: Account<'info, Owner>, 
 
@@ -550,7 +557,7 @@ pub struct GetTotalNodesHeldContext<'info>
         payer = payer, 
         seeds = [payer.key.as_ref()], 
         bump,
-        space = size_of::<TotalNodesHeld>() + 16
+        space = size_of::<TotalNodesHeld>() + 8
     )]
     pub nodes_bought_account: Account<'info, TotalNodesHeld>,
 
@@ -568,7 +575,7 @@ pub struct GetDiscountCodeContext<'info>
         payer = payer,
         seeds = [discount_code.as_bytes()],
         bump,
-        space = size_of::<DiscountCode>() + 16
+        space = size_of::<DiscountCode>() + 8
     )]
     pub discount_code_account: Account<'info,DiscountCode>,
 

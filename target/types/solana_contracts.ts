@@ -388,27 +388,6 @@ export type SolanaContracts = {
       "args": []
     },
     {
-      "name": "getWhitelistUser",
-      "accounts": [
-        {
-          "name": "whitelistAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "getDiscountCode",
       "accounts": [
         {
@@ -433,6 +412,27 @@ export type SolanaContracts = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "getWhitelistUser",
+      "accounts": [
+        {
+          "name": "whitelistAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
@@ -1064,27 +1064,6 @@ export const IDL: SolanaContracts = {
       "args": []
     },
     {
-      "name": "getWhitelistUser",
-      "accounts": [
-        {
-          "name": "whitelistAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "getDiscountCode",
       "accounts": [
         {
@@ -1109,6 +1088,27 @@ export const IDL: SolanaContracts = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "getWhitelistUser",
+      "accounts": [
+        {
+          "name": "whitelistAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
