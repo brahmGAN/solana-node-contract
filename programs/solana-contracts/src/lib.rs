@@ -1,5 +1,5 @@
 use anchor_lang::{prelude::*, solana_program::system_instruction};
-use std::mem::size_of;
+use std::{mem::size_of};
 
 declare_id!("6kgSdKsaQGrWMVrCgp7RmXX7pnqVnDZ5JDJjTDvC2j62");
 
@@ -26,20 +26,31 @@ pub mod solana_contracts
     pub fn add_whitelist_addresses(ctx: Context<AddWhitelistContext>, user:Pubkey) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
-        require! (owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
         let whitelist_account = &mut ctx.accounts.whitelist_account;
         whitelist_account.in_early_sale = true;
+        emit!(AddWhitelistEvent{
+            whitelist_address: user.key(), 
+            in_early_sale: whitelist_account.in_early_sale
+        });
+        msg!("Whitelist address:{}",user.key());
         msg!("White list address: in early sale:{}",whitelist_account.in_early_sale); 
         Ok(())
     }
 
-    /// @dev Add and remove a discount code by switching the boolean 
+    /// @dev Add and remove a discount code by switching the boolean
+    /// @dev `gpunet` is a reserved discount code string to signify no discount code is being used 
     pub fn discount_code(ctx: Context<DiscountCodeContext>, discount_code: String, discount_code_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
         require! (owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized); 
         let discount_code_account = &mut ctx.accounts.discount_code_account; 
         discount_code_account.discount_code = discount_code_status;
+        msg!("Discount code:{}",discount_code);
+        emit!(DiscountCodeEvent{
+            discount_code: discount_code,
+            discount_code_status: discount_code_account.discount_code
+        });
         msg!("Discount code status:{}",discount_code_account.discount_code);
         Ok(())
     }
@@ -66,12 +77,10 @@ pub mod solana_contracts
             final_tier_price = tier_price_account.tier_price;
         }
 
-        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit); 
-        require!(quantity <= tier_limit_account.tier_limit,ErrorCode::QuantityOutOfBounds);
-        // ALERT! THIS WON'T WORK IF THE DISCOUNT CODE IS ACTIVATED! THE LHS WILL BE SMALLER THAN THE RHS AS IT'S DISCOUNTED PRICE! 
-        // SET THE VALUE OF `quantity * tier_price_account.tier_price` LOCALLY IN BOTH THE if AND else BLOCK AND USE THAT IN THE BELOW REQUIRE STATEMENT
-        require!(amount == (quantity * final_tier_price),ErrorCode::IncorrectAmount);  
-        //require!(&ctx.accounts.payer.lamports() >= amount);
+        require!(tier_number < 12 && tier_number > 0, ErrorCode::TierLimit); 
+        require!(quantity <= tier_limit_account.tier_limit, ErrorCode::QuantityOutOfBounds);
+        require!(amount == (quantity * final_tier_price), ErrorCode::IncorrectAmount);  
+        require!(ctx.accounts.payer.lamports() >= amount, ErrorCode::InsufficientBalance);
         if early_sale_status_account.early_sale_status
         {
             require!(whitelist_account.in_early_sale,ErrorCode::EarlySale);
@@ -115,14 +124,22 @@ pub mod solana_contracts
             total_nodes_held_account.total_nodes_held += 1;
             tier_limit_account.tier_limit -= 1;         
         }
+        msg!("discount_code:{}",discount_code);
         emit!(NodeBoughtEvent{
-            payer: *ctx.accounts.payer.key,
+            user: *ctx.accounts.payer.key,
             quantity: quantity,
             amount: amount,
             tier_number: tier_number,
             total_nodes_held: total_nodes_held_account.total_nodes_held,
-            pending_tier_limit: tier_limit_account.tier_limit
+            pending_tier_limit: tier_limit_account.tier_limit,
+            discount_code: discount_code
         });
+        msg!("user:{}",*ctx.accounts.payer.key);
+        msg!("quantity:{}",quantity);
+        msg!("amount:{}",amount);
+        msg!("tier_number:{}",tier_number);
+        msg!("total_nodes_held:{}",total_nodes_held_account.total_nodes_held);
+        msg!("pending_tier_limit:{}",tier_limit_account.tier_limit);
         Ok(())
     }
 
@@ -132,10 +149,11 @@ pub mod solana_contracts
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let early_sale_status_account = &mut ctx.accounts.early_sale_status_account;
-        early_sale_status_account.early_sale_status = sale_status; 
+        early_sale_status_account.early_sale_status = early_sale_status_account.early_sale_status; 
         emit!(EarlySaleStatusEvent{
             early_sale_status: sale_status
         });
+        msg!("early_sale_status:{}",early_sale_status_account.early_sale_status);
         Ok(())
     }
 
@@ -147,9 +165,11 @@ pub mod solana_contracts
         require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);
         tier_limit_account.tier_limit = new_tier_limit;
         emit!(TierLimitEvent{
-            tier_limit: new_tier_limit,
+            tier_limit: tier_limit_account.tier_limit,
             tier_number: tier_number
         });
+        msg!("tier_limit:{}",tier_limit_account.tier_limit);
+        msg!("tier_number:{}",tier_number);
         Ok(())
     }
 
@@ -160,9 +180,11 @@ pub mod solana_contracts
         let tier_price_account = &mut ctx.accounts.tier_price_account; 
         tier_price_account.tier_price = new_price;
         emit!(TierPriceEvent{
-            tier_price: new_price,
+            tier_price: tier_price_account.tier_price,
             tier_number: tier_number
         });
+        msg!("tier_limit:{}",tier_price_account.tier_price);
+        msg!("tier_number:{}",tier_number);
         Ok(())
     }
 
@@ -181,56 +203,56 @@ pub mod solana_contracts
     pub fn get_tier_limit(ctx: Context<GetTierLimitContext>,tier_number: u64) -> Result<()>
     {
         let tier_limit_account = &ctx.accounts.tier_limit_account;
-        msg!("Tier limit:{}\nTier number:{}",tier_limit_account.tier_limit,tier_number);
         emit!(TierLimitEvent{
             tier_limit: tier_limit_account.tier_limit,
             tier_number: tier_number
         });
+        msg!("Tier limit:{}\nTier number:{}",tier_limit_account.tier_limit,tier_number);
         Ok(())
     }
 
     pub fn get_tier_price(ctx: Context<GetTierPriceContext>,tier_number: u64) -> Result<()>
     {
         let tier_price_account = &ctx.accounts.tier_price_account;
-        msg!("Tier price:{}\nTier number:{}",tier_price_account.tier_price,tier_number);
         emit!(TierPriceEvent{
             tier_price: tier_price_account.tier_price,
             tier_number: tier_number
         });
+        msg!("Tier price:{}\nTier number:{}",tier_price_account.tier_price,tier_number);
         Ok(())
     }
 
     pub fn get_owner(ctx: Context<GetOwnerContext>) -> Result<()> 
     {
         let owner_account = &mut ctx.accounts.owner_account;
-        msg!("owner:getOwner: {}",owner_account.owner_pubkey);
         emit!(OwnerEvent{
             owner: owner_account.owner_pubkey.key()
         });
+        msg!("owner:getOwner: {}",owner_account.owner_pubkey);
         Ok(())
     }
 
-    pub fn get_total_nodes_held(ctx: Context<GetTotalNodesHeldContext>) -> Result<()> 
+    pub fn get_total_nodes_held(ctx: Context<GetTotalNodesHeldContext>, user: Pubkey) -> Result<()> 
     {
         let nodes_bought_account = &ctx.accounts.nodes_bought_account;
-        msg!("Total nodes held:{}",nodes_bought_account.total_nodes_held);
         emit!(TotalNodesHeldEvent{
             total_nodes_held: nodes_bought_account.total_nodes_held
         });
+        msg!("Total nodes held:{}",nodes_bought_account.total_nodes_held);
         Ok(())
     }
 
-    pub fn get_discount_code(ctx: Context<GetDiscountCodeContext>, discount_code: String) -> Result<()>
+    pub fn get_discount_code_status(ctx: Context<GetDiscountCodeContext>, discount_code: String) -> Result<()>
     {
         let discount_code_account = &ctx.accounts.discount_code_account;
         msg!("Discount code status:{}", discount_code_account.discount_code);
         Ok(())
     }
 
-    pub fn get_whitelist_user(ctx: Context<GetWhitelistContext>) -> Result<()>
+    pub fn get_whitelist_user_status(ctx: Context<GetWhitelistContext>) -> Result<()>
     {
         let whitelist_account = &mut ctx.accounts.whitelist_account;
-        msg!("Get in early sale,{}",whitelist_account.in_early_sale); 
+        msg!("in early sale,{}",whitelist_account.in_early_sale); 
         Ok(())
     }
     
@@ -550,12 +572,13 @@ pub struct GetOwnerContext<'info>
 }
 
 #[derive(Accounts)]
+#[instruction(user: Pubkey)]
 pub struct GetTotalNodesHeldContext<'info>
 {
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [payer.key.as_ref()], 
+        seeds = [user.as_ref()], 
         bump,
         space = size_of::<TotalNodesHeld>() + 8
     )]
@@ -633,15 +656,37 @@ pub struct DiscountCode
 }
 
 //EVENTS
+
+#[event]
+pub struct OwnerEvent
+{
+    pub owner: Pubkey
+}
+
+#[event]
+pub struct AddWhitelistEvent
+{
+    pub whitelist_address: Pubkey, 
+    pub in_early_sale: bool
+}
+
+#[event]
+pub struct DiscountCodeEvent
+{
+    pub discount_code: String, 
+    pub discount_code_status: bool
+}
+
 #[event]
 pub struct NodeBoughtEvent
 {
-    pub payer: Pubkey,
+    pub user: Pubkey,
     pub quantity: u64, 
     pub amount: u64,
     pub tier_number: u64,
     pub total_nodes_held: u64,
-    pub pending_tier_limit: u64
+    pub pending_tier_limit: u64,
+    pub discount_code: String
 }
 
 #[event]
@@ -671,12 +716,6 @@ pub struct TierPriceEvent
 }
 
 #[event]
-pub struct OwnerEvent
-{
-    pub owner: Pubkey
-}
-
-#[event]
 pub struct TotalNodesHeldEvent
 {
     pub total_nodes_held: u64
@@ -702,4 +741,7 @@ pub enum ErrorCode
 
     #[msg("Incorrect Amount!")]
     IncorrectAmount,
+
+    #[msg("Insufficient Balance!")]
+    InsufficientBalance,
 }

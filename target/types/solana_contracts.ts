@@ -62,7 +62,8 @@ export type SolanaContracts = {
     {
       "name": "discountCode",
       "docs": [
-        "@dev Add and remove a discount code by switching the boolean"
+        "@dev Add and remove a discount code by switching the boolean",
+        "@dev `gpunet` is a reserved discount code string to signify no discount code is being used"
       ],
       "accounts": [
         {
@@ -385,10 +386,15 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        }
+      ]
     },
     {
-      "name": "getDiscountCode",
+      "name": "getDiscountCodeStatus",
       "accounts": [
         {
           "name": "discountCodeAccount",
@@ -414,7 +420,7 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "getWhitelistUser",
+      "name": "getWhitelistUserStatus",
       "accounts": [
         {
           "name": "whitelistAccount",
@@ -535,10 +541,50 @@ export type SolanaContracts = {
   ],
   "events": [
     {
+      "name": "OwnerEvent",
+      "fields": [
+        {
+          "name": "owner",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AddWhitelistEvent",
+      "fields": [
+        {
+          "name": "whitelistAddress",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "inEarlySale",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "DiscountCodeEvent",
+      "fields": [
+        {
+          "name": "discountCode",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "discountCodeStatus",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "NodeBoughtEvent",
       "fields": [
         {
-          "name": "payer",
+          "name": "user",
           "type": "publicKey",
           "index": false
         },
@@ -565,6 +611,11 @@ export type SolanaContracts = {
         {
           "name": "pendingTierLimit",
           "type": "u64",
+          "index": false
+        },
+        {
+          "name": "discountCode",
+          "type": "string",
           "index": false
         }
       ]
@@ -620,16 +671,6 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "OwnerEvent",
-      "fields": [
-        {
-          "name": "owner",
-          "type": "publicKey",
-          "index": false
-        }
-      ]
-    },
-    {
       "name": "TotalNodesHeldEvent",
       "fields": [
         {
@@ -670,6 +711,11 @@ export type SolanaContracts = {
       "code": 6005,
       "name": "IncorrectAmount",
       "msg": "Incorrect Amount!"
+    },
+    {
+      "code": 6006,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient Balance!"
     }
   ]
 };
@@ -738,7 +784,8 @@ export const IDL: SolanaContracts = {
     {
       "name": "discountCode",
       "docs": [
-        "@dev Add and remove a discount code by switching the boolean"
+        "@dev Add and remove a discount code by switching the boolean",
+        "@dev `gpunet` is a reserved discount code string to signify no discount code is being used"
       ],
       "accounts": [
         {
@@ -1061,10 +1108,15 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        }
+      ]
     },
     {
-      "name": "getDiscountCode",
+      "name": "getDiscountCodeStatus",
       "accounts": [
         {
           "name": "discountCodeAccount",
@@ -1090,7 +1142,7 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "getWhitelistUser",
+      "name": "getWhitelistUserStatus",
       "accounts": [
         {
           "name": "whitelistAccount",
@@ -1211,10 +1263,50 @@ export const IDL: SolanaContracts = {
   ],
   "events": [
     {
+      "name": "OwnerEvent",
+      "fields": [
+        {
+          "name": "owner",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "AddWhitelistEvent",
+      "fields": [
+        {
+          "name": "whitelistAddress",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "inEarlySale",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "DiscountCodeEvent",
+      "fields": [
+        {
+          "name": "discountCode",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "discountCodeStatus",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "NodeBoughtEvent",
       "fields": [
         {
-          "name": "payer",
+          "name": "user",
           "type": "publicKey",
           "index": false
         },
@@ -1241,6 +1333,11 @@ export const IDL: SolanaContracts = {
         {
           "name": "pendingTierLimit",
           "type": "u64",
+          "index": false
+        },
+        {
+          "name": "discountCode",
+          "type": "string",
           "index": false
         }
       ]
@@ -1296,16 +1393,6 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "OwnerEvent",
-      "fields": [
-        {
-          "name": "owner",
-          "type": "publicKey",
-          "index": false
-        }
-      ]
-    },
-    {
       "name": "TotalNodesHeldEvent",
       "fields": [
         {
@@ -1346,6 +1433,11 @@ export const IDL: SolanaContracts = {
       "code": 6005,
       "name": "IncorrectAmount",
       "msg": "Incorrect Amount!"
+    },
+    {
+      "code": 6006,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient Balance!"
     }
   ]
 };
