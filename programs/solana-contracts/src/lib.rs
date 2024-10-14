@@ -8,13 +8,15 @@ pub mod solana_contracts
 {
     use super::*;
 
-    pub fn initialize(ctx: Context<InitializeContext>) -> Result<()> 
+    pub fn initialize(ctx: Context<InitializeContext>, tier_number: u64) -> Result<()> 
     {
         let owner_account = &mut ctx.accounts.owner_account;
-        let owner_init_account = &mut ctx.accounts.owner_init_account; 
+        let owner_init_account = &mut ctx.accounts.owner_init_account;
+        let current_tier_number_account = &mut ctx.accounts.current_tier_number_account; 
         require! (!owner_init_account.owner_initialized, ErrorCode::AlreadyInitialized);
         owner_account.owner_pubkey = ctx.accounts.payer.key();
         owner_init_account.owner_initialized = true; 
+        current_tier_number_account.current_tier_number = tier_number; 
         emit!(OwnerEvent{
             owner: owner_account.owner_pubkey.key()
         });
@@ -29,7 +31,7 @@ pub mod solana_contracts
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
         let whitelist_account = &mut ctx.accounts.whitelist_account;
         whitelist_account.in_early_sale = true;
-        emit!(AddWhitelistEvent{
+        emit!(WhitelistEvent{
             whitelist_address: user.key(), 
             in_early_sale: whitelist_account.in_early_sale
         });
@@ -63,6 +65,7 @@ pub mod solana_contracts
         let whitelist_account = &ctx.accounts.whitelist_account;
         let total_nodes_held_account = &mut ctx.accounts.total_nodes_held_account;
         let discount_code_account = &ctx.accounts.discount_code_account;
+        let current_tier_number_account = &mut ctx.accounts.current_tier_number_account;
         let amount:u64;
         let final_tier_price:u64;
 
@@ -98,10 +101,7 @@ pub mod solana_contracts
                     ctx.accounts.payer.to_account_info(),
                     ctx.accounts.funds_handler_account.to_account_info(), 
                  ],
-            )?;
-
-            total_nodes_held_account.total_nodes_held += 1;
-            tier_limit_account.tier_limit -= 1;         
+            )?;       
         }
         else
         {
@@ -120,9 +120,12 @@ pub mod solana_contracts
                     ctx.accounts.funds_handler_account.to_account_info(),        
                  ],
             )?;
-
-            total_nodes_held_account.total_nodes_held += 1;
-            tier_limit_account.tier_limit -= 1;         
+        }
+        total_nodes_held_account.total_nodes_held += 1;
+        tier_limit_account.tier_limit -= 1; 
+        if tier_limit_account.tier_limit == 0
+        {
+            current_tier_number_account.current_tier_number += 1;
         }
         msg!("discount_code:{}",discount_code);
         emit!(NodeBoughtEvent{
@@ -245,34 +248,35 @@ pub mod solana_contracts
     pub fn get_discount_code_status(ctx: Context<GetDiscountCodeContext>, discount_code: String) -> Result<()>
     {
         let discount_code_account = &ctx.accounts.discount_code_account;
+        emit!(DiscountCodeEvent{
+            discount_code: discount_code,
+            discount_code_status: discount_code_account.discount_code
+        });
         msg!("Discount code status:{}", discount_code_account.discount_code);
         Ok(())
     }
 
-    pub fn get_whitelist_user_status(ctx: Context<GetWhitelistContext>) -> Result<()>
+    pub fn get_whitelist_user_status(ctx: Context<GetWhitelistContext>, user: Pubkey) -> Result<()>
     {
         let whitelist_account = &mut ctx.accounts.whitelist_account;
+        emit!(WhitelistEvent{
+            whitelist_address: user,
+            in_early_sale: whitelist_account.in_early_sale
+        });
         msg!("in early sale,{}",whitelist_account.in_early_sale); 
         Ok(())
     }
+
+    pub fn get_current_tier_number(ctx: Context<GetCurrentTierNumberContext>) -> Result<()>
+    {
+        let current_tier_number_account = &ctx.accounts.current_tier_number_account;
+        emit!(GetCurrentTierNumberEvent{
+            current_tier_number: current_tier_number_account.current_tier_number
+        });
+        msg!("Current Tier Number:{}",current_tier_number_account.current_tier_number);
+        Ok(())
+    }
     
-}
-
-#[derive(Accounts)]
-pub struct GetWhitelistContext<'info>
-{
-    #[account(
-        init_if_needed,
-        payer = payer, 
-        seeds = [payer.key().as_ref()],
-        bump,
-        space = size_of::<InEarlySale>() + 8
-    )]
-    pub whitelist_account: Account<'info,InEarlySale>, 
-
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    pub system_program: Program<'info,System>,
 }
 
 #[derive(Accounts)]
@@ -294,7 +298,16 @@ pub struct InitializeContext<'info>
         bump,
         space = size_of::<OwnerInit>() + 8
     )]
-    pub owner_init_account: Account<'info, OwnerInit>,  
+    pub owner_init_account: Account<'info, OwnerInit>, 
+
+    #[account(
+        init, 
+        payer = payer, 
+        seeds = [b"current_tier_number_account"], 
+        bump,
+        space = size_of::<CurrentTierNumber>() + 8
+    )]
+    pub current_tier_number_account: Account<'info, CurrentTierNumber>,  
 
     #[account(mut)]
     pub payer: Signer<'info>, 
@@ -403,6 +416,15 @@ pub struct BuyNodeContext<'info>
         space = size_of::<TotalNodesHeld>() + 8
     )]
     pub total_nodes_held_account: Account<'info, TotalNodesHeld>,
+
+    #[account(
+        init, 
+        payer = payer, 
+        seeds = [b"current_tier_number_account"], 
+        bump,
+        space = size_of::<CurrentTierNumber>() + 8
+    )]
+    pub current_tier_number_account: Account<'info, CurrentTierNumber>,
 
     #[account(mut)]
     pub funds_handler_account: SystemAccount<'info>,
@@ -607,6 +629,41 @@ pub struct GetDiscountCodeContext<'info>
     pub system_program: Program<'info,System>,
 }
 
+#[derive(Accounts)]
+#[instruction(user: Pubkey)]
+pub struct GetWhitelistContext<'info>
+{
+    #[account(
+        init_if_needed,
+        payer = payer, 
+        seeds = [user.key().as_ref()],
+        bump,
+        space = size_of::<InEarlySale>() + 8
+    )]
+    pub whitelist_account: Account<'info,InEarlySale>, 
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
+#[derive(Accounts)]
+pub struct GetCurrentTierNumberContext<'info>
+{
+    #[account(
+        init, 
+        payer = payer, 
+        seeds = [b"current_tier_number_account"], 
+        bump,
+        space = size_of::<CurrentTierNumber>() + 8
+    )]
+    pub current_tier_number_account: Account<'info, CurrentTierNumber>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
 #[account]
 pub struct Owner 
 {
@@ -655,6 +712,12 @@ pub struct DiscountCode
     pub discount_code: bool
 }
 
+#[account] 
+pub struct CurrentTierNumber
+{
+    pub current_tier_number: u64
+}
+
 //EVENTS
 
 #[event]
@@ -664,7 +727,7 @@ pub struct OwnerEvent
 }
 
 #[event]
-pub struct AddWhitelistEvent
+pub struct WhitelistEvent
 {
     pub whitelist_address: Pubkey, 
     pub in_early_sale: bool
@@ -719,6 +782,13 @@ pub struct TierPriceEvent
 pub struct TotalNodesHeldEvent
 {
     pub total_nodes_held: u64
+}
+
+
+#[event]
+pub struct GetCurrentTierNumberEvent
+{
+    pub current_tier_number: u64
 }
 
 #[error_code]

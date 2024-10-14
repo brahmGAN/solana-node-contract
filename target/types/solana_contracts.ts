@@ -16,6 +16,11 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
+          "name": "currentTierNumberAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -26,7 +31,12 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "addWhitelistAddresses",
@@ -123,6 +133,11 @@ export type SolanaContracts = {
         },
         {
           "name": "totalNodesHeldAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currentTierNumberAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -438,6 +453,32 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "getCurrentTierNumber",
+      "accounts": [
+        {
+          "name": "currentTierNumberAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
       "args": []
     }
   ],
@@ -537,6 +578,18 @@ export type SolanaContracts = {
           }
         ]
       }
+    },
+    {
+      "name": "currentTierNumber",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "currentTierNumber",
+            "type": "u64"
+          }
+        ]
+      }
     }
   ],
   "events": [
@@ -551,7 +604,7 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "AddWhitelistEvent",
+      "name": "WhitelistEvent",
       "fields": [
         {
           "name": "whitelistAddress",
@@ -675,6 +728,16 @@ export type SolanaContracts = {
       "fields": [
         {
           "name": "totalNodesHeld",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "GetCurrentTierNumberEvent",
+      "fields": [
+        {
+          "name": "currentTierNumber",
           "type": "u64",
           "index": false
         }
@@ -738,6 +801,11 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
+          "name": "currentTierNumberAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -748,7 +816,12 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "addWhitelistAddresses",
@@ -845,6 +918,11 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "totalNodesHeldAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "currentTierNumberAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1160,6 +1238,32 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "getCurrentTierNumber",
+      "accounts": [
+        {
+          "name": "currentTierNumberAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
       "args": []
     }
   ],
@@ -1259,6 +1363,18 @@ export const IDL: SolanaContracts = {
           }
         ]
       }
+    },
+    {
+      "name": "currentTierNumber",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "currentTierNumber",
+            "type": "u64"
+          }
+        ]
+      }
     }
   ],
   "events": [
@@ -1273,7 +1389,7 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "AddWhitelistEvent",
+      "name": "WhitelistEvent",
       "fields": [
         {
           "name": "whitelistAddress",
@@ -1397,6 +1513,16 @@ export const IDL: SolanaContracts = {
       "fields": [
         {
           "name": "totalNodesHeld",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "GetCurrentTierNumberEvent",
+      "fields": [
+        {
+          "name": "currentTierNumber",
           "type": "u64",
           "index": false
         }
