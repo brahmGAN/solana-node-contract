@@ -1,5 +1,5 @@
 use anchor_lang::{prelude::*, solana_program::system_instruction};
-use std::{mem::size_of};
+use std::mem::size_of;
 
 declare_id!("6kgSdKsaQGrWMVrCgp7RmXX7pnqVnDZ5JDJjTDvC2j62");
 
@@ -122,7 +122,7 @@ pub mod solana_contracts
         }
 
         total_nodes_held_account.total_nodes_held += quantity;
-        tier_limit_account.tier_limit -= 1; 
+        tier_limit_account.tier_limit -= quantity; 
 
         if tier_limit_account.tier_limit == 0
         {
