@@ -168,16 +168,12 @@ export type SolanaContracts = {
           "type": "u64"
         },
         {
-          "name": "amounts",
-          "type": "u64"
+          "name": "discountCode",
+          "type": "string"
         },
         {
           "name": "tierNumber",
           "type": "u64"
-        },
-        {
-          "name": "discountCode",
-          "type": "string"
         }
       ]
     },
@@ -726,6 +722,11 @@ export type SolanaContracts = {
     {
       "name": "TotalNodesHeldEvent",
       "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
         {
           "name": "totalNodesHeld",
           "type": "u64",
@@ -953,16 +954,12 @@ export const IDL: SolanaContracts = {
           "type": "u64"
         },
         {
-          "name": "amounts",
-          "type": "u64"
+          "name": "discountCode",
+          "type": "string"
         },
         {
           "name": "tierNumber",
           "type": "u64"
-        },
-        {
-          "name": "discountCode",
-          "type": "string"
         }
       ]
     },
@@ -1511,6 +1508,11 @@ export const IDL: SolanaContracts = {
     {
       "name": "TotalNodesHeldEvent",
       "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
         {
           "name": "totalNodesHeld",
           "type": "u64",

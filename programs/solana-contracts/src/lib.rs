@@ -57,7 +57,7 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, amounts:u64, tier_number: u64, discount_code: String) -> Result<()>
+    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, discount_code: String, tier_number: u64) -> Result<()>
     {
         let tier_limit_account = &mut ctx.accounts.tier_limit_account; 
         let early_sale_status_account = &ctx.accounts.early_sale_status_account; 
@@ -67,23 +67,22 @@ pub mod solana_contracts
         let discount_code_account = &ctx.accounts.discount_code_account;
         let current_tier_number_account = &mut ctx.accounts.current_tier_number_account;
         let amount:u64;
-        let final_tier_price:u64;
+        let tier_price:u64;
 
         if discount_code_account.discount_code == true 
         {
-            amount = (amounts * 10) / 100;
-            final_tier_price =  (tier_price_account.tier_price * 10 ) / 100; 
+            tier_price =  (tier_price_account.tier_price * 10 ) / 100; 
         }
         else
         {
-            amount = amounts;
-            final_tier_price = tier_price_account.tier_price;
+            tier_price = tier_price_account.tier_price;
         }
+
+        amount = quantity * tier_price;
 
         require!(tier_number < 12 && tier_number > 0, ErrorCode::TierLimit); 
         require!(quantity <= tier_limit_account.tier_limit, ErrorCode::QuantityOutOfBounds);
-        require!(amount == (quantity * final_tier_price), ErrorCode::IncorrectAmount);  
-        require!(ctx.accounts.payer.lamports() >= amount, ErrorCode::InsufficientBalance);
+        require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
         if early_sale_status_account.early_sale_status
         {
             require!(whitelist_account.in_early_sale,ErrorCode::EarlySale);
@@ -121,8 +120,10 @@ pub mod solana_contracts
                  ],
             )?;
         }
-        total_nodes_held_account.total_nodes_held += 1;
+
+        total_nodes_held_account.total_nodes_held += quantity;
         tier_limit_account.tier_limit -= 1; 
+
         if tier_limit_account.tier_limit == 0
         {
             current_tier_number_account.current_tier_number += 1;
@@ -239,8 +240,10 @@ pub mod solana_contracts
     {
         let nodes_bought_account = &ctx.accounts.nodes_bought_account;
         emit!(TotalNodesHeldEvent{
+            user: user,
             total_nodes_held: nodes_bought_account.total_nodes_held
         });
+        msg!("User:{}",user);
         msg!("Total nodes held:{}",nodes_bought_account.total_nodes_held);
         Ok(())
     }
@@ -781,6 +784,7 @@ pub struct TierPriceEvent
 #[event]
 pub struct TotalNodesHeldEvent
 {
+    pub user: Pubkey,
     pub total_nodes_held: u64
 }
 
