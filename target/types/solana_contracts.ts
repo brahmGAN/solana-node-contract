@@ -168,12 +168,12 @@ export type SolanaContracts = {
           "type": "u64"
         },
         {
-          "name": "discountCode",
+          "name": "tierNumber",
           "type": "string"
         },
         {
-          "name": "tierNumber",
-          "type": "u64"
+          "name": "discountCode",
+          "type": "string"
         }
       ]
     },
@@ -242,7 +242,7 @@ export type SolanaContracts = {
         },
         {
           "name": "tierNumber",
-          "type": "u64"
+          "type": "string"
         }
       ]
     },
@@ -277,7 +277,7 @@ export type SolanaContracts = {
         },
         {
           "name": "tierNumber",
-          "type": "u64"
+          "type": "string"
         }
       ]
     },
@@ -327,7 +327,7 @@ export type SolanaContracts = {
       "args": [
         {
           "name": "tierNumber",
-          "type": "u64"
+          "type": "string"
         }
       ]
     },
@@ -353,7 +353,7 @@ export type SolanaContracts = {
       "args": [
         {
           "name": "tierNumber",
-          "type": "u64"
+          "type": "string"
         }
       ]
     },
@@ -954,12 +954,12 @@ export const IDL: SolanaContracts = {
           "type": "u64"
         },
         {
-          "name": "discountCode",
+          "name": "tierNumber",
           "type": "string"
         },
         {
-          "name": "tierNumber",
-          "type": "u64"
+          "name": "discountCode",
+          "type": "string"
         }
       ]
     },
@@ -1028,7 +1028,7 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "tierNumber",
-          "type": "u64"
+          "type": "string"
         }
       ]
     },
@@ -1063,7 +1063,7 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "tierNumber",
-          "type": "u64"
+          "type": "string"
         }
       ]
     },
@@ -1113,7 +1113,7 @@ export const IDL: SolanaContracts = {
       "args": [
         {
           "name": "tierNumber",
-          "type": "u64"
+          "type": "string"
         }
       ]
     },
@@ -1139,7 +1139,7 @@ export const IDL: SolanaContracts = {
       "args": [
         {
           "name": "tierNumber",
-          "type": "u64"
+          "type": "string"
         }
       ]
     },

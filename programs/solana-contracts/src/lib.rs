@@ -57,7 +57,7 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, discount_code: String, tier_number: u64) -> Result<()>
+    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, tier_number: String, discount_code: String) -> Result<()>
     {
         let tier_limit_account = &mut ctx.accounts.tier_limit_account; 
         let early_sale_status_account = &ctx.accounts.early_sale_status_account; 
@@ -77,10 +77,25 @@ pub mod solana_contracts
         {
             tier_price = tier_price_account.tier_price;
         }
-
         amount = quantity * tier_price;
 
-        require!(tier_number < 12 && tier_number > 0, ErrorCode::TierLimit); 
+        let tier_num:u64 = match tier_number.as_str()
+        {
+            "one" => 1, 
+            "two" => 2, 
+            "three" => 3,
+            "four" => 4,
+            "five" => 5,
+            "six" => 6,
+            "seven" => 7,
+            "eight" => 8,
+            "nine" => 9,
+            "ten" => 10,
+            "eleven" => 11,
+            _ => 69,    
+        };
+
+        require!(tier_num != 69,ErrorCode::TierLimit);
         require!(quantity <= tier_limit_account.tier_limit, ErrorCode::QuantityOutOfBounds);
         require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
         if early_sale_status_account.early_sale_status
@@ -133,7 +148,7 @@ pub mod solana_contracts
             user: *ctx.accounts.payer.key,
             quantity: quantity,
             amount: amount,
-            tier_number: tier_number,
+            tier_number: tier_num,
             total_nodes_held: total_nodes_held_account.total_nodes_held,
             pending_tier_limit: tier_limit_account.tier_limit,
             discount_code: discount_code
@@ -161,31 +176,61 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_tier_limit(ctx: Context<SetTierLimitContext>,new_tier_limit: u64,tier_number: u64) -> Result<()>
+    pub fn set_tier_limit(ctx: Context<SetTierLimitContext>,new_tier_limit: u64,tier_number: String) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let tier_num:u64 = match tier_number.as_str()
+        {
+            "one" => 1, 
+            "two" => 2, 
+            "three" => 3,
+            "four" => 4,
+            "five" => 5,
+            "six" => 6,
+            "seven" => 7,
+            "eight" => 8,
+            "nine" => 9,
+            "ten" => 10,
+            "eleven" => 11,
+            _ => 69,    
+        };
         let tier_limit_account = &mut ctx.accounts.tier_limit_account;
-        require!(tier_number < 12 && tier_number > 0,ErrorCode::TierLimit);
+        require!(tier_num != 69,ErrorCode::TierLimit);
         tier_limit_account.tier_limit = new_tier_limit;
         emit!(TierLimitEvent{
             tier_limit: tier_limit_account.tier_limit,
-            tier_number: tier_number
+            tier_number: tier_num
         });
         msg!("tier_limit:{}",tier_limit_account.tier_limit);
         msg!("tier_number:{}",tier_number);
         Ok(())
     }
 
-    pub fn set_tier_price(ctx: Context<SetTierPriceContext>,new_price:u64,tier_number: u64) -> Result<()>
+    pub fn set_tier_price(ctx: Context<SetTierPriceContext>,new_price:u64,tier_number: String) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let tier_price_account = &mut ctx.accounts.tier_price_account; 
         tier_price_account.tier_price = new_price;
+        let tier_num:u64 = match tier_number.as_str()
+        {
+            "one" => 1, 
+            "two" => 2, 
+            "three" => 3,
+            "four" => 4,
+            "five" => 5,
+            "six" => 6,
+            "seven" => 7,
+            "eight" => 8,
+            "nine" => 9,
+            "ten" => 10,
+            "eleven" => 11,
+            _ => 69,    
+        };
         emit!(TierPriceEvent{
             tier_price: tier_price_account.tier_price,
-            tier_number: tier_number
+            tier_number: tier_num
         });
         msg!("tier_limit:{}",tier_price_account.tier_price);
         msg!("tier_number:{}",tier_number);
@@ -204,25 +249,57 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn get_tier_limit(ctx: Context<GetTierLimitContext>,tier_number: u64) -> Result<()>
+    pub fn get_tier_limit(ctx: Context<GetTierLimitContext>,tier_number: String) -> Result<()>
     {
         let tier_limit_account = &ctx.accounts.tier_limit_account;
+        let tier_num:u64 = match tier_number.as_str()
+        {
+            "one" => 1, 
+            "two" => 2, 
+            "three" => 3,
+            "four" => 4,
+            "five" => 5,
+            "six" => 6,
+            "seven" => 7,
+            "eight" => 8,
+            "nine" => 9,
+            "ten" => 10,
+            "eleven" => 11,
+            _ => 69,    
+        };
         emit!(TierLimitEvent{
             tier_limit: tier_limit_account.tier_limit,
-            tier_number: tier_number
+            tier_number: tier_num
         });
-        msg!("Tier limit:{}\nTier number:{}",tier_limit_account.tier_limit,tier_number);
+        msg!("Tier limit:{}",tier_limit_account.tier_limit);
+        msg!("Tier number:{}",tier_num);
         Ok(())
     }
 
-    pub fn get_tier_price(ctx: Context<GetTierPriceContext>,tier_number: u64) -> Result<()>
+    pub fn get_tier_price(ctx: Context<GetTierPriceContext>,tier_number: String) -> Result<()>
     {
         let tier_price_account = &ctx.accounts.tier_price_account;
+        let tier_num:u64 = match tier_number.as_str()
+        {
+            "one" => 1, 
+            "two" => 2, 
+            "three" => 3,
+            "four" => 4,
+            "five" => 5,
+            "six" => 6,
+            "seven" => 7,
+            "eight" => 8,
+            "nine" => 9,
+            "ten" => 10,
+            "eleven" => 11,
+            _ => 69,    
+        };
         emit!(TierPriceEvent{
             tier_price: tier_price_account.tier_price,
-            tier_number: tier_number
+            tier_number: tier_num
         });
-        msg!("Tier price:{}\nTier number:{}",tier_price_account.tier_price,tier_number);
+        msg!("Tier price:{}",tier_price_account.tier_price);
+        msg!("Tier number:{}",tier_num);
         Ok(())
     }
 
@@ -372,13 +449,13 @@ pub struct DiscountCodeContext<'info>
 }
 
 #[derive(Accounts)] 
-#[instruction(tier_number:u64, discount_code:String)]
+#[instruction(tier_number:String, discount_code:String)]
 pub struct BuyNodeContext<'info> 
 {
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [&tier_number.to_le_bytes()], 
+        seeds = [tier_number.as_bytes()], 
         bump,
         space = size_of::<TierLimit>() + 8
     )]
@@ -396,7 +473,7 @@ pub struct BuyNodeContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [&tier_number.to_le_bytes()], 
+        seeds = [tier_number.as_bytes()],
         bump,
         space = size_of::<TierPrice>() + 8
     )]
@@ -473,7 +550,7 @@ pub struct SetEarlySaleContext<'info>
 }
 
 #[derive(Accounts)]
-#[instruction(tier_number:u64)]
+#[instruction(tier_number:String)]
 pub struct SetTierLimitContext<'info>
 {
     #[account(
@@ -488,7 +565,7 @@ pub struct SetTierLimitContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [&tier_number.to_le_bytes()], 
+        seeds = [tier_number.as_bytes()],
         bump,
         space = size_of::<TierLimit>() + 8
     )]
@@ -500,7 +577,7 @@ pub struct SetTierLimitContext<'info>
 }
 
 #[derive(Accounts)]
-#[instruction(tier_number:u64)]
+#[instruction(tier_number:String)]
 pub struct SetTierPriceContext<'info>
 {
     #[account(
@@ -515,7 +592,7 @@ pub struct SetTierPriceContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [&tier_number.to_le_bytes()], 
+        seeds = [tier_number.as_bytes()],
         bump,
         space = size_of::<TierPrice>() + 8
     )]
@@ -544,13 +621,13 @@ pub struct GetEarlySaleStatusContext<'info>
 }
 
 #[derive(Accounts)]
-#[instruction(tier_number:u64)]
+#[instruction(tier_number:String)]
 pub struct GetTierLimitContext<'info>
 { 
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [&tier_number.to_le_bytes()], 
+        seeds = [tier_number.as_bytes()],
         bump,
         space = size_of::<TierLimit>() + 8
     )]
@@ -562,13 +639,13 @@ pub struct GetTierLimitContext<'info>
 }
 
 #[derive(Accounts)]
-#[instruction(tier_number:u64)]
+#[instruction(tier_number:String)]
 pub struct GetTierPriceContext<'info>
 {
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [&tier_number.to_le_bytes()], 
+        seeds = [tier_number.as_bytes()],
         bump,
         space = size_of::<TierPrice>() + 8
     )]
