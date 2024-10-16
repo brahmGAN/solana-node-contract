@@ -237,12 +237,12 @@ export type SolanaContracts = {
       ],
       "args": [
         {
-          "name": "newTierLimit",
-          "type": "u64"
-        },
-        {
           "name": "tierNumber",
           "type": "string"
+        },
+        {
+          "name": "newTierLimit",
+          "type": "u64"
         }
       ]
     },
@@ -272,12 +272,12 @@ export type SolanaContracts = {
       ],
       "args": [
         {
-          "name": "newPrice",
-          "type": "u64"
-        },
-        {
           "name": "tierNumber",
           "type": "string"
+        },
+        {
+          "name": "newPrice",
+          "type": "u64"
         }
       ]
     },
@@ -780,6 +780,11 @@ export type SolanaContracts = {
       "code": 6006,
       "name": "InsufficientBalance",
       "msg": "Insufficient Balance!"
+    },
+    {
+      "code": 6007,
+      "name": "IncorrectTier",
+      "msg": "Incorrect Tier!"
     }
   ]
 };
@@ -1023,12 +1028,12 @@ export const IDL: SolanaContracts = {
       ],
       "args": [
         {
-          "name": "newTierLimit",
-          "type": "u64"
-        },
-        {
           "name": "tierNumber",
           "type": "string"
+        },
+        {
+          "name": "newTierLimit",
+          "type": "u64"
         }
       ]
     },
@@ -1058,12 +1063,12 @@ export const IDL: SolanaContracts = {
       ],
       "args": [
         {
-          "name": "newPrice",
-          "type": "u64"
-        },
-        {
           "name": "tierNumber",
           "type": "string"
+        },
+        {
+          "name": "newPrice",
+          "type": "u64"
         }
       ]
     },
@@ -1566,6 +1571,11 @@ export const IDL: SolanaContracts = {
       "code": 6006,
       "name": "InsufficientBalance",
       "msg": "Insufficient Balance!"
+    },
+    {
+      "code": 6007,
+      "name": "IncorrectTier",
+      "msg": "Incorrect Tier!"
     }
   ]
 };

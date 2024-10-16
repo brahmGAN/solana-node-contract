@@ -96,6 +96,7 @@ pub mod solana_contracts
         };
 
         require!(tier_num != 69,ErrorCode::TierLimit);
+        require!(tier_num == current_tier_number_account.current_tier_number,ErrorCode::IncorrectTier);
         require!(quantity <= tier_limit_account.tier_limit, ErrorCode::QuantityOutOfBounds);
         require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
         if early_sale_status_account.early_sale_status
@@ -176,7 +177,7 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_tier_limit(ctx: Context<SetTierLimitContext>,new_tier_limit: u64,tier_number: String) -> Result<()>
+    pub fn set_tier_limit(ctx: Context<SetTierLimitContext>,tier_number: String, new_tier_limit: u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
@@ -207,7 +208,7 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_tier_price(ctx: Context<SetTierPriceContext>,new_price:u64,tier_number: String) -> Result<()>
+    pub fn set_tier_price(ctx: Context<SetTierPriceContext>,tier_number: String, new_price:u64) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
@@ -498,7 +499,7 @@ pub struct BuyNodeContext<'info>
     pub total_nodes_held_account: Account<'info, TotalNodesHeld>,
 
     #[account(
-        init, 
+        init_if_needed, 
         payer = payer, 
         seeds = [b"current_tier_number_account"], 
         bump,
@@ -731,7 +732,7 @@ pub struct GetWhitelistContext<'info>
 pub struct GetCurrentTierNumberContext<'info>
 {
     #[account(
-        init, 
+        init_if_needed, 
         payer = payer, 
         seeds = [b"current_tier_number_account"], 
         bump,
@@ -895,4 +896,7 @@ pub enum ErrorCode
 
     #[msg("Insufficient Balance!")]
     InsufficientBalance,
+
+    #[msg("Incorrect Tier!")]
+    IncorrectTier,
 }
