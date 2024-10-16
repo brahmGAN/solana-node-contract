@@ -164,16 +164,16 @@ export type SolanaContracts = {
       ],
       "args": [
         {
-          "name": "quantity",
-          "type": "u64"
-        },
-        {
           "name": "tierNumber",
           "type": "string"
         },
         {
           "name": "discountCode",
           "type": "string"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
         }
       ]
     },
@@ -955,16 +955,16 @@ export const IDL: SolanaContracts = {
       ],
       "args": [
         {
-          "name": "quantity",
-          "type": "u64"
-        },
-        {
           "name": "tierNumber",
           "type": "string"
         },
         {
           "name": "discountCode",
           "type": "string"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
         }
       ]
     },

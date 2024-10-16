@@ -57,7 +57,7 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn buy_node(ctx: Context<BuyNodeContext>, quantity:u64, tier_number: String, discount_code: String) -> Result<()>
+    pub fn buy_node(ctx: Context<BuyNodeContext>, tier_number:String, discount_code:String, quantity:u64) -> Result<()>
     {
         let tier_limit_account = &mut ctx.accounts.tier_limit_account; 
         let early_sale_status_account = &ctx.accounts.early_sale_status_account; 
