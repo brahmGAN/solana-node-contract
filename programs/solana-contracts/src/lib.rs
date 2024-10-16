@@ -316,13 +316,13 @@ pub mod solana_contracts
 
     pub fn get_total_nodes_held(ctx: Context<GetTotalNodesHeldContext>, user: Pubkey) -> Result<()> 
     {
-        let nodes_bought_account = &ctx.accounts.nodes_bought_account;
+        let total_nodes_held_account = &ctx.accounts.total_nodes_held_account;
         emit!(TotalNodesHeldEvent{
             user: user,
-            total_nodes_held: nodes_bought_account.total_nodes_held
+            total_nodes_held: total_nodes_held_account.total_nodes_held
         });
         msg!("User:{}",user);
-        msg!("Total nodes held:{}",nodes_bought_account.total_nodes_held);
+        msg!("Total nodes held:{}",total_nodes_held_account.total_nodes_held);
         Ok(())
     }
 
@@ -411,7 +411,7 @@ pub struct AddWhitelistContext<'info>
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [user.key().as_ref()], 
+        seeds = [user.key().as_ref(),b"whitelist_account"], 
         bump,
         space = size_of::<InEarlySale>() + 8
     )]
@@ -456,7 +456,7 @@ pub struct BuyNodeContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [tier_number.as_bytes()], 
+        seeds = [tier_number.as_bytes(),b"tier_limit_account"], 
         bump,
         space = size_of::<TierLimit>() + 8
     )]
@@ -474,7 +474,7 @@ pub struct BuyNodeContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [tier_number.as_bytes()],
+        seeds = [tier_number.as_bytes(),b"tier_price_account"],
         bump,
         space = size_of::<TierPrice>() + 8
     )]
@@ -483,7 +483,7 @@ pub struct BuyNodeContext<'info>
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [payer.key().as_ref()], 
+        seeds = [payer.key().as_ref(),b"whitelist_account"], 
         bump,
         space = size_of::<InEarlySale>() + 8
     )]
@@ -492,7 +492,7 @@ pub struct BuyNodeContext<'info>
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [payer.key.as_ref()], 
+        seeds = [payer.key.as_ref(),b"total_nodes_held_account"], 
         bump,
         space = size_of::<TotalNodesHeld>() + 8
     )]
@@ -566,7 +566,7 @@ pub struct SetTierLimitContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [tier_number.as_bytes()],
+        seeds = [tier_number.as_bytes(),b"tier_limit_account"],
         bump,
         space = size_of::<TierLimit>() + 8
     )]
@@ -593,7 +593,7 @@ pub struct SetTierPriceContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [tier_number.as_bytes()],
+        seeds = [tier_number.as_bytes(),b"tier_price_account"],
         bump,
         space = size_of::<TierPrice>() + 8
     )]
@@ -628,7 +628,7 @@ pub struct GetTierLimitContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [tier_number.as_bytes()],
+        seeds = [tier_number.as_bytes(),b"tier_limit_account"],
         bump,
         space = size_of::<TierLimit>() + 8
     )]
@@ -646,7 +646,7 @@ pub struct GetTierPriceContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [tier_number.as_bytes()],
+        seeds = [tier_number.as_bytes(),b"tier_price_account"],
         bump,
         space = size_of::<TierPrice>() + 8
     )]
@@ -681,11 +681,11 @@ pub struct GetTotalNodesHeldContext<'info>
     #[account(
         init_if_needed, 
         payer = payer, 
-        seeds = [user.as_ref()], 
+        seeds = [user.as_ref(),b"total_nodes_held_account"], 
         bump,
         space = size_of::<TotalNodesHeld>() + 8
     )]
-    pub nodes_bought_account: Account<'info, TotalNodesHeld>,
+    pub total_nodes_held_account: Account<'info, TotalNodesHeld>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -717,7 +717,7 @@ pub struct GetWhitelistContext<'info>
     #[account(
         init_if_needed,
         payer = payer, 
-        seeds = [user.key().as_ref()],
+        seeds = [user.key().as_ref(),b"whitelist_account"],
         bump,
         space = size_of::<InEarlySale>() + 8
     )]

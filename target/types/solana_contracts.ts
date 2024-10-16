@@ -382,7 +382,7 @@ export type SolanaContracts = {
       "name": "getTotalNodesHeld",
       "accounts": [
         {
-          "name": "nodesBoughtAccount",
+          "name": "totalNodesHeldAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1173,7 +1173,7 @@ export const IDL: SolanaContracts = {
       "name": "getTotalNodesHeld",
       "accounts": [
         {
-          "name": "nodesBoughtAccount",
+          "name": "totalNodesHeldAccount",
           "isMut": true,
           "isSigner": false
         },
