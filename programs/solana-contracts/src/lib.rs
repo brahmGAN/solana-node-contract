@@ -233,7 +233,7 @@ pub mod solana_contracts
             tier_price: tier_price_account.tier_price,
             tier_number: tier_num
         });
-        msg!("tier_limit:{}",tier_price_account.tier_price);
+        msg!("tier_price:{}",tier_price_account.tier_price);
         msg!("tier_number:{}",tier_number);
         Ok(())
     }
