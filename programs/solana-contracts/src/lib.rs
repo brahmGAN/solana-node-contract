@@ -449,6 +449,32 @@ pub struct DiscountCodeContext<'info>
     pub system_program: Program<'info,System>,
 }
 
+#[derive(Accounts)]
+pub struct SetFundsHandlerContext<'info>
+{
+    #[account(
+        init_if_needed, 
+        payer = payer, 
+        seeds = [b"owner"], 
+        bump,
+        space = size_of::<Owner>() + 8
+    )]
+    pub owner_account: Account<'info, Owner>,  
+
+    #[account(
+        init_if_needed, 
+        payer = payer, 
+        seeds = [b"funds_handler_account"],
+        bump,
+        space = size_of::<FundsHandler>() + 8
+    )]
+    pub funds_handler_account: Account<'info,FundsHandler>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
 #[derive(Accounts)] 
 #[instruction(tier_number:String, discount_code:String)]
 pub struct BuyNodeContext<'info> 
@@ -745,6 +771,23 @@ pub struct GetCurrentTierNumberContext<'info>
     pub system_program: Program<'info,System>,
 }
 
+#[derive(Accounts)]
+pub struct GetFundsHandlerContext<'info>
+{
+    #[account(
+        init_if_needed, 
+        payer = payer, 
+        seeds = [b"funds_handler_account"],
+        bump,
+        space = size_of::<FundsHandler>() + 8
+    )]
+    pub funds_handler_account: Account<'info,FundsHandler>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
 #[account]
 pub struct Owner 
 {
@@ -755,6 +798,12 @@ pub struct Owner
 pub struct OwnerInit
 {
     pub owner_initialized:bool
+}
+
+#[account]
+pub struct FundsHandler 
+{
+    pub funds_handler: Pubkey
 }
 
 #[account]
