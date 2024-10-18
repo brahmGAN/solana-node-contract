@@ -8,20 +8,40 @@ pub mod solana_contracts
 {
     use super::*;
 
-    pub fn initialize(ctx: Context<InitializeContext>, tier_number: u64) -> Result<()> 
+    pub fn initialize(ctx: Context<InitializeContext>, tier_number: u64, funds_handler: Pubkey) -> Result<()> 
     {
         let owner_account = &mut ctx.accounts.owner_account;
         let owner_init_account = &mut ctx.accounts.owner_init_account;
-        let current_tier_number_account = &mut ctx.accounts.current_tier_number_account; 
+        let current_tier_number_account = &mut ctx.accounts.current_tier_number_account;
+        let funds_handler_account = &mut ctx.accounts.funds_handler_account;  
         require! (!owner_init_account.owner_initialized, ErrorCode::AlreadyInitialized);
         owner_account.owner_pubkey = ctx.accounts.payer.key();
         owner_init_account.owner_initialized = true; 
         current_tier_number_account.current_tier_number = tier_number; 
-        emit!(OwnerEvent{
-            owner: owner_account.owner_pubkey.key()
+        funds_handler_account.funds_handler = funds_handler; 
+        emit!(InitializeEvent{
+            owner: owner_account.owner_pubkey.key(), 
+            owner_initialized: owner_init_account.owner_initialized, 
+            current_tier_number: current_tier_number_account.current_tier_number, 
+            funds_handler: funds_handler_account.funds_handler.key() 
         });
-        msg!("Owner:initialize: {}",owner_account.owner_pubkey);
+        msg!("Owner: {}",owner_account.owner_pubkey);
         msg!("Owner init status: {}",owner_init_account.owner_initialized);
+        msg!("Current tier number: {}", current_tier_number_account.current_tier_number);
+        msg!("Funds handler: {}", funds_handler_account.funds_handler);
+        Ok(())
+    }
+
+    pub fn set_funds_handler(ctx: Context<SetFundsHandlerContext>, funds_handler: Pubkey) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account;
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized); 
+        let funds_handler_account = &mut ctx.accounts.funds_handler_account; 
+        funds_handler_account.funds_handler = funds_handler; 
+        emit!(FundsHandlerEvent{
+            funds_handler: funds_handler_account.funds_handler
+        });
+        msg!("Funds handler:{}",funds_handler_account.funds_handler);
         Ok(())
     }
 
@@ -66,6 +86,8 @@ pub mod solana_contracts
         let total_nodes_held_account = &mut ctx.accounts.total_nodes_held_account;
         let discount_code_account = &ctx.accounts.discount_code_account;
         let current_tier_number_account = &mut ctx.accounts.current_tier_number_account;
+        let funds_handler_account = &ctx.accounts.funds_handler_account; 
+        let funds_handler_pubkey = &ctx.accounts.funds_handler_pubkey; 
         let amount:u64;
         let tier_price:u64;
 
@@ -95,6 +117,7 @@ pub mod solana_contracts
             _ => 69,    
         };
 
+        require!(funds_handler_account.funds_handler.key() == funds_handler_pubkey.key(), ErrorCode::UnauthorizedFundsHandler);
         require!(tier_num != 69,ErrorCode::TierLimit);
         require!(tier_num == current_tier_number_account.current_tier_number,ErrorCode::IncorrectTier);
         require!(quantity <= tier_limit_account.tier_limit, ErrorCode::QuantityOutOfBounds);
@@ -105,7 +128,7 @@ pub mod solana_contracts
             let ix = system_instruction::transfer
             (   
                 &ctx.accounts.payer.key(), 
-                &ctx.accounts.funds_handler_account.key(), 
+                &ctx.accounts.funds_handler_pubkey.key(), 
                 amount 
             );
 
@@ -114,7 +137,7 @@ pub mod solana_contracts
                 &ix, 
                 &[
                     ctx.accounts.payer.to_account_info(),
-                    ctx.accounts.funds_handler_account.to_account_info(), 
+                    ctx.accounts.funds_handler_pubkey.to_account_info(), 
                  ],
             )?;       
         }
@@ -123,7 +146,7 @@ pub mod solana_contracts
             let ix = system_instruction::transfer
             (   
                 &ctx.accounts.payer.key(), 
-                &ctx.accounts.funds_handler_account.key(), 
+                &ctx.accounts.funds_handler_pubkey.key(), 
                 amount 
             );
 
@@ -132,7 +155,7 @@ pub mod solana_contracts
                 &ix, 
                 &[
                     ctx.accounts.payer.to_account_info(),
-                    ctx.accounts.funds_handler_account.to_account_info(),        
+                    ctx.accounts.funds_handler_pubkey.to_account_info(),        
                  ],
             )?;
         }
@@ -203,8 +226,8 @@ pub mod solana_contracts
             tier_limit: tier_limit_account.tier_limit,
             tier_number: tier_num
         });
+        msg!("tier_number:{}",tier_num);
         msg!("tier_limit:{}",tier_limit_account.tier_limit);
-        msg!("tier_number:{}",tier_number);
         Ok(())
     }
 
@@ -233,8 +256,8 @@ pub mod solana_contracts
             tier_price: tier_price_account.tier_price,
             tier_number: tier_num
         });
+        msg!("tier_number:{}",tier_num);
         msg!("tier_price:{}",tier_price_account.tier_price);
-        msg!("tier_number:{}",tier_number);
         Ok(())
     }
 
@@ -272,8 +295,8 @@ pub mod solana_contracts
             tier_limit: tier_limit_account.tier_limit,
             tier_number: tier_num
         });
-        msg!("Tier limit:{}",tier_limit_account.tier_limit);
         msg!("Tier number:{}",tier_num);
+        msg!("Tier limit:{}",tier_limit_account.tier_limit);
         Ok(())
     }
 
@@ -299,8 +322,8 @@ pub mod solana_contracts
             tier_price: tier_price_account.tier_price,
             tier_number: tier_num
         });
-        msg!("Tier price:{}",tier_price_account.tier_price);
         msg!("Tier number:{}",tier_num);
+        msg!("Tier price:{}",tier_price_account.tier_price);
         Ok(())
     }
 
@@ -310,7 +333,17 @@ pub mod solana_contracts
         emit!(OwnerEvent{
             owner: owner_account.owner_pubkey.key()
         });
-        msg!("owner:getOwner: {}",owner_account.owner_pubkey);
+        msg!("Owner: {}",owner_account.owner_pubkey);
+        Ok(())
+    }
+
+    pub fn get_funds_handler(ctx: Context<GetFundsHandlerContext>) -> Result<()> 
+    {
+        let funds_handler_account = &ctx.accounts.funds_handler_account; 
+        emit!(FundsHandlerEvent{
+            funds_handler: funds_handler_account.funds_handler.key() 
+        });
+        msg!("Funds handler: {}",funds_handler_account.funds_handler.key());
         Ok(())
     }
 
@@ -390,9 +423,44 @@ pub struct InitializeContext<'info>
     )]
     pub current_tier_number_account: Account<'info, CurrentTierNumber>,  
 
+    #[account(
+        init_if_needed, 
+        payer = payer, 
+        seeds = [b"funds_handler_account"],
+        bump,
+        space = size_of::<FundsHandler>() + 8
+    )]
+    pub funds_handler_account: Account<'info,FundsHandler>,
+
     #[account(mut)]
     pub payer: Signer<'info>, 
     pub system_program: Program<'info, System>, 
+}
+
+#[derive(Accounts)]
+pub struct SetFundsHandlerContext<'info>
+{
+    #[account(
+        init_if_needed, 
+        payer = payer, 
+        seeds = [b"owner"], 
+        bump,
+        space = size_of::<Owner>() + 8
+    )]
+    pub owner_account: Account<'info, Owner>,  
+
+    #[account(
+        init_if_needed, 
+        payer = payer, 
+        seeds = [b"funds_handler_account"],
+        bump,
+        space = size_of::<FundsHandler>() + 8
+    )]
+    pub funds_handler_account: Account<'info,FundsHandler>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
 }
 
 #[derive(Accounts)]
@@ -443,32 +511,6 @@ pub struct DiscountCodeContext<'info>
         space = size_of::<DiscountCode>() + 8
     )]
     pub discount_code_account: Account<'info,DiscountCode>,
-
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    pub system_program: Program<'info,System>,
-}
-
-#[derive(Accounts)]
-pub struct SetFundsHandlerContext<'info>
-{
-    #[account(
-        init_if_needed, 
-        payer = payer, 
-        seeds = [b"owner"], 
-        bump,
-        space = size_of::<Owner>() + 8
-    )]
-    pub owner_account: Account<'info, Owner>,  
-
-    #[account(
-        init_if_needed, 
-        payer = payer, 
-        seeds = [b"funds_handler_account"],
-        bump,
-        space = size_of::<FundsHandler>() + 8
-    )]
-    pub funds_handler_account: Account<'info,FundsHandler>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -533,8 +575,17 @@ pub struct BuyNodeContext<'info>
     )]
     pub current_tier_number_account: Account<'info, CurrentTierNumber>,
 
+    #[account(
+        init_if_needed, 
+        payer = payer, 
+        seeds = [b"funds_handler_account"],
+        bump,
+        space = size_of::<FundsHandler>() + 8
+    )]
+    pub funds_handler_account: Account<'info,FundsHandler>,
+
     #[account(mut)]
-    pub funds_handler_account: SystemAccount<'info>,
+    pub funds_handler_pubkey: SystemAccount<'info>,
 
     #[account(
         init_if_needed, 
@@ -850,10 +901,25 @@ pub struct CurrentTierNumber
 
 //EVENTS
 
+#[event] 
+pub struct InitializeEvent 
+{
+    pub owner: Pubkey, 
+    pub owner_initialized: bool, 
+    pub current_tier_number: u64, 
+    pub funds_handler: Pubkey 
+}
+
 #[event]
 pub struct OwnerEvent
 {
     pub owner: Pubkey
+}
+
+#[event]
+pub struct FundsHandlerEvent
+{
+    pub funds_handler: Pubkey
 }
 
 #[event]
@@ -880,12 +946,6 @@ pub struct NodeBoughtEvent
     pub total_nodes_held: u64,
     pub pending_tier_limit: u64,
     pub discount_code: String
-}
-
-#[event]
-pub struct FundsHandlerEvent
-{
-    pub funds_handler: Pubkey
 }
 
 #[event]
@@ -948,4 +1008,7 @@ pub enum ErrorCode
 
     #[msg("Incorrect Tier!")]
     IncorrectTier,
+
+    #[msg("Unauthorized Funds Handler!")]
+    UnauthorizedFundsHandler,
 }

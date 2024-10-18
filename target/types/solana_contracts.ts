@@ -21,6 +21,11 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
+          "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -35,6 +40,41 @@ export type SolanaContracts = {
         {
           "name": "tierNumber",
           "type": "u64"
+        },
+        {
+          "name": "fundsHandler",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setFundsHandler",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "fundsHandler",
+          "type": "publicKey"
         }
       ]
     },
@@ -143,6 +183,11 @@ export type SolanaContracts = {
         },
         {
           "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsHandlerPubkey",
           "isMut": true,
           "isSigner": false
         },
@@ -379,6 +424,27 @@ export type SolanaContracts = {
       "args": []
     },
     {
+      "name": "getFundsHandler",
+      "accounts": [
+        {
+          "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "getTotalNodesHeld",
       "accounts": [
         {
@@ -504,6 +570,18 @@ export type SolanaContracts = {
       }
     },
     {
+      "name": "fundsHandler",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "fundsHandler",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
       "name": "earlySaleStatus",
       "type": {
         "kind": "struct",
@@ -590,10 +668,45 @@ export type SolanaContracts = {
   ],
   "events": [
     {
+      "name": "InitializeEvent",
+      "fields": [
+        {
+          "name": "owner",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "ownerInitialized",
+          "type": "bool",
+          "index": false
+        },
+        {
+          "name": "currentTierNumber",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "fundsHandler",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "OwnerEvent",
       "fields": [
         {
           "name": "owner",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "FundsHandlerEvent",
+      "fields": [
+        {
+          "name": "fundsHandler",
           "type": "publicKey",
           "index": false
         }
@@ -665,16 +778,6 @@ export type SolanaContracts = {
         {
           "name": "discountCode",
           "type": "string",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "FundsHandlerEvent",
-      "fields": [
-        {
-          "name": "fundsHandler",
-          "type": "publicKey",
           "index": false
         }
       ]
@@ -785,6 +888,11 @@ export type SolanaContracts = {
       "code": 6007,
       "name": "IncorrectTier",
       "msg": "Incorrect Tier!"
+    },
+    {
+      "code": 6008,
+      "name": "UnauthorizedFundsHandler",
+      "msg": "Unauthorized Funds Handler!"
     }
   ]
 };
@@ -812,6 +920,11 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
+          "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -826,6 +939,41 @@ export const IDL: SolanaContracts = {
         {
           "name": "tierNumber",
           "type": "u64"
+        },
+        {
+          "name": "fundsHandler",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setFundsHandler",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "fundsHandler",
+          "type": "publicKey"
         }
       ]
     },
@@ -934,6 +1082,11 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsHandlerPubkey",
           "isMut": true,
           "isSigner": false
         },
@@ -1170,6 +1323,27 @@ export const IDL: SolanaContracts = {
       "args": []
     },
     {
+      "name": "getFundsHandler",
+      "accounts": [
+        {
+          "name": "fundsHandlerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "getTotalNodesHeld",
       "accounts": [
         {
@@ -1295,6 +1469,18 @@ export const IDL: SolanaContracts = {
       }
     },
     {
+      "name": "fundsHandler",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "fundsHandler",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
       "name": "earlySaleStatus",
       "type": {
         "kind": "struct",
@@ -1381,10 +1567,45 @@ export const IDL: SolanaContracts = {
   ],
   "events": [
     {
+      "name": "InitializeEvent",
+      "fields": [
+        {
+          "name": "owner",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "ownerInitialized",
+          "type": "bool",
+          "index": false
+        },
+        {
+          "name": "currentTierNumber",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "fundsHandler",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
       "name": "OwnerEvent",
       "fields": [
         {
           "name": "owner",
+          "type": "publicKey",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "FundsHandlerEvent",
+      "fields": [
+        {
+          "name": "fundsHandler",
           "type": "publicKey",
           "index": false
         }
@@ -1456,16 +1677,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "discountCode",
           "type": "string",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "FundsHandlerEvent",
-      "fields": [
-        {
-          "name": "fundsHandler",
-          "type": "publicKey",
           "index": false
         }
       ]
@@ -1576,6 +1787,11 @@ export const IDL: SolanaContracts = {
       "code": 6007,
       "name": "IncorrectTier",
       "msg": "Incorrect Tier!"
+    },
+    {
+      "code": 6008,
+      "name": "UnauthorizedFundsHandler",
+      "msg": "Unauthorized Funds Handler!"
     }
   ]
 };
