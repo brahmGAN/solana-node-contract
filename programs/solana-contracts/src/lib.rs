@@ -236,7 +236,6 @@ pub mod solana_contracts
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let tier_price_account = &mut ctx.accounts.tier_price_account; 
-        tier_price_account.tier_price = new_price;
         let tier_num:u64 = match tier_number.as_str()
         {
             "one" => 1, 
@@ -252,6 +251,8 @@ pub mod solana_contracts
             "eleven" => 11,
             _ => 69,    
         };
+        require!(tier_num != 69,ErrorCode::TierLimit);
+        tier_price_account.tier_price = new_price;
         emit!(TierPriceEvent{
             tier_price: tier_price_account.tier_price,
             tier_number: tier_num
