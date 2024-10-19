@@ -192,7 +192,7 @@ pub mod solana_contracts
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let early_sale_status_account = &mut ctx.accounts.early_sale_status_account;
-        early_sale_status_account.early_sale_status = early_sale_status_account.early_sale_status; 
+        early_sale_status_account.early_sale_status = sale_status; 
         emit!(EarlySaleStatusEvent{
             early_sale_status: sale_status
         });
