@@ -155,7 +155,7 @@ pub mod solana_contracts
 
         if discount_code_account.discount_code == true 
         {
-            tier_price =  (tier_price_account.tier_price * 10 ) / 100; 
+            tier_price =  (tier_price_account.tier_price * 90 ) / 100; 
         }
         else
         {
@@ -241,7 +241,7 @@ pub mod solana_contracts
         msg!("user:{}",*ctx.accounts.payer.key);
         msg!("quantity:{}",quantity);
         msg!("amount:{}",amount);
-        msg!("tier_number:{}",tier_number);
+        msg!("tier_number:{}",tier_num);
         msg!("total_nodes_held:{}",total_nodes_held_account.total_nodes_held);
         msg!("pending_tier_limit:{}",tier_limit_account.tier_limit);
         Ok(())
@@ -361,6 +361,7 @@ pub mod solana_contracts
     pub fn get_discount_code_status(ctx: Context<GetDiscountCodeContext>, discount_code: String) -> Result<()>
     {
         let discount_code_account = &ctx.accounts.discount_code_account;
+        msg!("Discount code:{}",discount_code);
         emit!(DiscountCodeEvent{
             discount_code: discount_code,
             discount_code_status: discount_code_account.discount_code
@@ -376,6 +377,7 @@ pub mod solana_contracts
             whitelist_address: user,
             in_early_sale: whitelist_account.in_early_sale
         });
+        msg!("Address:{}",user.key());
         msg!("in early sale,{}",whitelist_account.in_early_sale); 
         Ok(())
     }
