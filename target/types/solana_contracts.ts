@@ -48,6 +48,76 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "setTierLimit",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tierLimitAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "string"
+        },
+        {
+          "name": "newTierLimit",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "setTierPrice",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tierPriceAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "string"
+        },
+        {
+          "name": "newPrice",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "setFundsHandler",
       "accounts": [
         {
@@ -74,37 +144,6 @@ export type SolanaContracts = {
       "args": [
         {
           "name": "fundsHandler",
-          "type": "publicKey"
-        }
-      ]
-    },
-    {
-      "name": "addWhitelistAddresses",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "whitelistAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "user",
           "type": "publicKey"
         }
       ]
@@ -145,6 +184,37 @@ export type SolanaContracts = {
         {
           "name": "discountCodeStatus",
           "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "addWhitelistAddresses",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
         }
       ]
     },
@@ -224,9 +294,6 @@ export type SolanaContracts = {
     },
     {
       "name": "setEarlySaleStatus",
-      "docs": [
-        "@dev Setter functions"
-      ],
       "accounts": [
         {
           "name": "ownerAccount",
@@ -253,76 +320,6 @@ export type SolanaContracts = {
         {
           "name": "saleStatus",
           "type": "bool"
-        }
-      ]
-    },
-    {
-      "name": "setTierLimit",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tierLimitAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        },
-        {
-          "name": "newTierLimit",
-          "type": "u64"
-        }
-      ]
-    },
-    {
-      "name": "setTierPrice",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tierPriceAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        },
-        {
-          "name": "newPrice",
-          "type": "u64"
         }
       ]
     },
@@ -947,6 +944,76 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
+      "name": "setTierLimit",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tierLimitAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "string"
+        },
+        {
+          "name": "newTierLimit",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "setTierPrice",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tierPriceAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "string"
+        },
+        {
+          "name": "newPrice",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "setFundsHandler",
       "accounts": [
         {
@@ -973,37 +1040,6 @@ export const IDL: SolanaContracts = {
       "args": [
         {
           "name": "fundsHandler",
-          "type": "publicKey"
-        }
-      ]
-    },
-    {
-      "name": "addWhitelistAddresses",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "whitelistAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "user",
           "type": "publicKey"
         }
       ]
@@ -1044,6 +1080,37 @@ export const IDL: SolanaContracts = {
         {
           "name": "discountCodeStatus",
           "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "addWhitelistAddresses",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "whitelistAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
         }
       ]
     },
@@ -1123,9 +1190,6 @@ export const IDL: SolanaContracts = {
     },
     {
       "name": "setEarlySaleStatus",
-      "docs": [
-        "@dev Setter functions"
-      ],
       "accounts": [
         {
           "name": "ownerAccount",
@@ -1152,76 +1216,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "saleStatus",
           "type": "bool"
-        }
-      ]
-    },
-    {
-      "name": "setTierLimit",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tierLimitAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        },
-        {
-          "name": "newTierLimit",
-          "type": "u64"
-        }
-      ]
-    },
-    {
-      "name": "setTierPrice",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tierPriceAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        },
-        {
-          "name": "newPrice",
-          "type": "u64"
         }
       ]
     },

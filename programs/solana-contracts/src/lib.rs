@@ -32,6 +32,68 @@ pub mod solana_contracts
         Ok(())
     }
 
+    pub fn set_tier_limit(ctx: Context<SetTierLimitContext>,tier_number: String, new_tier_limit: u64) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account; 
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let tier_num:u64 = match tier_number.as_str()
+        {
+            "one" => 1, 
+            "two" => 2, 
+            "three" => 3,
+            "four" => 4,
+            "five" => 5,
+            "six" => 6,
+            "seven" => 7,
+            "eight" => 8,
+            "nine" => 9,
+            "ten" => 10,
+            "eleven" => 11,
+            _ => 69,    
+        };
+        let tier_limit_account = &mut ctx.accounts.tier_limit_account;
+        require!(tier_num != 69,ErrorCode::TierLimit);
+        tier_limit_account.tier_limit = new_tier_limit;
+        emit!(TierLimitEvent{
+            tier_limit: tier_limit_account.tier_limit,
+            tier_number: tier_num
+        });
+        msg!("tier_number:{}",tier_num);
+        msg!("tier_limit:{}",tier_limit_account.tier_limit);
+        Ok(())
+    }
+
+    pub fn set_tier_price(ctx: Context<SetTierPriceContext>,tier_number: String, new_price:u64) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account; 
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let tier_price_account = &mut ctx.accounts.tier_price_account; 
+        let tier_num:u64 = match tier_number.as_str()
+        {
+            "one" => 1, 
+            "two" => 2, 
+            "three" => 3,
+            "four" => 4,
+            "five" => 5,
+            "six" => 6,
+            "seven" => 7,
+            "eight" => 8,
+            "nine" => 9,
+            "ten" => 10,
+            "eleven" => 11,
+            _ => 69,    
+        };
+        require!(tier_num != 69,ErrorCode::TierLimit);
+        tier_price_account.tier_price = new_price;
+        emit!(TierPriceEvent{
+            tier_price: tier_price_account.tier_price,
+            tier_number: tier_num
+        });
+        msg!("tier_number:{}",tier_num);
+        msg!("tier_price:{}",tier_price_account.tier_price);
+        Ok(())
+    }
+
     pub fn set_funds_handler(ctx: Context<SetFundsHandlerContext>, funds_handler: Pubkey) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
@@ -42,21 +104,6 @@ pub mod solana_contracts
             funds_handler: funds_handler_account.funds_handler
         });
         msg!("Funds handler:{}",funds_handler_account.funds_handler);
-        Ok(())
-    }
-
-    pub fn add_whitelist_addresses(ctx: Context<AddWhitelistContext>, user:Pubkey) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account;
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
-        let whitelist_account = &mut ctx.accounts.whitelist_account;
-        whitelist_account.in_early_sale = true;
-        emit!(WhitelistEvent{
-            whitelist_address: user.key(), 
-            in_early_sale: whitelist_account.in_early_sale
-        });
-        msg!("Whitelist address:{}",user.key());
-        msg!("White list address: in early sale:{}",whitelist_account.in_early_sale); 
         Ok(())
     }
 
@@ -74,6 +121,21 @@ pub mod solana_contracts
             discount_code_status: discount_code_account.discount_code
         });
         msg!("Discount code status:{}",discount_code_account.discount_code);
+        Ok(())
+    }
+
+    pub fn add_whitelist_addresses(ctx: Context<AddWhitelistContext>, user:Pubkey) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account;
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
+        let whitelist_account = &mut ctx.accounts.whitelist_account;
+        whitelist_account.in_early_sale = true;
+        emit!(WhitelistEvent{
+            whitelist_address: user.key(), 
+            in_early_sale: whitelist_account.in_early_sale
+        });
+        msg!("Whitelist address:{}",user.key());
+        msg!("White list address: in early sale:{}",whitelist_account.in_early_sale); 
         Ok(())
     }
 
@@ -117,9 +179,9 @@ pub mod solana_contracts
             _ => 69,    
         };
 
+        require!(quantity <= tier_limit_account.tier_limit, ErrorCode::QuantityOutOfBounds);
         require!(funds_handler_account.funds_handler.key() == funds_handler_pubkey.key(), ErrorCode::UnauthorizedFundsHandler);
         require!(tier_num == current_tier_number_account.current_tier_number,ErrorCode::IncorrectTier);
-        require!(quantity <= tier_limit_account.tier_limit, ErrorCode::QuantityOutOfBounds);
         require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
         if early_sale_status_account.early_sale_status
         {
@@ -185,7 +247,6 @@ pub mod solana_contracts
         Ok(())
     }
 
-    /// @dev Setter functions
     pub fn set_early_sale_status(ctx: Context<SetEarlySaleContext>, sale_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
@@ -196,68 +257,6 @@ pub mod solana_contracts
             early_sale_status: sale_status
         });
         msg!("early_sale_status:{}",early_sale_status_account.early_sale_status);
-        Ok(())
-    }
-
-    pub fn set_tier_limit(ctx: Context<SetTierLimitContext>,tier_number: String, new_tier_limit: u64) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
-        let tier_num:u64 = match tier_number.as_str()
-        {
-            "one" => 1, 
-            "two" => 2, 
-            "three" => 3,
-            "four" => 4,
-            "five" => 5,
-            "six" => 6,
-            "seven" => 7,
-            "eight" => 8,
-            "nine" => 9,
-            "ten" => 10,
-            "eleven" => 11,
-            _ => 69,    
-        };
-        let tier_limit_account = &mut ctx.accounts.tier_limit_account;
-        require!(tier_num != 69,ErrorCode::TierLimit);
-        tier_limit_account.tier_limit = new_tier_limit;
-        emit!(TierLimitEvent{
-            tier_limit: tier_limit_account.tier_limit,
-            tier_number: tier_num
-        });
-        msg!("tier_number:{}",tier_num);
-        msg!("tier_limit:{}",tier_limit_account.tier_limit);
-        Ok(())
-    }
-
-    pub fn set_tier_price(ctx: Context<SetTierPriceContext>,tier_number: String, new_price:u64) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
-        let tier_price_account = &mut ctx.accounts.tier_price_account; 
-        let tier_num:u64 = match tier_number.as_str()
-        {
-            "one" => 1, 
-            "two" => 2, 
-            "three" => 3,
-            "four" => 4,
-            "five" => 5,
-            "six" => 6,
-            "seven" => 7,
-            "eight" => 8,
-            "nine" => 9,
-            "ten" => 10,
-            "eleven" => 11,
-            _ => 69,    
-        };
-        require!(tier_num != 69,ErrorCode::TierLimit);
-        tier_price_account.tier_price = new_price;
-        emit!(TierPriceEvent{
-            tier_price: tier_price_account.tier_price,
-            tier_number: tier_num
-        });
-        msg!("tier_number:{}",tier_num);
-        msg!("tier_price:{}",tier_price_account.tier_price);
         Ok(())
     }
 
