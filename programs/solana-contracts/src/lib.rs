@@ -118,7 +118,6 @@ pub mod solana_contracts
         };
 
         require!(funds_handler_account.funds_handler.key() == funds_handler_pubkey.key(), ErrorCode::UnauthorizedFundsHandler);
-        require!(tier_num != 69,ErrorCode::TierLimit);
         require!(tier_num == current_tier_number_account.current_tier_number,ErrorCode::IncorrectTier);
         require!(quantity <= tier_limit_account.tier_limit, ErrorCode::QuantityOutOfBounds);
         require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
