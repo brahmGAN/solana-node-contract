@@ -293,7 +293,7 @@ pub mod solana_contracts
             in_early_sale: user_account.in_early_sale
         });
         msg!("Address:{}",user.key());
-        msg!("In early sale:,{}",user_account.in_early_sale); 
+        msg!("In early sale:{}",user_account.in_early_sale); 
         Ok(())
     }
 
