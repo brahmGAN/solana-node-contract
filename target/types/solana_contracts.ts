@@ -11,17 +11,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerInitAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "currentTierNumberAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fundsHandlerAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -56,7 +46,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "tierLimitAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -73,12 +63,10 @@ export type SolanaContracts = {
       ],
       "args": [
         {
-          "name": "tierNumber",
-          "type": "string"
-        },
-        {
-          "name": "newTierLimit",
-          "type": "u64"
+          "name": "tierLimit",
+          "type": {
+            "vec": "u64"
+          }
         }
       ]
     },
@@ -91,7 +79,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "tierPriceAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -108,12 +96,10 @@ export type SolanaContracts = {
       ],
       "args": [
         {
-          "name": "tierNumber",
-          "type": "string"
-        },
-        {
-          "name": "newPrice",
-          "type": "u64"
+          "name": "tierPrice",
+          "type": {
+            "vec": "u64"
+          }
         }
       ]
     },
@@ -126,7 +112,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "fundsHandlerAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -145,6 +131,37 @@ export type SolanaContracts = {
         {
           "name": "fundsHandler",
           "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setEarlySaleStatus",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "saleStatus",
+          "type": "bool"
         }
       ]
     },
@@ -196,7 +213,7 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "whitelistAccount",
+          "name": "userAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -222,47 +239,22 @@ export type SolanaContracts = {
       "name": "buyNode",
       "accounts": [
         {
-          "name": "tierLimitAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "earlySaleStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tierPriceAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "whitelistAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "totalNodesHeldAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "currentTierNumberAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fundsHandlerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fundsHandlerPubkey",
+          "name": "userAccount",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "discountCodeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsHandlerPubkey",
           "isMut": true,
           "isSigner": false
         },
@@ -278,10 +270,6 @@ export type SolanaContracts = {
         }
       ],
       "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        },
         {
           "name": "discountCode",
           "type": "string"
@@ -293,44 +281,13 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setEarlySaleStatus",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "earlySaleStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "saleStatus",
-          "type": "bool"
-        }
-      ]
-    },
-    {
       "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
       ],
       "accounts": [
         {
-          "name": "earlySaleStatusAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -351,7 +308,7 @@ export type SolanaContracts = {
       "name": "getTierLimit",
       "accounts": [
         {
-          "name": "tierLimitAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -366,18 +323,13 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        }
-      ]
+      "args": []
     },
     {
       "name": "getTierPrice",
       "accounts": [
         {
-          "name": "tierPriceAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -392,12 +344,7 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        }
-      ]
+      "args": []
     },
     {
       "name": "getOwner",
@@ -424,7 +371,7 @@ export type SolanaContracts = {
       "name": "getFundsHandler",
       "accounts": [
         {
-          "name": "fundsHandlerAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -445,7 +392,7 @@ export type SolanaContracts = {
       "name": "getTotalNodesHeld",
       "accounts": [
         {
-          "name": "totalNodesHeldAccount",
+          "name": "userAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -497,7 +444,7 @@ export type SolanaContracts = {
       "name": "getWhitelistUserStatus",
       "accounts": [
         {
-          "name": "whitelistAccount",
+          "name": "userAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -523,7 +470,7 @@ export type SolanaContracts = {
       "name": "getCurrentTierNumber",
       "accounts": [
         {
-          "name": "currentTierNumberAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -550,15 +497,7 @@ export type SolanaContracts = {
           {
             "name": "ownerPubkey",
             "type": "publicKey"
-          }
-        ]
-      }
-    },
-    {
-      "name": "ownerInit",
-      "type": {
-        "kind": "struct",
-        "fields": [
+          },
           {
             "name": "ownerInitialized",
             "type": "bool"
@@ -567,73 +506,17 @@ export type SolanaContracts = {
       }
     },
     {
-      "name": "fundsHandler",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "fundsHandler",
-            "type": "publicKey"
-          }
-        ]
-      }
-    },
-    {
-      "name": "earlySaleStatus",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "earlySaleStatus",
-            "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "totalNodesHeld",
+      "name": "user",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "totalNodesHeld",
             "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "inEarlySale",
-      "type": {
-        "kind": "struct",
-        "fields": [
+          },
           {
             "name": "inEarlySale",
             "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "tierLimit",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "tierLimit",
-            "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "tierPrice",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "tierPrice",
-            "type": "u64"
           }
         ]
       }
@@ -651,10 +534,30 @@ export type SolanaContracts = {
       }
     },
     {
-      "name": "currentTierNumber",
+      "name": "nodeSale",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "tierLimit",
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "tierPrice",
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "fundsHandler",
+            "type": "publicKey"
+          },
+          {
+            "name": "earlySaleStatus",
+            "type": "bool"
+          },
           {
             "name": "currentTierNumber",
             "type": "u64"
@@ -695,6 +598,11 @@ export type SolanaContracts = {
         {
           "name": "owner",
           "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "ownerInitStatus",
+          "type": "bool",
           "index": false
         }
       ]
@@ -794,12 +702,9 @@ export type SolanaContracts = {
       "fields": [
         {
           "name": "tierLimit",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "tierNumber",
-          "type": "u64",
+          "type": {
+            "vec": "u64"
+          },
           "index": false
         }
       ]
@@ -809,12 +714,9 @@ export type SolanaContracts = {
       "fields": [
         {
           "name": "tierPrice",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "tierNumber",
-          "type": "u64",
+          "type": {
+            "vec": "u64"
+          },
           "index": false
         }
       ]
@@ -907,17 +809,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "ownerInitAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "currentTierNumberAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fundsHandlerAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -952,7 +844,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "tierLimitAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -969,12 +861,10 @@ export const IDL: SolanaContracts = {
       ],
       "args": [
         {
-          "name": "tierNumber",
-          "type": "string"
-        },
-        {
-          "name": "newTierLimit",
-          "type": "u64"
+          "name": "tierLimit",
+          "type": {
+            "vec": "u64"
+          }
         }
       ]
     },
@@ -987,7 +877,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "tierPriceAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1004,12 +894,10 @@ export const IDL: SolanaContracts = {
       ],
       "args": [
         {
-          "name": "tierNumber",
-          "type": "string"
-        },
-        {
-          "name": "newPrice",
-          "type": "u64"
+          "name": "tierPrice",
+          "type": {
+            "vec": "u64"
+          }
         }
       ]
     },
@@ -1022,7 +910,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "fundsHandlerAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1041,6 +929,37 @@ export const IDL: SolanaContracts = {
         {
           "name": "fundsHandler",
           "type": "publicKey"
+        }
+      ]
+    },
+    {
+      "name": "setEarlySaleStatus",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "saleStatus",
+          "type": "bool"
         }
       ]
     },
@@ -1092,7 +1011,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "whitelistAccount",
+          "name": "userAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1118,47 +1037,22 @@ export const IDL: SolanaContracts = {
       "name": "buyNode",
       "accounts": [
         {
-          "name": "tierLimitAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "earlySaleStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tierPriceAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "whitelistAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "totalNodesHeldAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "currentTierNumberAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fundsHandlerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "fundsHandlerPubkey",
+          "name": "userAccount",
           "isMut": true,
           "isSigner": false
         },
         {
           "name": "discountCodeAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "fundsHandlerPubkey",
           "isMut": true,
           "isSigner": false
         },
@@ -1174,10 +1068,6 @@ export const IDL: SolanaContracts = {
         }
       ],
       "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        },
         {
           "name": "discountCode",
           "type": "string"
@@ -1189,44 +1079,13 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "setEarlySaleStatus",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "earlySaleStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "saleStatus",
-          "type": "bool"
-        }
-      ]
-    },
-    {
       "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
       ],
       "accounts": [
         {
-          "name": "earlySaleStatusAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1247,7 +1106,7 @@ export const IDL: SolanaContracts = {
       "name": "getTierLimit",
       "accounts": [
         {
-          "name": "tierLimitAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1262,18 +1121,13 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        }
-      ]
+      "args": []
     },
     {
       "name": "getTierPrice",
       "accounts": [
         {
-          "name": "tierPriceAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1288,12 +1142,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "tierNumber",
-          "type": "string"
-        }
-      ]
+      "args": []
     },
     {
       "name": "getOwner",
@@ -1320,7 +1169,7 @@ export const IDL: SolanaContracts = {
       "name": "getFundsHandler",
       "accounts": [
         {
-          "name": "fundsHandlerAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1341,7 +1190,7 @@ export const IDL: SolanaContracts = {
       "name": "getTotalNodesHeld",
       "accounts": [
         {
-          "name": "totalNodesHeldAccount",
+          "name": "userAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1393,7 +1242,7 @@ export const IDL: SolanaContracts = {
       "name": "getWhitelistUserStatus",
       "accounts": [
         {
-          "name": "whitelistAccount",
+          "name": "userAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1419,7 +1268,7 @@ export const IDL: SolanaContracts = {
       "name": "getCurrentTierNumber",
       "accounts": [
         {
-          "name": "currentTierNumberAccount",
+          "name": "nodeSaleAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1446,15 +1295,7 @@ export const IDL: SolanaContracts = {
           {
             "name": "ownerPubkey",
             "type": "publicKey"
-          }
-        ]
-      }
-    },
-    {
-      "name": "ownerInit",
-      "type": {
-        "kind": "struct",
-        "fields": [
+          },
           {
             "name": "ownerInitialized",
             "type": "bool"
@@ -1463,73 +1304,17 @@ export const IDL: SolanaContracts = {
       }
     },
     {
-      "name": "fundsHandler",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "fundsHandler",
-            "type": "publicKey"
-          }
-        ]
-      }
-    },
-    {
-      "name": "earlySaleStatus",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "earlySaleStatus",
-            "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "totalNodesHeld",
+      "name": "user",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "totalNodesHeld",
             "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "inEarlySale",
-      "type": {
-        "kind": "struct",
-        "fields": [
+          },
           {
             "name": "inEarlySale",
             "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "tierLimit",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "tierLimit",
-            "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "tierPrice",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "tierPrice",
-            "type": "u64"
           }
         ]
       }
@@ -1547,10 +1332,30 @@ export const IDL: SolanaContracts = {
       }
     },
     {
-      "name": "currentTierNumber",
+      "name": "nodeSale",
       "type": {
         "kind": "struct",
         "fields": [
+          {
+            "name": "tierLimit",
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "tierPrice",
+            "type": {
+              "vec": "u64"
+            }
+          },
+          {
+            "name": "fundsHandler",
+            "type": "publicKey"
+          },
+          {
+            "name": "earlySaleStatus",
+            "type": "bool"
+          },
           {
             "name": "currentTierNumber",
             "type": "u64"
@@ -1591,6 +1396,11 @@ export const IDL: SolanaContracts = {
         {
           "name": "owner",
           "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "ownerInitStatus",
+          "type": "bool",
           "index": false
         }
       ]
@@ -1690,12 +1500,9 @@ export const IDL: SolanaContracts = {
       "fields": [
         {
           "name": "tierLimit",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "tierNumber",
-          "type": "u64",
+          "type": {
+            "vec": "u64"
+          },
           "index": false
         }
       ]
@@ -1705,12 +1512,9 @@ export const IDL: SolanaContracts = {
       "fields": [
         {
           "name": "tierPrice",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "tierNumber",
-          "type": "u64",
+          "type": {
+            "vec": "u64"
+          },
           "index": false
         }
       ]
