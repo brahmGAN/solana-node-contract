@@ -458,7 +458,7 @@ pub struct BuyNodeContext<'info>
 pub struct GetOwnerContext<'info> 
 {
     #[account(
-        init, 
+        init_if_needed, 
         payer = payer, 
         seeds = [b"owner"], 
         bump,
