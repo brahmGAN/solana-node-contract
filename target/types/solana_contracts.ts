@@ -323,7 +323,12 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "getTierPrice",
@@ -344,7 +349,12 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "getOwner",
@@ -698,7 +708,7 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "TierLimitEvent",
+      "name": "SetTierLimitEvent",
       "fields": [
         {
           "name": "tierLimit",
@@ -710,13 +720,33 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "TierPriceEvent",
+      "name": "GetTierLimitEvent",
+      "fields": [
+        {
+          "name": "tierLimit",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "SetTierPriceEvent",
       "fields": [
         {
           "name": "tierPrice",
           "type": {
             "vec": "u64"
           },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "GetTierPriceEvent",
+      "fields": [
+        {
+          "name": "tierPrice",
+          "type": "u64",
           "index": false
         }
       ]
@@ -1121,7 +1151,12 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "getTierPrice",
@@ -1142,7 +1177,12 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "tierNumber",
+          "type": "u64"
+        }
+      ]
     },
     {
       "name": "getOwner",
@@ -1496,7 +1536,7 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "TierLimitEvent",
+      "name": "SetTierLimitEvent",
       "fields": [
         {
           "name": "tierLimit",
@@ -1508,13 +1548,33 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "TierPriceEvent",
+      "name": "GetTierLimitEvent",
+      "fields": [
+        {
+          "name": "tierLimit",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "SetTierPriceEvent",
       "fields": [
         {
           "name": "tierPrice",
           "type": {
             "vec": "u64"
           },
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "GetTierPriceEvent",
+      "fields": [
+        {
+          "name": "tierPrice",
+          "type": "u64",
           "index": false
         }
       ]

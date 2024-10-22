@@ -36,7 +36,7 @@ pub mod solana_contracts
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let node_sale_account = &mut ctx.accounts.node_sale_account;
         node_sale_account.tier_limit = tier_limit;
-        emit!(TierLimitEvent{
+        emit!(SetTierLimitEvent{
             tier_limit: node_sale_account.tier_limit.clone(),
         });
         msg!("tier_limit:{:#?}",node_sale_account.tier_limit);
@@ -49,7 +49,7 @@ pub mod solana_contracts
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let node_sale_account = &mut ctx.accounts.node_sale_account; 
         node_sale_account.tier_price = tier_price;
-        emit!(TierPriceEvent{
+        emit!(SetTierPriceEvent{
             tier_price: node_sale_account.tier_price.clone(),
         });
         msg!("tier_price:{:#?}",node_sale_account.tier_price);
@@ -219,23 +219,23 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn get_tier_limit(ctx: Context<GetNodeSaleContext>) -> Result<()>
+    pub fn get_tier_limit(ctx: Context<GetNodeSaleContext>, tier_number:u64) -> Result<()>
     {
         let node_sale_account = &ctx.accounts.node_sale_account;
-        emit!(TierLimitEvent{
-            tier_limit: node_sale_account.tier_limit.clone() 
+        emit!(GetTierLimitEvent{
+            tier_limit: node_sale_account.tier_limit[tier_number as usize]
         });
-        msg!("tier_limit:{:#?}",node_sale_account.tier_limit);
+        msg!("tier_limit:{}",node_sale_account.tier_limit[tier_number as usize]);
         Ok(())
     }
 
-    pub fn get_tier_price(ctx: Context<GetNodeSaleContext>) -> Result<()>
+    pub fn get_tier_price(ctx: Context<GetNodeSaleContext>, tier_number:u64) -> Result<()>
     {
         let node_sale_account = &ctx.accounts.node_sale_account;
-        emit!(TierPriceEvent{
-            tier_price: node_sale_account.tier_price.clone(),
+        emit!(GetTierPriceEvent{
+            tier_price: node_sale_account.tier_price[tier_number as usize],
         });
-        msg!("Tier price:{:#?}",node_sale_account.tier_price);
+        msg!("Tier price:{}",node_sale_account.tier_price[tier_number as usize]);
         Ok(())
     }
 
@@ -611,15 +611,27 @@ pub struct EarlySaleStatusEvent
 }
 
 #[event]
-pub struct TierLimitEvent
+pub struct SetTierLimitEvent
 {
     pub tier_limit: Vec<u64>,
 }
 
 #[event]
-pub struct TierPriceEvent
+pub struct GetTierLimitEvent
+{
+    pub tier_limit: u64,
+}
+
+#[event]
+pub struct SetTierPriceEvent
 {
     pub tier_price:Vec<u64>
+}
+
+#[event]
+pub struct GetTierPriceEvent
+{
+    pub tier_price:u64
 }
 
 #[event]
