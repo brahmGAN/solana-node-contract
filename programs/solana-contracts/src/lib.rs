@@ -223,8 +223,10 @@ pub mod solana_contracts
     {
         let node_sale_account = &ctx.accounts.node_sale_account;
         emit!(GetTierLimitEvent{
+            tier_number: tier_number,
             tier_limit: node_sale_account.tier_limit[tier_number as usize]
         });
+        msg!("Tier number:{}",tier_number);
         msg!("tier_limit:{}",node_sale_account.tier_limit[tier_number as usize]);
         Ok(())
     }
@@ -233,8 +235,10 @@ pub mod solana_contracts
     {
         let node_sale_account = &ctx.accounts.node_sale_account;
         emit!(GetTierPriceEvent{
+            tier_number: tier_number,
             tier_price: node_sale_account.tier_price[tier_number as usize],
         });
+        msg!("Tier number:{}",tier_number);
         msg!("Tier price:{}",node_sale_account.tier_price[tier_number as usize]);
         Ok(())
     }
@@ -619,6 +623,7 @@ pub struct SetTierLimitEvent
 #[event]
 pub struct GetTierLimitEvent
 {
+    pub tier_number: u64,
     pub tier_limit: u64,
 }
 
@@ -631,6 +636,7 @@ pub struct SetTierPriceEvent
 #[event]
 pub struct GetTierPriceEvent
 {
+    pub tier_number: u64,
     pub tier_price:u64
 }
 
