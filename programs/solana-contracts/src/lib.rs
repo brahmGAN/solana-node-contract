@@ -99,18 +99,25 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn add_whitelist_addresses(ctx: Context<SetUserContext>, user: Pubkey) -> Result<()>
+    pub fn add_whitelist_addresses(ctx: Context<SetUserContext>, user: Pubkey, list_number: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
         let user_account = &mut ctx.accounts.user_account;
         user_account.in_early_sale = true;
+        /// @dev if list_number = true then the user is part of whitelist 1,else they're part of whitelist 2
+        if list_number 
+        {
+            user_account.in_white_list_1 = true; 
+        }
         emit!(WhitelistEvent{
             whitelist_address: user.key(), 
-            in_early_sale: user_account.in_early_sale
+            in_early_sale: user_account.in_early_sale, 
+            in_white_list_1: list_number
         });
         msg!("Whitelist address:{}",user.key());
-        msg!("White in early sale:{}",user_account.in_early_sale); 
+        msg!("In early sale:{}",user_account.in_early_sale); 
+        msg!("Whitelist number:{}",user_account.in_white_list_1); 
         Ok(())
     }
 
@@ -294,10 +301,12 @@ pub mod solana_contracts
         let user_account = &mut ctx.accounts.user_account;
         emit!(WhitelistEvent{
             whitelist_address: user,
-            in_early_sale: user_account.in_early_sale
+            in_early_sale: user_account.in_early_sale, 
+            in_white_list_1: user_account.in_white_list_1
         });
         msg!("Address:{}",user.key());
         msg!("In early sale:{}",user_account.in_early_sale); 
+        msg!("In early sale:{}",user_account.in_white_list_1); 
         Ok(())
     }
 
@@ -539,7 +548,8 @@ pub struct Owner
 pub struct User
 {
     pub total_nodes_held: u64,
-    pub in_early_sale: bool
+    pub in_early_sale: bool,
+    pub in_white_list_1: bool
 }
 
 #[account] 
@@ -586,7 +596,8 @@ pub struct FundsHandlerEvent
 pub struct WhitelistEvent
 {
     pub whitelist_address: Pubkey, 
-    pub in_early_sale: bool
+    pub in_early_sale: bool, 
+    pub in_white_list_1:bool 
 }
 
 #[event]

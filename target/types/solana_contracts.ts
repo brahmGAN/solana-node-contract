@@ -232,6 +232,10 @@ export type SolanaContracts = {
         {
           "name": "user",
           "type": "publicKey"
+        },
+        {
+          "name": "listNumber",
+          "type": "bool"
         }
       ]
     },
@@ -527,6 +531,10 @@ export type SolanaContracts = {
           {
             "name": "inEarlySale",
             "type": "bool"
+          },
+          {
+            "name": "inWhiteList1",
+            "type": "bool"
           }
         ]
       }
@@ -637,6 +645,11 @@ export type SolanaContracts = {
         },
         {
           "name": "inEarlySale",
+          "type": "bool",
+          "index": false
+        },
+        {
+          "name": "inWhiteList1",
           "type": "bool",
           "index": false
         }
@@ -1070,6 +1083,10 @@ export const IDL: SolanaContracts = {
         {
           "name": "user",
           "type": "publicKey"
+        },
+        {
+          "name": "listNumber",
+          "type": "bool"
         }
       ]
     },
@@ -1365,6 +1382,10 @@ export const IDL: SolanaContracts = {
           {
             "name": "inEarlySale",
             "type": "bool"
+          },
+          {
+            "name": "inWhiteList1",
+            "type": "bool"
           }
         ]
       }
@@ -1475,6 +1496,11 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "inEarlySale",
+          "type": "bool",
+          "index": false
+        },
+        {
+          "name": "inWhiteList1",
           "type": "bool",
           "index": false
         }
