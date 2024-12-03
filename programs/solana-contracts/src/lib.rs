@@ -82,6 +82,19 @@ pub mod solana_contracts
         Ok(())
     }
 
+    pub fn set_gpu_net_sale_status(ctx: Context<SetNodeSaleContext>, sale_status: bool) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account; 
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let node_sale_account = &mut ctx.accounts.node_sale_account;
+        node_sale_account.gpu_net_sale_status = sale_status; 
+        emit!(GpuNetSaleStatusEvent{
+            gpu_net_sale_status: node_sale_account.gpu_net_sale_status
+        });
+        msg!("early_sale_status:{}",node_sale_account.gpu_net_sale_status);
+        Ok(())
+    }
+
     /// @dev Add and remove a discount code by switching the boolean
     /// @dev `gpunet` is a reserved discount code string to signify no discount code is being used 
     pub fn discount_code(ctx: Context<DiscountCodeContext>, discount_code: String, discount_code_status: bool) -> Result<()>
@@ -105,7 +118,7 @@ pub mod solana_contracts
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);    
         let user_account = &mut ctx.accounts.user_account;
         user_account.in_early_sale = true;
-        /// @dev if list_number = true then the user is part of whitelist 1,else they're part of whitelist 2
+        // @dev if list_number = true then the user is part of whitelist 1,else they're part of whitelist 2
         if list_number 
         {
             user_account.in_white_list_1 = true; 
@@ -193,6 +206,7 @@ pub mod solana_contracts
         }
         else
         {
+            //check if gpu.net sale is on
             let ix = system_instruction::transfer
             (   
                 &ctx.accounts.payer.key(), 
@@ -215,6 +229,17 @@ pub mod solana_contracts
 
         if node_sale_account.tier_limit[current_tier_number as usize] == 0
         {
+            // @dev Use this if-else block if Magic eden handles sale of Tier-5,6,7
+            if current_tier_number == 4
+            {
+                node_sale_account.current_tier_number = 8;
+            }
+            else 
+            {
+                node_sale_account.current_tier_number += 1;
+            }
+
+            // @dev Use this block if GPU.net handles sale of Tier 5 6 7
             node_sale_account.current_tier_number += 1;
         }
 
@@ -245,6 +270,16 @@ pub mod solana_contracts
         msg!("Early sale status:{}",node_sale_account.early_sale_status);
         emit!(EarlySaleStatusEvent{
             early_sale_status: node_sale_account.early_sale_status
+        }); 
+        Ok(())
+    }
+
+    pub fn get_gpu_net_sale_status(ctx: Context<GetNodeSaleContext>) -> Result<()>
+    {
+        let node_sale_account = &ctx.accounts.node_sale_account;
+        msg!("GPU Net sale status:{}",node_sale_account.gpu_net_sale_status);
+        emit!(GpuNetSaleStatusEvent{
+            gpu_net_sale_status: node_sale_account.gpu_net_sale_status
         }); 
         Ok(())
     }
@@ -589,6 +624,7 @@ pub struct NodeSale
     pub funds_handler: Pubkey,
     pub early_sale_status: bool,
     pub current_tier_number: u64,
+    pub gpu_net_sale_status: bool 
 }
 
 //EVENTS
@@ -646,6 +682,12 @@ pub struct NodeBoughtEvent
 pub struct EarlySaleStatusEvent
 {
     pub early_sale_status: bool,
+}
+
+#[event]
+pub struct GpuNetSaleStatusEvent
+{
+    pub gpu_net_sale_status: bool,
 }
 
 #[event]
