@@ -166,37 +166,6 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setGpuNetSaleStatus",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "saleStatus",
-          "type": "bool"
-        }
-      ]
-    },
-    {
       "name": "discountCode",
       "docs": [
         "@dev Add and remove a discount code by switching the boolean",
@@ -320,27 +289,6 @@ export type SolanaContracts = {
       "docs": [
         "@dev Getter functions"
       ],
-      "accounts": [
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "getGpuNetSaleStatus",
       "accounts": [
         {
           "name": "nodeSaleAccount",
@@ -631,10 +579,6 @@ export type SolanaContracts = {
           {
             "name": "currentTierNumber",
             "type": "u64"
-          },
-          {
-            "name": "gpuNetSaleStatus",
-            "type": "bool"
           }
         ]
       }
@@ -771,16 +715,6 @@ export type SolanaContracts = {
       "fields": [
         {
           "name": "earlySaleStatus",
-          "type": "bool",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "GpuNetSaleStatusEvent",
-      "fields": [
-        {
-          "name": "gpuNetSaleStatus",
           "type": "bool",
           "index": false
         }
@@ -1088,37 +1022,6 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "setGpuNetSaleStatus",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "saleStatus",
-          "type": "bool"
-        }
-      ]
-    },
-    {
       "name": "discountCode",
       "docs": [
         "@dev Add and remove a discount code by switching the boolean",
@@ -1242,27 +1145,6 @@ export const IDL: SolanaContracts = {
       "docs": [
         "@dev Getter functions"
       ],
-      "accounts": [
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
-      "name": "getGpuNetSaleStatus",
       "accounts": [
         {
           "name": "nodeSaleAccount",
@@ -1553,10 +1435,6 @@ export const IDL: SolanaContracts = {
           {
             "name": "currentTierNumber",
             "type": "u64"
-          },
-          {
-            "name": "gpuNetSaleStatus",
-            "type": "bool"
           }
         ]
       }
@@ -1693,16 +1571,6 @@ export const IDL: SolanaContracts = {
       "fields": [
         {
           "name": "earlySaleStatus",
-          "type": "bool",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "GpuNetSaleStatusEvent",
-      "fields": [
-        {
-          "name": "gpuNetSaleStatus",
           "type": "bool",
           "index": false
         }
