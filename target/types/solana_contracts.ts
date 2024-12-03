@@ -845,6 +845,11 @@ export type SolanaContracts = {
       "code": 6008,
       "name": "UnauthorizedFundsHandler",
       "msg": "Unauthorized Funds Handler!"
+    },
+    {
+      "code": 6009,
+      "name": "WhiteList",
+      "msg": "WhiteList-1 sale yet to complete!"
     }
   ]
 };
@@ -1696,6 +1701,11 @@ export const IDL: SolanaContracts = {
       "code": 6008,
       "name": "UnauthorizedFundsHandler",
       "msg": "Unauthorized Funds Handler!"
+    },
+    {
+      "code": 6009,
+      "name": "WhiteList",
+      "msg": "WhiteList-1 sale yet to complete!"
     }
   ]
 };

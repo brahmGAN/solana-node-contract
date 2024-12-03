@@ -152,21 +152,44 @@ pub mod solana_contracts
         if node_sale_account.early_sale_status
         {
             require!(user_account.in_early_sale,ErrorCode::EarlySale);
-            let ix = system_instruction::transfer
-            (   
-                &ctx.accounts.payer.key(), 
-                &ctx.accounts.funds_handler_pubkey.key(), 
-                amount 
-            );
+            if current_tier_number < 1 
+            {
+                require!(user_account.in_white_list_1,ErrorCode::WhiteList); 
+                let ix = system_instruction::transfer
+                (   
+                    &ctx.accounts.payer.key(), 
+                    &ctx.accounts.funds_handler_pubkey.key(), 
+                    amount 
+                );
 
-            anchor_lang::solana_program::program::invoke
-            (   
-                &ix, 
-                &[
-                    ctx.accounts.payer.to_account_info(),
-                    ctx.accounts.funds_handler_pubkey.to_account_info(), 
-                 ],
-            )?;       
+                anchor_lang::solana_program::program::invoke
+                (   
+                    &ix, 
+                    &[
+                        ctx.accounts.payer.to_account_info(),
+                        ctx.accounts.funds_handler_pubkey.to_account_info(), 
+                    ],
+                )?; 
+            }
+            else 
+            {
+                let ix = system_instruction::transfer
+                (   
+                    &ctx.accounts.payer.key(), 
+                    &ctx.accounts.funds_handler_pubkey.key(), 
+                    amount 
+                );
+
+                anchor_lang::solana_program::program::invoke
+                (   
+                    &ix, 
+                    &[
+                        ctx.accounts.payer.to_account_info(),
+                        ctx.accounts.funds_handler_pubkey.to_account_info(), 
+                    ],
+                )?; 
+            }
+                  
         }
         else
         {
@@ -694,4 +717,7 @@ pub enum ErrorCode
 
     #[msg("Unauthorized Funds Handler!")]
     UnauthorizedFundsHandler,
+
+    #[msg("WhiteList-1 sale yet to complete!")]
+    WhiteList,
 }
