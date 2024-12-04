@@ -82,6 +82,32 @@ pub mod solana_contracts
         Ok(())
     }
 
+    pub fn set_white_list_1_sale(ctx: Context<SetNodeSaleContext>, sale_status: bool) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account; 
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let node_sale_account = &mut ctx.accounts.node_sale_account;
+        node_sale_account.white_list_1_sale = sale_status; 
+        emit!(WhiteList1SaleEvent{
+            white_list_1_sale: node_sale_account.white_list_1_sale
+        });
+        msg!("white_list_1_sale:{}",node_sale_account.white_list_1_sale);
+        Ok(())
+    }
+
+    pub fn set_gpu_net_sale(ctx: Context<SetNodeSaleContext>, sale_status: bool) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account; 
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let node_sale_account = &mut ctx.accounts.node_sale_account;
+        node_sale_account.gpu_net_sale = sale_status; 
+        emit!(GpuNetSaleEvent{
+            gpu_net_sale: node_sale_account.gpu_net_sale
+        });
+        msg!("early_sale_status:{}",node_sale_account.gpu_net_sale);
+        Ok(())
+    }
+
     /// @dev Add and remove a discount code by switching the boolean
     /// @dev `gpunet` is a reserved discount code string to signify no discount code is being used 
     pub fn discount_code(ctx: Context<DiscountCodeContext>, discount_code: String, discount_code_status: bool) -> Result<()>
@@ -149,10 +175,12 @@ pub mod solana_contracts
         require!(quantity <= node_sale_account.tier_limit[current_tier_number as usize], ErrorCode::QuantityOutOfBounds);
         require!(node_sale_account.funds_handler.key() == funds_handler_pubkey.key(), ErrorCode::UnauthorizedFundsHandler);
         require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
+        // @dev Turn this on to true at 2pm.Turn this off at 6pm.From 6pm the sale on magic eden happens for tier-5,6,7,8.  
         if node_sale_account.early_sale_status
         {
             require!(user_account.in_early_sale,ErrorCode::EarlySale);
-            if current_tier_number < 1 
+            // @dev Turn this on to true at 2pm. Switch this off to false at 3pm.  
+            if node_sale_account.white_list_1_sale  
             {
                 require!(user_account.in_white_list_1,ErrorCode::WhiteList); 
                 let ix = system_instruction::transfer
@@ -191,7 +219,8 @@ pub mod solana_contracts
             }
                   
         }
-        else  
+        // @dev Turn this on to true at next day 6pm. This is never turned off 
+        else if node_sale_account.gpu_net_sale
         {
             let ix = system_instruction::transfer
             (   
@@ -256,6 +285,27 @@ pub mod solana_contracts
         msg!("Early sale status:{}",node_sale_account.early_sale_status);
         emit!(EarlySaleStatusEvent{
             early_sale_status: node_sale_account.early_sale_status
+        }); 
+        Ok(())
+    }
+
+    pub fn get_white_list_1_sale(ctx: Context<GetNodeSaleContext>) -> Result<()>
+    {
+        let node_sale_account = &ctx.accounts.node_sale_account;
+        msg!("White list 1 sale status:{}",node_sale_account.white_list_1_sale);
+        emit!(WhiteList1SaleEvent{
+            white_list_1_sale: node_sale_account.white_list_1_sale
+        }); 
+        Ok(())
+    }
+
+
+    pub fn get_gpu_net_sale(ctx: Context<GetNodeSaleContext>) -> Result<()>
+    {
+        let node_sale_account = &ctx.accounts.node_sale_account;
+        msg!("GPU Net sale status:{}",node_sale_account.gpu_net_sale);
+        emit!(GpuNetSaleEvent{
+            gpu_net_sale: node_sale_account.gpu_net_sale
         }); 
         Ok(())
     }
@@ -600,6 +650,8 @@ pub struct NodeSale
     pub funds_handler: Pubkey,
     pub early_sale_status: bool,
     pub current_tier_number: u64,
+    pub gpu_net_sale: bool,
+    pub white_list_1_sale: bool 
 }
 
 //EVENTS
@@ -692,11 +744,22 @@ pub struct TotalNodesHeldEvent
     pub total_nodes_held: u64
 }
 
-
 #[event]
 pub struct GetCurrentTierNumberEvent
 {
     pub current_tier_number: u64
+}
+
+#[event]
+pub struct WhiteList1SaleEvent
+{
+    pub white_list_1_sale: bool,
+}
+
+#[event]
+pub struct GpuNetSaleEvent
+{
+    pub gpu_net_sale: bool,
 }
 
 #[error_code]

@@ -166,6 +166,68 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "setWhiteList1Sale",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "saleStatus",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "setGpuNetSale",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "saleStatus",
+          "type": "bool"
+        }
+      ]
+    },
+    {
       "name": "discountCode",
       "docs": [
         "@dev Add and remove a discount code by switching the boolean",
@@ -289,6 +351,48 @@ export type SolanaContracts = {
       "docs": [
         "@dev Getter functions"
       ],
+      "accounts": [
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "getWhiteList1Sale",
+      "accounts": [
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "getGpuNetSale",
       "accounts": [
         {
           "name": "nodeSaleAccount",
@@ -579,6 +683,14 @@ export type SolanaContracts = {
           {
             "name": "currentTierNumber",
             "type": "u64"
+          },
+          {
+            "name": "gpuNetSale",
+            "type": "bool"
+          },
+          {
+            "name": "whiteList1Sale",
+            "type": "bool"
           }
         ]
       }
@@ -795,6 +907,26 @@ export type SolanaContracts = {
         {
           "name": "currentTierNumber",
           "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "WhiteList1SaleEvent",
+      "fields": [
+        {
+          "name": "whiteList1Sale",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "GpuNetSaleEvent",
+      "fields": [
+        {
+          "name": "gpuNetSale",
+          "type": "bool",
           "index": false
         }
       ]
@@ -1022,6 +1154,68 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
+      "name": "setWhiteList1Sale",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "saleStatus",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "setGpuNetSale",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "saleStatus",
+          "type": "bool"
+        }
+      ]
+    },
+    {
       "name": "discountCode",
       "docs": [
         "@dev Add and remove a discount code by switching the boolean",
@@ -1145,6 +1339,48 @@ export const IDL: SolanaContracts = {
       "docs": [
         "@dev Getter functions"
       ],
+      "accounts": [
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "getWhiteList1Sale",
+      "accounts": [
+        {
+          "name": "nodeSaleAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "getGpuNetSale",
       "accounts": [
         {
           "name": "nodeSaleAccount",
@@ -1435,6 +1671,14 @@ export const IDL: SolanaContracts = {
           {
             "name": "currentTierNumber",
             "type": "u64"
+          },
+          {
+            "name": "gpuNetSale",
+            "type": "bool"
+          },
+          {
+            "name": "whiteList1Sale",
+            "type": "bool"
           }
         ]
       }
@@ -1651,6 +1895,26 @@ export const IDL: SolanaContracts = {
         {
           "name": "currentTierNumber",
           "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "WhiteList1SaleEvent",
+      "fields": [
+        {
+          "name": "whiteList1Sale",
+          "type": "bool",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "GpuNetSaleEvent",
+      "fields": [
+        {
+          "name": "gpuNetSale",
+          "type": "bool",
           "index": false
         }
       ]
