@@ -104,7 +104,7 @@ pub mod solana_contracts
         emit!(GpuNetSaleEvent{
             gpu_net_sale: node_sale_account.gpu_net_sale
         });
-        msg!("early_sale_status:{}",node_sale_account.gpu_net_sale);
+        msg!("gpu_net_sale:{}",node_sale_account.gpu_net_sale);
         Ok(())
     }
 
