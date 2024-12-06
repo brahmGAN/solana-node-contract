@@ -69,12 +69,12 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_sale_status(ctx: Context<SetNodeSaleContext>, sale_type:u8, sale_status: bool) -> Result<()>
+    pub fn set_sale_status(ctx: Context<SetNodeSaleContext>, sale_type:bool, sale_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let node_sale_account = &mut ctx.accounts.node_sale_account;
-        if sale_type == 0 
+        if sale_type 
         {
             node_sale_account.early_sale_status = sale_status;
         }
@@ -83,7 +83,6 @@ pub mod solana_contracts
             node_sale_account.white_list_1_sale = sale_status;
         }
         emit!(SaleStatusEvent{
-            sale_type: sale_type, 
             sale_status: sale_status
         });
         msg!("sale_type:{}\nsale_status:{}",sale_type,sale_status);
@@ -267,7 +266,6 @@ pub mod solana_contracts
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("Early sale status:{}",node_sale_account.early_sale_status);
         emit!(SaleStatusEvent{
-            sale_type: 0,
             sale_status: node_sale_account.early_sale_status
         }); 
         Ok(())
@@ -278,7 +276,6 @@ pub mod solana_contracts
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("White list 1 sale status:{}",node_sale_account.white_list_1_sale);
         emit!(SaleStatusEvent{
-            sale_type: 1,
             sale_status: node_sale_account.white_list_1_sale
         }); 
         Ok(())
@@ -681,7 +678,6 @@ pub struct NodeBoughtEvent
 #[event]
 pub struct SaleStatusEvent
 {
-    pub sale_type: u8, 
     pub sale_status: bool,
 }
 

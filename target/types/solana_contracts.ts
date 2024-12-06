@@ -161,7 +161,7 @@ export type SolanaContracts = {
       "args": [
         {
           "name": "saleType",
-          "type": "u8"
+          "type": "bool"
         },
         {
           "name": "saleStatus",
@@ -742,11 +742,6 @@ export type SolanaContracts = {
     {
       "name": "SaleStatusEvent",
       "fields": [
-        {
-          "name": "saleType",
-          "type": "u8",
-          "index": false
-        },
         {
           "name": "saleStatus",
           "type": "bool",
@@ -1056,7 +1051,7 @@ export const IDL: SolanaContracts = {
       "args": [
         {
           "name": "saleType",
-          "type": "u8"
+          "type": "bool"
         },
         {
           "name": "saleStatus",
@@ -1637,11 +1632,6 @@ export const IDL: SolanaContracts = {
     {
       "name": "SaleStatusEvent",
       "fields": [
-        {
-          "name": "saleType",
-          "type": "u8",
-          "index": false
-        },
         {
           "name": "saleStatus",
           "type": "bool",
