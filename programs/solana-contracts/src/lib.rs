@@ -73,24 +73,29 @@ pub mod solana_contracts
     {
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let sale_type_str: String;
         let node_sale_account = &mut ctx.accounts.node_sale_account;
         if sale_type == 0 
         {
-            node_sale_account.early_sale_status = sale_status;
+            node_sale_account.early_sale_status = sale_status; 
+            sale_type_str = "Early sale".to_string();
         }
         else if sale_type == 1 
         {
             node_sale_account.white_list_1_sale = sale_status;
+            sale_type_str = "White list-1 sale".to_string();
         }
         else 
         {
             node_sale_account.gpu_net_sale = sale_status;
+            sale_type_str = "GPU net sale".to_string();
         } 
+        msg!("sale_type:{}",sale_type_str);
+        msg!("sale_status:{}",sale_status);
         emit!(SaleStatusEvent{
-            sale_type: sale_type,
+            sale_type: sale_type_str,
             sale_status: sale_status
         });
-        msg!("sale_type:{}\nsale_status:{}",sale_type,sale_status);
         Ok(())
     }
 
@@ -293,7 +298,7 @@ pub mod solana_contracts
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("Early sale status:{}",node_sale_account.early_sale_status);
         emit!(SaleStatusEvent{
-            sale_type: 0,
+            sale_type: "Early sale".to_string(),
             sale_status: node_sale_account.early_sale_status
         }); 
         Ok(())
@@ -304,7 +309,7 @@ pub mod solana_contracts
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("White list 1 sale status:{}",node_sale_account.white_list_1_sale);
         emit!(SaleStatusEvent{
-            sale_type: 1,
+            sale_type: "Whitelist-1 sale".to_string(),
             sale_status: node_sale_account.white_list_1_sale
         }); 
         Ok(())
@@ -315,7 +320,7 @@ pub mod solana_contracts
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("GPU Net sale status:{}",node_sale_account.gpu_net_sale);
         emit!(SaleStatusEvent{
-            sale_type: 2,
+            sale_type: "GPU net sale".to_string(),
             sale_status: node_sale_account.gpu_net_sale
         }); 
         Ok(())
@@ -720,7 +725,7 @@ pub struct NodeBoughtEvent
 #[event]
 pub struct SaleStatusEvent
 {
-    pub sale_type: u8, 
+    pub sale_type: String, 
     pub sale_status: bool,
 }
 

@@ -774,7 +774,7 @@ export type SolanaContracts = {
       "fields": [
         {
           "name": "saleType",
-          "type": "u8",
+          "type": "string",
           "index": false
         },
         {
@@ -1704,7 +1704,7 @@ export const IDL: SolanaContracts = {
       "fields": [
         {
           "name": "saleType",
-          "type": "u8",
+          "type": "string",
           "index": false
         },
         {
