@@ -135,7 +135,7 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setEarlySaleStatus",
+      "name": "setSaleStatus",
       "accounts": [
         {
           "name": "ownerAccount",
@@ -160,67 +160,9 @@ export type SolanaContracts = {
       ],
       "args": [
         {
-          "name": "saleStatus",
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "name": "setWhiteList1Sale",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
+          "name": "saleType",
+          "type": "u8"
         },
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "saleStatus",
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "name": "setGpuNetSale",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
         {
           "name": "saleStatus",
           "type": "bool"
@@ -823,10 +765,15 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "EarlySaleStatusEvent",
+      "name": "SaleStatusEvent",
       "fields": [
         {
-          "name": "earlySaleStatus",
+          "name": "saleType",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "saleStatus",
           "type": "bool",
           "index": false
         }
@@ -907,26 +854,6 @@ export type SolanaContracts = {
         {
           "name": "currentTierNumber",
           "type": "u64",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "WhiteList1SaleEvent",
-      "fields": [
-        {
-          "name": "whiteList1Sale",
-          "type": "bool",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "GpuNetSaleEvent",
-      "fields": [
-        {
-          "name": "gpuNetSale",
-          "type": "bool",
           "index": false
         }
       ]
@@ -1128,7 +1055,7 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "setEarlySaleStatus",
+      "name": "setSaleStatus",
       "accounts": [
         {
           "name": "ownerAccount",
@@ -1153,67 +1080,9 @@ export const IDL: SolanaContracts = {
       ],
       "args": [
         {
-          "name": "saleStatus",
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "name": "setWhiteList1Sale",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
+          "name": "saleType",
+          "type": "u8"
         },
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "saleStatus",
-          "type": "bool"
-        }
-      ]
-    },
-    {
-      "name": "setGpuNetSale",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
         {
           "name": "saleStatus",
           "type": "bool"
@@ -1816,10 +1685,15 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "EarlySaleStatusEvent",
+      "name": "SaleStatusEvent",
       "fields": [
         {
-          "name": "earlySaleStatus",
+          "name": "saleType",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "saleStatus",
           "type": "bool",
           "index": false
         }
@@ -1900,26 +1774,6 @@ export const IDL: SolanaContracts = {
         {
           "name": "currentTierNumber",
           "type": "u64",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "WhiteList1SaleEvent",
-      "fields": [
-        {
-          "name": "whiteList1Sale",
-          "type": "bool",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "GpuNetSaleEvent",
-      "fields": [
-        {
-          "name": "gpuNetSale",
-          "type": "bool",
           "index": false
         }
       ]

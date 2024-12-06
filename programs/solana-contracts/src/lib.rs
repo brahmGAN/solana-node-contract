@@ -69,42 +69,28 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_early_sale_status(ctx: Context<SetNodeSaleContext>, sale_status: bool) -> Result<()>
+    pub fn set_sale_status(ctx: Context<SetNodeSaleContext>, sale_type:u8, sale_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let node_sale_account = &mut ctx.accounts.node_sale_account;
-        node_sale_account.early_sale_status = sale_status; 
-        emit!(EarlySaleStatusEvent{
-            early_sale_status: node_sale_account.early_sale_status
+        if sale_type == 0 
+        {
+            node_sale_account.early_sale_status = sale_status;
+        }
+        else if sale_type == 1 
+        {
+            node_sale_account.white_list_1_sale = sale_status;
+        }
+        else 
+        {
+            node_sale_account.gpu_net_sale = sale_status;
+        } 
+        emit!(SaleStatusEvent{
+            sale_type: sale_type, 
+            sale_status: sale_status
         });
-        msg!("early_sale_status:{}",node_sale_account.early_sale_status);
-        Ok(())
-    }
-
-    pub fn set_white_list_1_sale(ctx: Context<SetNodeSaleContext>, sale_status: bool) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
-        let node_sale_account = &mut ctx.accounts.node_sale_account;
-        node_sale_account.white_list_1_sale = sale_status; 
-        emit!(WhiteList1SaleEvent{
-            white_list_1_sale: node_sale_account.white_list_1_sale
-        });
-        msg!("white_list_1_sale:{}",node_sale_account.white_list_1_sale);
-        Ok(())
-    }
-
-    pub fn set_gpu_net_sale(ctx: Context<SetNodeSaleContext>, sale_status: bool) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account; 
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
-        let node_sale_account = &mut ctx.accounts.node_sale_account;
-        node_sale_account.gpu_net_sale = sale_status; 
-        emit!(GpuNetSaleEvent{
-            gpu_net_sale: node_sale_account.gpu_net_sale
-        });
-        msg!("gpu_net_sale:{}",node_sale_account.gpu_net_sale);
+        msg!("sale_type:{}\nsale_status:{}",sale_type,sale_status);
         Ok(())
     }
 
@@ -285,8 +271,9 @@ pub mod solana_contracts
     {
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("Early sale status:{}",node_sale_account.early_sale_status);
-        emit!(EarlySaleStatusEvent{
-            early_sale_status: node_sale_account.early_sale_status
+        emit!(SaleStatusEvent{
+            sale_type: 0,
+            sale_status: node_sale_account.early_sale_status
         }); 
         Ok(())
     }
@@ -295,8 +282,9 @@ pub mod solana_contracts
     {
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("White list 1 sale status:{}",node_sale_account.white_list_1_sale);
-        emit!(WhiteList1SaleEvent{
-            white_list_1_sale: node_sale_account.white_list_1_sale
+        emit!(SaleStatusEvent{
+            sale_type: 1,
+            sale_status: node_sale_account.white_list_1_sale
         }); 
         Ok(())
     }
@@ -306,8 +294,9 @@ pub mod solana_contracts
     {
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("GPU Net sale status:{}",node_sale_account.gpu_net_sale);
-        emit!(GpuNetSaleEvent{
-            gpu_net_sale: node_sale_account.gpu_net_sale
+        emit!(SaleStatusEvent{
+            sale_type: 2,
+            sale_status: node_sale_account.gpu_net_sale
         }); 
         Ok(())
     }
@@ -708,9 +697,10 @@ pub struct NodeBoughtEvent
 }
 
 #[event]
-pub struct EarlySaleStatusEvent
+pub struct SaleStatusEvent
 {
-    pub early_sale_status: bool,
+    pub sale_type: u8, 
+    pub sale_status: bool,
 }
 
 #[event]
@@ -750,18 +740,6 @@ pub struct TotalNodesHeldEvent
 pub struct GetCurrentTierNumberEvent
 {
     pub current_tier_number: u64
-}
-
-#[event]
-pub struct WhiteList1SaleEvent
-{
-    pub white_list_1_sale: bool,
-}
-
-#[event]
-pub struct GpuNetSaleEvent
-{
-    pub gpu_net_sale: bool,
 }
 
 #[error_code]
