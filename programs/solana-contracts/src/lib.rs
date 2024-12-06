@@ -144,6 +144,7 @@ pub mod solana_contracts
         let current_tier_price:u64; 
         let current_tier_number:u64;
         let mut nodes_bought: bool = false;
+        let mut sale_type: String = String::new();
         
         require!(node_sale_account.early_sale_status || node_sale_account.gpu_net_sale, ErrorCode::SaleYetToBegin);
 
@@ -192,6 +193,7 @@ pub mod solana_contracts
                 user_account.total_nodes_held += quantity;
                 node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
                 nodes_bought = true; 
+                sale_type = "White list-1 sale".to_string();
             }
             else 
             {
@@ -215,6 +217,7 @@ pub mod solana_contracts
                 user_account.total_nodes_held += quantity;
                 node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
                 nodes_bought = true;
+                sale_type = "White list-2 sale".to_string();
             }
                   
         }
@@ -240,6 +243,7 @@ pub mod solana_contracts
             user_account.total_nodes_held += quantity;
             node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
             nodes_bought = true;
+            sale_type = "GPU sale".to_string();
         } 
 
         if node_sale_account.tier_limit[current_tier_number as usize] == 0
@@ -261,6 +265,7 @@ pub mod solana_contracts
         if nodes_bought 
         {
             msg!("discount_code:{}",discount_code);
+            msg!("sale_type:{}",sale_type);
             emit!(NodeBoughtEvent{
                 user: *ctx.accounts.payer.key,
                 quantity: quantity,
@@ -268,14 +273,15 @@ pub mod solana_contracts
                 tier_number: current_tier_number,
                 total_nodes_held: user_account.total_nodes_held,
                 pending_tier_limit: node_sale_account.tier_limit[current_tier_number as usize],
-                discount_code: discount_code
+                discount_code: discount_code, 
+                sale_type: sale_type
             });
             msg!("user:{}",*ctx.accounts.payer.key);
             msg!("quantity:{}",quantity);
             msg!("amount:{}",amount);
             msg!("tier_number:{}",current_tier_number);
             msg!("total_nodes_held:{}",user_account.total_nodes_held);
-            msg!("pending_tier_limit:{}",node_sale_account.tier_limit[current_tier_number as usize]);
+            msg!("pending_tier_limit:{}",node_sale_account.tier_limit[current_tier_number as usize]); 
         }
         Ok(())
     }
@@ -707,7 +713,8 @@ pub struct NodeBoughtEvent
     pub tier_number: u64,
     pub total_nodes_held: u64,
     pub pending_tier_limit: u64,
-    pub discount_code: String
+    pub discount_code: String, 
+    pub sale_type: String,
 }
 
 #[event]

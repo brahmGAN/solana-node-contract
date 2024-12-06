@@ -761,6 +761,11 @@ export type SolanaContracts = {
           "name": "discountCode",
           "type": "string",
           "index": false
+        },
+        {
+          "name": "saleType",
+          "type": "string",
+          "index": false
         }
       ]
     },
@@ -1684,6 +1689,11 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "discountCode",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "saleType",
           "type": "string",
           "index": false
         }
