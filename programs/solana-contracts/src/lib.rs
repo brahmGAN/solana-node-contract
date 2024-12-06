@@ -69,20 +69,25 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_sale_status(ctx: Context<SetNodeSaleContext>, sale_type:bool, sale_status: bool) -> Result<()>
+    pub fn set_sale_status(ctx: Context<SetNodeSaleContext>, sale_type:u8, sale_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account; 
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let node_sale_account = &mut ctx.accounts.node_sale_account;
-        if sale_type 
+        if sale_type == 0 
         {
             node_sale_account.early_sale_status = sale_status;
         }
-        else 
+        else if sale_type == 1 
         {
             node_sale_account.white_list_1_sale = sale_status;
         }
+        else 
+        {
+            node_sale_account.gpu_net_sale = sale_status;
+        } 
         emit!(SaleStatusEvent{
+            sale_type: sale_type,
             sale_status: sale_status
         });
         msg!("sale_type:{}\nsale_status:{}",sale_type,sale_status);
@@ -137,7 +142,8 @@ pub mod solana_contracts
         let amount:u64;
         let tier_price:u64;
         let current_tier_price:u64; 
-        let current_tier_number:u64; 
+        let current_tier_number:u64;
+        let mut nodes_bought: bool = false;
         
         current_tier_number = node_sale_account.current_tier_number; 
         current_tier_price = node_sale_account.tier_price[current_tier_number as usize];
@@ -179,7 +185,11 @@ pub mod solana_contracts
                         ctx.accounts.payer.to_account_info(),
                         ctx.accounts.funds_handler_pubkey.to_account_info(), 
                     ],
-                )?; 
+                )?;
+                
+                user_account.total_nodes_held += quantity;
+                node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
+                nodes_bought = true; 
             }
             else 
             {
@@ -198,11 +208,16 @@ pub mod solana_contracts
                         ctx.accounts.payer.to_account_info(),
                         ctx.accounts.funds_handler_pubkey.to_account_info(), 
                     ],
-                )?; 
+                )?;
+                
+                user_account.total_nodes_held += quantity;
+                node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
+                nodes_bought = true;
             }
                   
         }
-        else 
+        // @dev Turn this on to true at next day 6pm. This is never turned off
+        else if node_sale_account.gpu_net_sale
         {
             let ix = system_instruction::transfer
             (   
@@ -219,10 +234,11 @@ pub mod solana_contracts
                     ctx.accounts.funds_handler_pubkey.to_account_info(),        
                  ],
             )?;
-        }
 
-        user_account.total_nodes_held += quantity;
-        node_sale_account.tier_limit[current_tier_number as usize] -= quantity; 
+            user_account.total_nodes_held += quantity;
+            node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
+            nodes_bought = true;
+        } 
 
         if node_sale_account.tier_limit[current_tier_number as usize] == 0
         {
@@ -240,22 +256,25 @@ pub mod solana_contracts
             //node_sale_account.current_tier_number += 1;
         }
 
-        msg!("discount_code:{}",discount_code);
-        emit!(NodeBoughtEvent{
-            user: *ctx.accounts.payer.key,
-            quantity: quantity,
-            amount: amount,
-            tier_number: current_tier_number,
-            total_nodes_held: user_account.total_nodes_held,
-            pending_tier_limit: node_sale_account.tier_limit[current_tier_number as usize],
-            discount_code: discount_code
-        });
-        msg!("user:{}",*ctx.accounts.payer.key);
-        msg!("quantity:{}",quantity);
-        msg!("amount:{}",amount);
-        msg!("tier_number:{}",current_tier_number);
-        msg!("total_nodes_held:{}",user_account.total_nodes_held);
-        msg!("pending_tier_limit:{}",node_sale_account.tier_limit[current_tier_number as usize]);
+        if nodes_bought 
+        {
+            msg!("discount_code:{}",discount_code);
+            emit!(NodeBoughtEvent{
+                user: *ctx.accounts.payer.key,
+                quantity: quantity,
+                amount: amount,
+                tier_number: current_tier_number,
+                total_nodes_held: user_account.total_nodes_held,
+                pending_tier_limit: node_sale_account.tier_limit[current_tier_number as usize],
+                discount_code: discount_code
+            });
+            msg!("user:{}",*ctx.accounts.payer.key);
+            msg!("quantity:{}",quantity);
+            msg!("amount:{}",amount);
+            msg!("tier_number:{}",current_tier_number);
+            msg!("total_nodes_held:{}",user_account.total_nodes_held);
+            msg!("pending_tier_limit:{}",node_sale_account.tier_limit[current_tier_number as usize]);
+        }
         Ok(())
     }
 
@@ -266,6 +285,7 @@ pub mod solana_contracts
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("Early sale status:{}",node_sale_account.early_sale_status);
         emit!(SaleStatusEvent{
+            sale_type: 0,
             sale_status: node_sale_account.early_sale_status
         }); 
         Ok(())
@@ -276,7 +296,19 @@ pub mod solana_contracts
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("White list 1 sale status:{}",node_sale_account.white_list_1_sale);
         emit!(SaleStatusEvent{
+            sale_type: 1,
             sale_status: node_sale_account.white_list_1_sale
+        }); 
+        Ok(())
+    }
+
+    pub fn get_gpu_net_sale(ctx: Context<GetNodeSaleContext>) -> Result<()>
+    {
+        let node_sale_account = &ctx.accounts.node_sale_account;
+        msg!("GPU Net sale status:{}",node_sale_account.gpu_net_sale);
+        emit!(SaleStatusEvent{
+            sale_type: 2,
+            sale_status: node_sale_account.gpu_net_sale
         }); 
         Ok(())
     }
@@ -621,7 +653,8 @@ pub struct NodeSale
     pub funds_handler: Pubkey,
     pub early_sale_status: bool,
     pub current_tier_number: u64,
-    pub white_list_1_sale: bool 
+    pub white_list_1_sale: bool,
+    pub gpu_net_sale: bool, 
 }
 
 //EVENTS
@@ -678,6 +711,7 @@ pub struct NodeBoughtEvent
 #[event]
 pub struct SaleStatusEvent
 {
+    pub sale_type: u8, 
     pub sale_status: bool,
 }
 
