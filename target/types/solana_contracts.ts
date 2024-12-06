@@ -914,6 +914,11 @@ export type SolanaContracts = {
       "code": 6010,
       "name": "ReservedForNextSale",
       "msg": "Current tier onwards are reserved for next sale!"
+    },
+    {
+      "code": 6011,
+      "name": "SaleYetToBegin",
+      "msg": "Sale is yet to begin!"
     }
   ]
 };
@@ -1834,6 +1839,11 @@ export const IDL: SolanaContracts = {
       "code": 6010,
       "name": "ReservedForNextSale",
       "msg": "Current tier onwards are reserved for next sale!"
+    },
+    {
+      "code": 6011,
+      "name": "SaleYetToBegin",
+      "msg": "Sale is yet to begin!"
     }
   ]
 };

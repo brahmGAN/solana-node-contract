@@ -145,6 +145,8 @@ pub mod solana_contracts
         let current_tier_number:u64;
         let mut nodes_bought: bool = false;
         
+        require!(node_sale_account.early_sale_status || node_sale_account.gpu_net_sale, ErrorCode::SaleYetToBegin);
+
         current_tier_number = node_sale_account.current_tier_number; 
         current_tier_price = node_sale_account.tier_price[current_tier_number as usize];
 
@@ -789,4 +791,7 @@ pub enum ErrorCode
 
     #[msg("Current tier onwards are reserved for next sale!")]
     ReservedForNextSale,
+
+    #[msg("Sale is yet to begin!")]
+    SaleYetToBegin,
 }
