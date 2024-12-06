@@ -434,7 +434,7 @@ pub struct InitializeContext<'info>
         payer = payer, 
         seeds = [b"node_sale_account"],
         bump,
-        space = size_of::<NodeSale>() + 8 + 140
+        space = size_of::<NodeSale>() + 8 + 240
     )]
     pub node_sale_account: Account<'info,NodeSale>,
 
@@ -460,7 +460,7 @@ pub struct SetNodeSaleContext<'info>
         payer = payer, 
         seeds = [b"node_sale_account"],
         bump,
-        space = size_of::<NodeSale>() + 8 + 140
+        space = size_of::<NodeSale>() + 8 + 240
     )]
     pub node_sale_account: Account<'info,NodeSale>,
 
@@ -532,7 +532,7 @@ pub struct BuyNodeContext<'info>
         payer = payer, 
         seeds = [b"node_sale_account"],
         bump,
-        space = size_of::<NodeSale>() + 8 + 140
+        space = size_of::<NodeSale>() + 8 + 240
     )]
     pub node_sale_account: Account<'info,NodeSale>,
 
@@ -587,7 +587,7 @@ pub struct GetNodeSaleContext<'info>
         payer = payer, 
         seeds = [b"node_sale_account"],
         bump,
-        space = size_of::<NodeSale>() + 8 + 140
+        space = size_of::<NodeSale>() + 8 + 240
     )]
     pub node_sale_account: Account<'info,NodeSale>,
 
