@@ -982,6 +982,11 @@ export type SolanaContracts = {
       "code": 6009,
       "name": "WhiteList",
       "msg": "WhiteList-1 sale yet to complete!"
+    },
+    {
+      "code": 6010,
+      "name": "ReservedForNextSale",
+      "msg": "Current tier onwards are reserved for next sale!"
     }
   ]
 };
@@ -1970,6 +1975,11 @@ export const IDL: SolanaContracts = {
       "code": 6009,
       "name": "WhiteList",
       "msg": "WhiteList-1 sale yet to complete!"
+    },
+    {
+      "code": 6010,
+      "name": "ReservedForNextSale",
+      "msg": "Current tier onwards are reserved for next sale!"
     }
   ]
 };

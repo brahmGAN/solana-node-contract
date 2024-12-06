@@ -182,7 +182,8 @@ pub mod solana_contracts
             // @dev Turn this on to true at 2pm. Switch this off to false at 3pm.  
             if node_sale_account.white_list_1_sale  
             {
-                require!(user_account.in_white_list_1,ErrorCode::WhiteList); 
+                require!(user_account.in_white_list_1,ErrorCode::WhiteList);
+                require!(current_tier_number == 1, ErrorCode::ReservedForNextSale);  
                 let ix = system_instruction::transfer
                 (   
                     &ctx.accounts.payer.key(), 
@@ -201,6 +202,7 @@ pub mod solana_contracts
             }
             else 
             {
+                require!(current_tier_number < 5, ErrorCode::ReservedForNextSale); 
                 let ix = system_instruction::transfer
                 (   
                     &ctx.accounts.payer.key(), 
@@ -794,4 +796,7 @@ pub enum ErrorCode
 
     #[msg("WhiteList-1 sale yet to complete!")]
     WhiteList,
+
+    #[msg("Current tier onwards are reserved for next sale!")]
+    ReservedForNextSale,
 }
