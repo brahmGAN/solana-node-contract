@@ -78,14 +78,10 @@ pub mod solana_contracts
         {
             node_sale_account.early_sale_status = sale_status;
         }
-        else if sale_type == 1 
+        else 
         {
             node_sale_account.white_list_1_sale = sale_status;
         }
-        else 
-        {
-            node_sale_account.gpu_net_sale = sale_status;
-        } 
         emit!(SaleStatusEvent{
             sale_type: sale_type, 
             sale_status: sale_status
@@ -207,8 +203,7 @@ pub mod solana_contracts
             }
                   
         }
-        // @dev Turn this on to true at next day 6pm. This is never turned off 
-        else if node_sale_account.gpu_net_sale
+        else 
         {
             let ix = system_instruction::transfer
             (   
@@ -285,18 +280,6 @@ pub mod solana_contracts
         emit!(SaleStatusEvent{
             sale_type: 1,
             sale_status: node_sale_account.white_list_1_sale
-        }); 
-        Ok(())
-    }
-
-
-    pub fn get_gpu_net_sale(ctx: Context<GetNodeSaleContext>) -> Result<()>
-    {
-        let node_sale_account = &ctx.accounts.node_sale_account;
-        msg!("GPU Net sale status:{}",node_sale_account.gpu_net_sale);
-        emit!(SaleStatusEvent{
-            sale_type: 2,
-            sale_status: node_sale_account.gpu_net_sale
         }); 
         Ok(())
     }
@@ -641,7 +624,6 @@ pub struct NodeSale
     pub funds_handler: Pubkey,
     pub early_sale_status: bool,
     pub current_tier_number: u64,
-    pub gpu_net_sale: bool,
     pub white_list_1_sale: bool 
 }
 

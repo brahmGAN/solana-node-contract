@@ -334,27 +334,6 @@ export type SolanaContracts = {
       "args": []
     },
     {
-      "name": "getGpuNetSale",
-      "accounts": [
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "getTierLimit",
       "accounts": [
         {
@@ -625,10 +604,6 @@ export type SolanaContracts = {
           {
             "name": "currentTierNumber",
             "type": "u64"
-          },
-          {
-            "name": "gpuNetSale",
-            "type": "bool"
           },
           {
             "name": "whiteList1Sale",
@@ -1254,27 +1229,6 @@ export const IDL: SolanaContracts = {
       "args": []
     },
     {
-      "name": "getGpuNetSale",
-      "accounts": [
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": []
-    },
-    {
       "name": "getTierLimit",
       "accounts": [
         {
@@ -1545,10 +1499,6 @@ export const IDL: SolanaContracts = {
           {
             "name": "currentTierNumber",
             "type": "u64"
-          },
-          {
-            "name": "gpuNetSale",
-            "type": "bool"
           },
           {
             "name": "whiteList1Sale",
