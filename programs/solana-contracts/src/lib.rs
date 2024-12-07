@@ -406,7 +406,7 @@ pub mod solana_contracts
         });
         msg!("Address:{}",user.key());
         msg!("In early sale:{}",user_account.in_early_sale); 
-        msg!("In early sale:{}",user_account.in_white_list_1); 
+        msg!("In whitelist 1:{}",user_account.in_white_list_1); 
         Ok(())
     }
 
