@@ -313,7 +313,7 @@ export type SolanaContracts = {
       "args": []
     },
     {
-      "name": "getWhiteList1Sale",
+      "name": "getWhiteListOneSale",
       "accounts": [
         {
           "name": "nodeSaleAccount",
@@ -1243,7 +1243,7 @@ export const IDL: SolanaContracts = {
       "args": []
     },
     {
-      "name": "getWhiteList1Sale",
+      "name": "getWhiteListOneSale",
       "accounts": [
         {
           "name": "nodeSaleAccount",

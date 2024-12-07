@@ -304,7 +304,7 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn get_white_list_1_sale(ctx: Context<GetNodeSaleContext>) -> Result<()>
+    pub fn get_white_list_one_sale(ctx: Context<GetNodeSaleContext>) -> Result<()>
     {
         let node_sale_account = &ctx.accounts.node_sale_account;
         msg!("White list 1 sale status:{}",node_sale_account.white_list_1_sale);
