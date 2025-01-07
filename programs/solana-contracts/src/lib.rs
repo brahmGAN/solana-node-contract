@@ -295,20 +295,24 @@ pub mod solana_contracts
     pub fn swap_into_credits(ctx: Context<SwapNodeContext>, quantity:u64, email:String) -> Result<()>
     {
         let user_account = &mut ctx.accounts.user_account; 
+        let event_tracker_account = &mut ctx.accounts.event_tracker;
         if user_account.total_nodes_held >= quantity 
         {
             user_account.total_nodes_held -= quantity; 
+            event_tracker_account.nodes_to_credits_id += 1; 
             //@vipin: Please remove this comment and add the NFT burning mechanism here
             emit!(NodesToCreditsEvent{
                 user: *ctx.accounts.payer.key,
                 total_nodes_held: user_account.total_nodes_held, 
                 user_email: email.clone(), 
-                nodes_burnt: quantity 
+                nodes_burnt: quantity,
+                nodes_to_credits_id: event_tracker_account.nodes_to_credits_id 
             });
             msg!("User: {}",*ctx.accounts.payer.key);
             msg!("Total nodes held:{}",user_account.total_nodes_held);
             msg!("User email: {}", email);
             msg!("Nodes burnt: {}", quantity); 
+            msg!("nodes_to_credits_id: {}", event_tracker_account.nodes_to_credits_id);
         }
 
         Ok(())
@@ -318,6 +322,7 @@ pub mod solana_contracts
     {
         let mut nodes_burnt:u64 = 0; 
         let user_account = &mut ctx.accounts.user_account; 
+        let event_tracker_account = &mut ctx.accounts.event_tracker;
 
         match role 
         {
@@ -357,13 +362,15 @@ pub mod solana_contracts
         if nodes_burnt > 0  
         {
             //vipin: Please remove this comment and do your NFT burning magic here
+            event_tracker_account.nodes_to_super_nodes_id += 1; 
             emit!(NodesToSuperNodeEvent{
                 user: *ctx.accounts.payer.key,
                 total_nodes_held: user_account.total_nodes_held, 
                 user_email: email.clone(), 
                 nodes_burnt: nodes_burnt, 
                 role: role, 
-                evm_address: evm_address.clone()  
+                evm_address: evm_address.clone(),  
+                nodes_to_super_nodes_id: event_tracker_account.nodes_to_super_nodes_id
             });
             msg!("User: {}",*ctx.accounts.payer.key);
             msg!("Total nodes held: {}",user_account.total_nodes_held);
@@ -371,6 +378,7 @@ pub mod solana_contracts
             msg!("Nodes burnt: {}", nodes_burnt);
             msg!("Role: {}", role);  
             msg!("EVM address: {}", evm_address);
+            msg!("nodes_to_super_nodes_id: {}", event_tracker_account.nodes_to_super_nodes_id);
         }
 
         Ok(())
@@ -734,6 +742,15 @@ pub struct SwapNodeContext<'info>
     )]
     pub user_account: Account<'info, User>, 
 
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [b"event_tracker_account"], 
+        bump,
+        space = size_of::<EventTracker>() + 8
+    )]
+    pub event_tracker: Account<'info, EventTracker>,
+
     #[account(mut)]
     pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
@@ -772,7 +789,14 @@ pub struct NodeSale
     pub current_tier_number: u64,
     pub white_list_1_sale: bool,
     pub gpu_net_sale: bool, 
-}
+} 
+
+#[account] 
+pub struct EventTracker
+{
+    pub nodes_to_credits_id:u64,
+    pub nodes_to_super_nodes_id:u64, 
+} 
 
 //EVENTS
 
@@ -878,7 +902,8 @@ pub struct NodesToCreditsEvent
     pub user: Pubkey,
     pub total_nodes_held: u64, 
     pub user_email: String, 
-    pub nodes_burnt: u64 
+    pub nodes_burnt: u64, 
+    pub nodes_to_credits_id: u64 
 }
 
 #[event]
@@ -889,7 +914,8 @@ pub struct NodesToSuperNodeEvent
     pub user_email: String, 
     pub nodes_burnt: u64,
     pub role: u8,
-    pub evm_address: String 
+    pub evm_address: String, 
+    pub nodes_to_super_nodes_id: u64 
 }
 
 #[error_code]

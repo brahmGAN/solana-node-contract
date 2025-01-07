@@ -297,6 +297,11 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
+          "name": "eventTracker",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -323,6 +328,11 @@ export type SolanaContracts = {
       "accounts": [
         {
           "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventTracker",
           "isMut": true,
           "isSigner": false
         },
@@ -704,6 +714,22 @@ export type SolanaContracts = {
           }
         ]
       }
+    },
+    {
+      "name": "eventTracker",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "nodesToCreditsId",
+            "type": "u64"
+          },
+          {
+            "name": "nodesToSuperNodesId",
+            "type": "u64"
+          }
+        ]
+      }
     }
   ],
   "events": [
@@ -953,6 +979,11 @@ export type SolanaContracts = {
           "name": "nodesBurnt",
           "type": "u64",
           "index": false
+        },
+        {
+          "name": "nodesToCreditsId",
+          "type": "u64",
+          "index": false
         }
       ]
     },
@@ -987,6 +1018,11 @@ export type SolanaContracts = {
         {
           "name": "evmAddress",
           "type": "string",
+          "index": false
+        },
+        {
+          "name": "nodesToSuperNodesId",
+          "type": "u64",
           "index": false
         }
       ]
@@ -1360,6 +1396,11 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
+          "name": "eventTracker",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "payer",
           "isMut": true,
           "isSigner": true
@@ -1386,6 +1427,11 @@ export const IDL: SolanaContracts = {
       "accounts": [
         {
           "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "eventTracker",
           "isMut": true,
           "isSigner": false
         },
@@ -1767,6 +1813,22 @@ export const IDL: SolanaContracts = {
           }
         ]
       }
+    },
+    {
+      "name": "eventTracker",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "nodesToCreditsId",
+            "type": "u64"
+          },
+          {
+            "name": "nodesToSuperNodesId",
+            "type": "u64"
+          }
+        ]
+      }
     }
   ],
   "events": [
@@ -2016,6 +2078,11 @@ export const IDL: SolanaContracts = {
           "name": "nodesBurnt",
           "type": "u64",
           "index": false
+        },
+        {
+          "name": "nodesToCreditsId",
+          "type": "u64",
+          "index": false
         }
       ]
     },
@@ -2050,6 +2117,11 @@ export const IDL: SolanaContracts = {
         {
           "name": "evmAddress",
           "type": "string",
+          "index": false
+        },
+        {
+          "name": "nodesToSuperNodesId",
+          "type": "u64",
           "index": false
         }
       ]
