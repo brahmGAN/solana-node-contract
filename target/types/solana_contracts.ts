@@ -289,6 +289,74 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "swapIntoCredits",
+      "accounts": [
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "quantity",
+          "type": "u64"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "swapIntoSuperNode",
+      "accounts": [
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "role",
+          "type": "u8"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
+        },
+        {
+          "name": "evmAddress",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
@@ -862,6 +930,66 @@ export type SolanaContracts = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "NodesToCreditsEvent",
+      "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "totalNodesHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "userEmail",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "nodesBurnt",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "NodesToSuperNodeEvent",
+      "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "totalNodesHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "userEmail",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "nodesBurnt",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "role",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "evmAddress",
+          "type": "string",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -924,6 +1052,11 @@ export type SolanaContracts = {
       "code": 6011,
       "name": "SaleYetToBegin",
       "msg": "Sale is yet to begin!"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidRole",
+      "msg": "Invalid role provided!"
     }
   ]
 };
@@ -1219,6 +1352,74 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
+      "name": "swapIntoCredits",
+      "accounts": [
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "quantity",
+          "type": "u64"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "swapIntoSuperNode",
+      "accounts": [
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "role",
+          "type": "u8"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
+        },
+        {
+          "name": "evmAddress",
+          "type": "string"
+        },
+        {
+          "name": "email",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
@@ -1792,6 +1993,66 @@ export const IDL: SolanaContracts = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "NodesToCreditsEvent",
+      "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "totalNodesHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "userEmail",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "nodesBurnt",
+          "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "NodesToSuperNodeEvent",
+      "fields": [
+        {
+          "name": "user",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "totalNodesHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "userEmail",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "nodesBurnt",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "role",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "evmAddress",
+          "type": "string",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -1854,6 +2115,11 @@ export const IDL: SolanaContracts = {
       "code": 6011,
       "name": "SaleYetToBegin",
       "msg": "Sale is yet to begin!"
+    },
+    {
+      "code": 6012,
+      "name": "InvalidRole",
+      "msg": "Invalid role provided!"
     }
   ]
 };
