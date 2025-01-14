@@ -282,7 +282,6 @@ pub mod solana_contracts
 
         if nodes_bought 
         {
-            // @vipin: Please remove this comment and do your NFT minting magic in this block
             msg!("discount_code:{}",discount_code);
             msg!("sale_type:{}",sale_type);
             emit!(NodeBoughtEvent{
@@ -302,98 +301,6 @@ pub mod solana_contracts
             msg!("total_nodes_held:{}",user_account.total_nodes_held);
             msg!("pending_tier_limit:{}",node_sale_account.tier_limit[current_tier_number as usize]); 
         }
-        Ok(())
-    }
-
-    pub fn swap_into_credits(ctx: Context<SwapNodeContext>, quantity:u64, email:String) -> Result<()>
-    {
-        let user_account = &mut ctx.accounts.user_account; 
-        let event_tracker_account = &mut ctx.accounts.event_tracker;
-        if user_account.total_nodes_held >= quantity 
-        {
-            user_account.total_nodes_held -= quantity; 
-            event_tracker_account.nodes_to_credits_id += 1; 
-            //@vipin: Please remove this comment and add the NFT burning mechanism here
-            emit!(NodesToCreditsEvent{
-                user: *ctx.accounts.payer.key,
-                total_nodes_held: user_account.total_nodes_held, 
-                user_email: email.clone(), 
-                nodes_burnt: quantity,
-                nodes_to_credits_id: event_tracker_account.nodes_to_credits_id 
-            });
-            msg!("User: {}",*ctx.accounts.payer.key);
-            msg!("Total nodes held:{}",user_account.total_nodes_held);
-            msg!("User email: {}", email);
-            msg!("Nodes burnt: {}", quantity); 
-            msg!("nodes_to_credits_id: {}", event_tracker_account.nodes_to_credits_id);
-        }
-
-        Ok(())
-    } 
-
-    pub fn swap_into_super_node(ctx: Context<SwapNodeContext>, role:u8, quantity:u64, evm_address:String, email: String) -> Result<()> 
-    {
-        let mut nodes_burnt:u64 = 0; 
-        let user_account = &mut ctx.accounts.user_account; 
-        let event_tracker_account = &mut ctx.accounts.event_tracker;
-
-        match role 
-        {
-            0 => 
-            {
-                if user_account.total_nodes_held >= 11 * quantity  
-                {
-                    user_account.total_nodes_held -= 11 * quantity;
-                    nodes_burnt = 11 * quantity; 
-                }
-            }
-
-            1 => 
-            {
-                if user_account.total_nodes_held >= 33 * quantity  
-                {
-                    user_account.total_nodes_held -= 33 * quantity;
-                    nodes_burnt = 33 * quantity; 
-                }
-            }
-
-            2 => 
-            {
-                if user_account.total_nodes_held >= 66 * quantity
-                {
-                    user_account.total_nodes_held -= 66 * quantity;
-                    nodes_burnt = 66 * quantity; 
-                }
-            }
-
-            _ => 
-            {
-                return Err(ErrorCode::InvalidRole.into());
-            }
-        }
-
-        if nodes_burnt > 0  
-        {
-            //vipin: Please remove this comment and do your NFT burning magic here
-            event_tracker_account.nodes_to_super_nodes_id += 1; 
-            emit!(NodesToSuperNodeEvent{
-                user: *ctx.accounts.payer.key,
-                total_nodes_held: user_account.total_nodes_held, 
-                user_email: email.clone(), 
-                nodes_burnt: nodes_burnt, 
-                role: role, 
-                evm_address: evm_address.clone(),  
-                nodes_to_super_nodes_id: event_tracker_account.nodes_to_super_nodes_id
-            });
-            msg!("User: {}",*ctx.accounts.payer.key);
-            msg!("Total nodes held: {}",user_account.total_nodes_held);
-            msg!("User email: {}", email);
-            msg!("Nodes burnt: {}", nodes_burnt);
-            msg!("Role: {}", role);  
-            msg!("EVM address: {}", evm_address);
-            msg!("nodes_to_super_nodes_id: {}", event_tracker_account.nodes_to_super_nodes_id);
-        }
-
         Ok(())
     }
 
@@ -609,6 +516,24 @@ pub mod solana_contracts
 
         Ok(())
     }
+
+    //@vipin: Please remove this comment and add your NFT burning magic 
+    pub fn burnt_nft(ctx: Context<>, email:String, evm_address: String) -> Result<()>
+    {
+        if //NFT burn is a success 
+        {
+            emit!(NftBurningEvent{
+                user_pubkey: *ctx.accounts.payer.key,
+                user_email: email.clone(), 
+                evm_address: evm_address.clone() 
+            });
+            msg!("User: {}",*ctx.accounts.payer.key);
+            msg!("User email: {}", email);
+            msg!("evm_address: {}", evm_address);
+        }
+
+        Ok(())
+    } 
 }
 
 #[derive(Accounts)]
@@ -826,32 +751,6 @@ pub struct GetDiscountCodeContext<'info>
     pub system_program: Program<'info,System>,
 }
 
-#[derive(Accounts)]
-pub struct SwapNodeContext<'info>
-{
-    #[account(
-        init_if_needed,
-        payer = payer,
-        seeds = [payer.key().as_ref()], 
-        bump,
-        space = size_of::<User>() + 8
-    )]
-    pub user_account: Account<'info, User>, 
-
-    #[account(
-        init_if_needed,
-        payer = payer,
-        seeds = [b"event_tracker_account"], 
-        bump,
-        space = size_of::<EventTracker>() + 8
-    )]
-    pub event_tracker: Account<'info, EventTracker>,
-
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    pub system_program: Program<'info,System>,
-}
-
 //Variables structs
 
 #[account]
@@ -993,25 +892,11 @@ pub struct GetCurrentTierNumberEvent
 }
 
 #[event]
-pub struct NodesToCreditsEvent
+pub struct NftBurningEvent
 {
-    pub user: Pubkey,
-    pub total_nodes_held: u64, 
+    pub user_pubkey: Pubkey,
     pub user_email: String, 
-    pub nodes_burnt: u64, 
-    pub nodes_to_credits_id: u64 
-}
-
-#[event]
-pub struct NodesToSuperNodeEvent
-{
-    pub user: Pubkey,
-    pub total_nodes_held: u64, 
-    pub user_email: String, 
-    pub nodes_burnt: u64,
-    pub role: u8,
     pub evm_address: String, 
-    pub nodes_to_super_nodes_id: u64 
 }
 
 #[error_code]

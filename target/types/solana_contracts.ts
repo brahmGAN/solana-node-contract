@@ -262,44 +262,6 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "associatedTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "metadataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK - address"
-          ]
-        },
-        {
-          "name": "masterEditionAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenMetadataProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "fundsHandlerPubkey",
           "isMut": true,
           "isSigner": false
@@ -311,11 +273,6 @@ export type SolanaContracts = {
         },
         {
           "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
           "isMut": false,
           "isSigner": false
         }
@@ -332,7 +289,7 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "swapIntoCredits",
+      "name": "burntNft",
       "accounts": [
         {
           "name": "userAccount",
@@ -356,55 +313,12 @@ export type SolanaContracts = {
         }
       ],
       "args": [
-        {
-          "name": "quantity",
-          "type": "u64"
-        },
         {
           "name": "email",
           "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "swapIntoSuperNode",
-      "accounts": [
-        {
-          "name": "userAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "eventTracker",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "role",
-          "type": "u8"
-        },
-        {
-          "name": "quantity",
-          "type": "u64"
         },
         {
           "name": "evmAddress",
-          "type": "string"
-        },
-        {
-          "name": "email",
           "type": "string"
         }
       ]
@@ -596,6 +510,32 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "setTotalNodesHeld",
+      "accounts": [
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "getDiscountCodeStatus",
       "accounts": [
         {
@@ -662,6 +602,70 @@ export type SolanaContracts = {
         },
         {
           "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initNft",
+      "accounts": [
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "associatedTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK - address"
+          ]
+        },
+        {
+          "name": "masterEditionAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
           "isMut": false,
           "isSigner": false
         }
@@ -1001,71 +1005,21 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "NodesToCreditsEvent",
+      "name": "NftBurningEvent",
       "fields": [
         {
-          "name": "user",
+          "name": "userPubkey",
           "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "totalNodesHeld",
-          "type": "u64",
           "index": false
         },
         {
           "name": "userEmail",
           "type": "string",
-          "index": false
-        },
-        {
-          "name": "nodesBurnt",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "nodesToCreditsId",
-          "type": "u64",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "NodesToSuperNodeEvent",
-      "fields": [
-        {
-          "name": "user",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "totalNodesHeld",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "userEmail",
-          "type": "string",
-          "index": false
-        },
-        {
-          "name": "nodesBurnt",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "role",
-          "type": "u8",
           "index": false
         },
         {
           "name": "evmAddress",
           "type": "string",
-          "index": false
-        },
-        {
-          "name": "nodesToSuperNodesId",
-          "type": "u64",
           "index": false
         }
       ]
@@ -1404,44 +1358,6 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         },
         {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "associatedTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "metadataAccount",
-          "isMut": true,
-          "isSigner": false,
-          "docs": [
-            "CHECK - address"
-          ]
-        },
-        {
-          "name": "masterEditionAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "tokenMetadataProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
           "name": "fundsHandlerPubkey",
           "isMut": true,
           "isSigner": false
@@ -1453,11 +1369,6 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        },
-        {
-          "name": "rent",
           "isMut": false,
           "isSigner": false
         }
@@ -1474,7 +1385,7 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "swapIntoCredits",
+      "name": "burntNft",
       "accounts": [
         {
           "name": "userAccount",
@@ -1498,55 +1409,12 @@ export const IDL: SolanaContracts = {
         }
       ],
       "args": [
-        {
-          "name": "quantity",
-          "type": "u64"
-        },
         {
           "name": "email",
           "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "swapIntoSuperNode",
-      "accounts": [
-        {
-          "name": "userAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "eventTracker",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "role",
-          "type": "u8"
-        },
-        {
-          "name": "quantity",
-          "type": "u64"
         },
         {
           "name": "evmAddress",
-          "type": "string"
-        },
-        {
-          "name": "email",
           "type": "string"
         }
       ]
@@ -1738,6 +1606,32 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
+      "name": "setTotalNodesHeld",
+      "accounts": [
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "getDiscountCodeStatus",
       "accounts": [
         {
@@ -1804,6 +1698,70 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "initNft",
+      "accounts": [
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "associatedTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "metadataAccount",
+          "isMut": true,
+          "isSigner": false,
+          "docs": [
+            "CHECK - address"
+          ]
+        },
+        {
+          "name": "masterEditionAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenMetadataProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
           "isMut": false,
           "isSigner": false
         }
@@ -2143,71 +2101,21 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "NodesToCreditsEvent",
+      "name": "NftBurningEvent",
       "fields": [
         {
-          "name": "user",
+          "name": "userPubkey",
           "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "totalNodesHeld",
-          "type": "u64",
           "index": false
         },
         {
           "name": "userEmail",
           "type": "string",
-          "index": false
-        },
-        {
-          "name": "nodesBurnt",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "nodesToCreditsId",
-          "type": "u64",
-          "index": false
-        }
-      ]
-    },
-    {
-      "name": "NodesToSuperNodeEvent",
-      "fields": [
-        {
-          "name": "user",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "totalNodesHeld",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "userEmail",
-          "type": "string",
-          "index": false
-        },
-        {
-          "name": "nodesBurnt",
-          "type": "u64",
-          "index": false
-        },
-        {
-          "name": "role",
-          "type": "u8",
           "index": false
         },
         {
           "name": "evmAddress",
           "type": "string",
-          "index": false
-        },
-        {
-          "name": "nodesToSuperNodesId",
-          "type": "u64",
           "index": false
         }
       ]
