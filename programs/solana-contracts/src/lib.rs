@@ -192,6 +192,7 @@ pub mod solana_contracts
             {
                 require!(user_account.in_white_list_1,ErrorCode::WhiteList);
                 require!(current_tier_number == 1, ErrorCode::ReservedForNextSale);
+                require!(quantity < 11);
                 let ix = system_instruction::transfer
                 (
                     &ctx.accounts.payer.key(),
@@ -1016,4 +1017,7 @@ pub enum ErrorCode
 
     #[msg("Invalid role provided!")]
     InvalidRole,
+
+    #[msg("Exceeded Max Quantity of nodes that can be bought!")]
+    ExceededMaxQuantity,
 }
