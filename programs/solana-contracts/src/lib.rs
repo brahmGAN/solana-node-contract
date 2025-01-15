@@ -397,19 +397,6 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_total_nodes_held(ctx: Context<GetUserContext>, user: Pubkey) -> Result<()>
-    {
-        let user_account = &mut ctx.accounts.user_account;
-        user_account.total_nodes_held = 100;
-        emit!(TotalNodesHeldEvent{
-            user: user,
-            total_nodes_held: user_account.total_nodes_held
-        });
-        msg!("User:{}",user);
-        msg!("Total nodes held:{}",user_account.total_nodes_held);
-        Ok(())
-    }
-
     pub fn get_discount_code_status(ctx: Context<GetDiscountCodeContext>, discount_code: String) -> Result<()>
     {
         let discount_code_account = &ctx.accounts.discount_code_account;
@@ -446,9 +433,8 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn init_nft(
-        ctx: Context<InitNFT>,
-    ) -> Result<()> {
+    pub fn init_nft(ctx: Context<InitNFT>,) -> Result<()> 
+    {
 
         let  user=&mut ctx.accounts.user_account;
 
@@ -516,9 +502,9 @@ pub mod solana_contracts
 
         Ok(())
     }
+
     pub fn burnt_nft(ctx: Context<BurnNFT>, email:String, evm_address: String) -> Result<()>
     {
-
         let cpi_accounts= token::Burn{
             mint: ctx.accounts.mint.to_account_info(),
             authority:ctx.accounts.signer.to_account_info() ,
@@ -551,7 +537,6 @@ pub mod solana_contracts
             msg!("User: {}",*ctx.accounts.signer.key);
             msg!("User email: {}", email);
             msg!("evm_address: {}", evm_address);
-
 
         Ok(())
     }
@@ -772,6 +757,76 @@ pub struct GetDiscountCodeContext<'info>
     pub system_program: Program<'info,System>,
 }
 
+#[derive(Accounts)]
+pub struct InitNFT<'info> {
+
+    #[account(
+        init_if_needed,
+        payer = signer,
+        seeds = [signer.key.as_ref()],
+        bump,
+        space = size_of::<User>() + 8
+    )]
+    pub user_account: Account<'info, User>,
+
+    /// CHECK: ok, we are passing in this account ourselves
+    #[account(mut, signer)]
+    pub signer: AccountInfo<'info>,
+
+    #[account(
+        init,
+        payer = signer,
+        mint::decimals = 0,
+        mint::authority = signer.key(),
+        mint::freeze_authority = signer.key()
+    )]
+    pub mint: Account<'info, Mint>,
+
+    #[account(
+        init_if_needed,
+        payer = signer,
+        associated_token::mint = mint,
+        associated_token::authority = signer
+    )]
+    pub associated_token_account: Account<'info, TokenAccount>,
+
+    /// CHECK - address
+    #[account(
+        mut,
+        address = MetadataAccount::find_pda(&mint.key()).0,
+    )]
+    pub metadata_account: AccountInfo<'info>,
+
+    /// CHECK: address
+    #[account(
+        mut,
+        address = MasterEdition::find_pda(&mint.key()).0,
+    )]
+    pub master_edition_account: AccountInfo<'info>,
+
+    pub token_program: Program<'info, Token>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
+    pub token_metadata_program: Program<'info, Metadata>,
+    pub system_program: Program<'info, System>,
+    pub rent: Sysvar<'info, Rent>,
+}
+
+#[derive(Accounts)]
+pub struct BurnNFT<'info> 
+{
+    #[account(mut)]
+    pub signer: Signer<'info>,
+
+    #[account(mut)]
+    pub mint: Account<'info, Mint>,
+
+    #[account(mut)]
+    pub associated_token_account: Account<'info, TokenAccount>,
+
+    pub token_program: Program<'info, Token>,
+    pub system_program: Program<'info, System>,
+}
+
 //Variables structs
 
 #[account]
@@ -961,65 +1016,4 @@ pub enum ErrorCode
 
     #[msg("Invalid role provided!")]
     InvalidRole,
-}
-
-#[derive(Accounts)]
-pub struct InitNFT<'info> {
-
-    #[account(
-        init_if_needed,
-        payer = signer,
-        seeds = [signer.key.as_ref()],
-        bump,
-        space = size_of::<User>() + 8
-    )]
-    pub user_account: Account<'info, User>,
-    /// CHECK: ok, we are passing in this account ourselves
-    #[account(mut, signer)]
-    pub signer: AccountInfo<'info>,
-    #[account(
-        init,
-        payer = signer,
-        mint::decimals = 0,
-        mint::authority = signer.key(),
-        mint::freeze_authority = signer.key()
-    )]
-    pub mint: Account<'info, Mint>,
-    #[account(
-        init_if_needed,
-        payer = signer,
-        associated_token::mint = mint,
-        associated_token::authority = signer
-    )]
-    pub associated_token_account: Account<'info, TokenAccount>,
-    /// CHECK - address
-    #[account(
-        mut,
-        address = MetadataAccount::find_pda(&mint.key()).0,
-    )]
-    pub metadata_account: AccountInfo<'info>,
-    /// CHECK: address
-    #[account(
-        mut,
-        address = MasterEdition::find_pda(&mint.key()).0,
-    )]
-    pub master_edition_account: AccountInfo<'info>,
-
-    pub token_program: Program<'info, Token>,
-    pub associated_token_program: Program<'info, AssociatedToken>,
-    pub token_metadata_program: Program<'info, Metadata>,
-    pub system_program: Program<'info, System>,
-    pub rent: Sysvar<'info, Rent>,
-}
-
-#[derive(Accounts)]
-pub struct BurnNFT<'info> {
-    #[account(mut)]
-    pub signer: Signer<'info>,
-    #[account(mut)]
-    pub mint: Account<'info, Mint>,
-    #[account(mut)]
-    pub associated_token_account: Account<'info, TokenAccount>,
-    pub token_program: Program<'info, Token>,
-    pub system_program: Program<'info, System>,
 }

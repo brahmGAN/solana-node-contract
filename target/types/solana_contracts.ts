@@ -289,41 +289,6 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "burntNft",
-      "accounts": [
-        {
-          "name": "userAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "eventTracker",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "email",
-          "type": "string"
-        },
-        {
-          "name": "evmAddress",
-          "type": "string"
-        }
-      ]
-    },
-    {
       "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
@@ -510,32 +475,6 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setTotalNodesHeld",
-      "accounts": [
-        {
-          "name": "userAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "user",
-          "type": "publicKey"
-        }
-      ]
-    },
-    {
       "name": "getDiscountCodeStatus",
       "accounts": [
         {
@@ -671,6 +610,46 @@ export type SolanaContracts = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "burntNft",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "evmAddress",
+          "type": "string"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -1385,41 +1364,6 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "burntNft",
-      "accounts": [
-        {
-          "name": "userAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "eventTracker",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "email",
-          "type": "string"
-        },
-        {
-          "name": "evmAddress",
-          "type": "string"
-        }
-      ]
-    },
-    {
       "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
@@ -1606,32 +1550,6 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "setTotalNodesHeld",
-      "accounts": [
-        {
-          "name": "userAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "user",
-          "type": "publicKey"
-        }
-      ]
-    },
-    {
       "name": "getDiscountCodeStatus",
       "accounts": [
         {
@@ -1767,6 +1685,46 @@ export const IDL: SolanaContracts = {
         }
       ],
       "args": []
+    },
+    {
+      "name": "burntNft",
+      "accounts": [
+        {
+          "name": "signer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "mint",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "associatedTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "evmAddress",
+          "type": "string"
+        }
+      ]
     }
   ],
   "accounts": [
