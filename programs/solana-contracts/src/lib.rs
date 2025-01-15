@@ -266,18 +266,18 @@ pub mod solana_contracts
 
         if node_sale_account.tier_limit[current_tier_number as usize] == 0
         {
-            // @dev Use this if-else block if Magic eden handles sale of Tier-5,6,7,8
-            if current_tier_number == 4
-            {
-                node_sale_account.current_tier_number = 9;
-            }
-            else
-            {
-                node_sale_account.current_tier_number += 1;
-            }
+            // // @dev Use this if-else block if Magic eden handles sale of Tier-5,6,7,8
+            // if current_tier_number == 4
+            // {
+            //     node_sale_account.current_tier_number = 9;
+            // }
+            // else
+            // {
+            //     node_sale_account.current_tier_number += 1;
+            // }
 
             // @dev Use this block if GPU.net handles sale of Tier 5 6 7 8
-            //node_sale_account.current_tier_number += 1;
+            node_sale_account.current_tier_number += 1;
         }
 
         if nodes_bought
