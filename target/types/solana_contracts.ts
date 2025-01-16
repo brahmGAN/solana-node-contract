@@ -1069,6 +1069,11 @@ export type SolanaContracts = {
       "code": 6012,
       "name": "InvalidRole",
       "msg": "Invalid role provided!"
+    },
+    {
+      "code": 6013,
+      "name": "ExceededMaxQuantity",
+      "msg": "Exceeded Max Quantity of nodes that can be bought!"
     }
   ]
 };
@@ -2144,6 +2149,11 @@ export const IDL: SolanaContracts = {
       "code": 6012,
       "name": "InvalidRole",
       "msg": "Invalid role provided!"
+    },
+    {
+      "code": 6013,
+      "name": "ExceededMaxQuantity",
+      "msg": "Exceeded Max Quantity of nodes that can be bought!"
     }
   ]
 };
