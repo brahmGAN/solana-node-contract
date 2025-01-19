@@ -439,68 +439,68 @@ pub mod solana_contracts
 
         let  user=&mut ctx.accounts.user_account;
 
-        if user.total_nodes_held > 0{
+        if user.total_nodes_held > 0
+        {
 
-            let name="Gpu.net".into();
-            let symbol="GPU".into();
-            let uri= "https://raw.githubusercontent.com/687c/solana-nft-native-client/main/metadata.json".into();
+                let name="Gpu.net".into();
+                let symbol="GPU".into();
+                let uri= "https://raw.githubusercontent.com/687c/solana-nft-native-client/main/metadata.json".into();
 
-        // create mint account
-        let cpi_context = CpiContext::new(ctx.accounts.token_program.to_account_info(), MintTo {
-            mint: ctx.accounts.mint.to_account_info(),
-            to: ctx.accounts.associated_token_account.to_account_info(),
-            authority: ctx.accounts.signer.to_account_info(),
-        });
-
-        mint_to(cpi_context, 1)?;
-
-        // create metadata account
-        let cpi_context = CpiContext::new(
-            ctx.accounts.token_metadata_program.to_account_info(),
-            CreateMetadataAccountsV3 {
-                metadata: ctx.accounts.metadata_account.to_account_info(),
+            // create mint account
+            let cpi_context = CpiContext::new(ctx.accounts.token_program.to_account_info(), MintTo {
                 mint: ctx.accounts.mint.to_account_info(),
-                mint_authority: ctx.accounts.signer.to_account_info(),
-                update_authority: ctx.accounts.signer.to_account_info(),
-                payer: ctx.accounts.signer.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                rent: ctx.accounts.rent.to_account_info(),
-            }
-        );
+                to: ctx.accounts.associated_token_account.to_account_info(),
+                authority: ctx.accounts.signer.to_account_info(),
+            });
 
-        let data_v2 = DataV2 {
-            name: name,
-            symbol: symbol,
-            uri: uri,
-            seller_fee_basis_points: 0,
-            creators: None,
-            collection: None,    // create metadata account
-            uses: None,
-        };
+            mint_to(cpi_context, 1)?;
 
-        create_metadata_accounts_v3(cpi_context, data_v2, false, true, None)?;
+            // create metadata account
+            let cpi_context = CpiContext::new(
+                ctx.accounts.token_metadata_program.to_account_info(),
+                CreateMetadataAccountsV3 {
+                    metadata: ctx.accounts.metadata_account.to_account_info(),
+                    mint: ctx.accounts.mint.to_account_info(),
+                    mint_authority: ctx.accounts.signer.to_account_info(),
+                    update_authority: ctx.accounts.signer.to_account_info(),
+                    payer: ctx.accounts.signer.to_account_info(),
+                    system_program: ctx.accounts.system_program.to_account_info(),
+                    rent: ctx.accounts.rent.to_account_info(),
+                }
+            );
 
-        //create master edition account
-        let cpi_context = CpiContext::new(
-            ctx.accounts.token_metadata_program.to_account_info(),
-            CreateMasterEditionV3 {
-                edition: ctx.accounts.master_edition_account.to_account_info(),
-                mint: ctx.accounts.mint.to_account_info(),
-                update_authority: ctx.accounts.signer.to_account_info(),
-                mint_authority: ctx.accounts.signer.to_account_info(),
-                payer: ctx.accounts.signer.to_account_info(),
-                metadata: ctx.accounts.metadata_account.to_account_info(),
-                token_program: ctx.accounts.token_program.to_account_info(),
-                system_program: ctx.accounts.system_program.to_account_info(),
-                rent: ctx.accounts.rent.to_account_info(),
-            }
-        );
+            let data_v2 = DataV2 {
+                name: name,
+                symbol: symbol,
+                uri: uri,
+                seller_fee_basis_points: 0,
+                creators: None,
+                collection: None,    // create metadata account
+                uses: None,
+            };
 
-        create_master_edition_v3(cpi_context, None)?;
+            create_metadata_accounts_v3(cpi_context, data_v2, false, true, None)?;
 
-        user.total_nodes_held -=1;
-    }
+            //create master edition account
+            let cpi_context = CpiContext::new(
+                ctx.accounts.token_metadata_program.to_account_info(),
+                CreateMasterEditionV3 {
+                    edition: ctx.accounts.master_edition_account.to_account_info(),
+                    mint: ctx.accounts.mint.to_account_info(),
+                    update_authority: ctx.accounts.signer.to_account_info(),
+                    mint_authority: ctx.accounts.signer.to_account_info(),
+                    payer: ctx.accounts.signer.to_account_info(),
+                    metadata: ctx.accounts.metadata_account.to_account_info(),
+                    token_program: ctx.accounts.token_program.to_account_info(),
+                    system_program: ctx.accounts.system_program.to_account_info(),
+                    rent: ctx.accounts.rent.to_account_info(),
+                }
+            );
 
+            create_master_edition_v3(cpi_context, None)?;
+
+            user.total_nodes_held -=1;
+        }
         Ok(())
     }
 
@@ -861,13 +861,6 @@ pub struct NodeSale
     pub current_tier_number: u64,
     pub white_list_1_sale: bool,
     pub gpu_net_sale: bool,
-}
-
-#[account]
-pub struct EventTracker
-{
-    pub nodes_to_credits_id:u64,
-    pub nodes_to_super_nodes_id:u64,
 }
 
 //EVENTS

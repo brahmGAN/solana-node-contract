@@ -740,22 +740,6 @@ export type SolanaContracts = {
           }
         ]
       }
-    },
-    {
-      "name": "eventTracker",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "nodesToCreditsId",
-            "type": "u64"
-          },
-          {
-            "name": "nodesToSuperNodesId",
-            "type": "u64"
-          }
-        ]
-      }
     }
   ],
   "events": [
@@ -1817,22 +1801,6 @@ export const IDL: SolanaContracts = {
           {
             "name": "gpuNetSale",
             "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "eventTracker",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "nodesToCreditsId",
-            "type": "u64"
-          },
-          {
-            "name": "nodesToSuperNodesId",
-            "type": "u64"
           }
         ]
       }
