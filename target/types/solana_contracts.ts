@@ -654,6 +654,11 @@ export type SolanaContracts = {
       "name": "burntNft",
       "accounts": [
         {
+          "name": "userAddressAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "burnStatusAccount",
           "isMut": true,
           "isSigner": false
@@ -740,6 +745,10 @@ export type SolanaContracts = {
           {
             "name": "status",
             "type": "bool"
+          },
+          {
+            "name": "totalNodesBurnt",
+            "type": "u64"
           }
         ]
       }
@@ -1792,6 +1801,11 @@ export const IDL: SolanaContracts = {
       "name": "burntNft",
       "accounts": [
         {
+          "name": "userAddressAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "burnStatusAccount",
           "isMut": true,
           "isSigner": false
@@ -1878,6 +1892,10 @@ export const IDL: SolanaContracts = {
           {
             "name": "status",
             "type": "bool"
+          },
+          {
+            "name": "totalNodesBurnt",
+            "type": "u64"
           }
         ]
       }

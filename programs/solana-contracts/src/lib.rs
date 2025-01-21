@@ -320,6 +320,16 @@ pub mod solana_contracts
         Ok(())
     }
 
+    // pub fn swap_barrels(ctx: Context<SwapBarrelsContext>, role:u8, ) -> Result<()>
+    // {
+    //     let user_address_account = &mut ctx.accounts.user_address_account;
+    //     require!(!user_address_account.status,ErrorCode::UserAddressAlreadySet);
+    //     user_address_account.email = email; 
+    //     user_address_account.evm_address = evm_address;
+    //     user_address_account.status = true; 
+    //     Ok(())
+    // }
+
     /// @dev Getter functions
 
     pub fn get_early_sale_status(ctx: Context<GetNodeSaleContext>) -> Result<()>
@@ -521,7 +531,8 @@ pub mod solana_contracts
 
     pub fn burnt_nft(ctx: Context<BurnNFTContext>) -> Result<()>
     {
-        let burn_status_account = &ctx.accounts.burn_status_account; 
+        let burn_status_account = &ctx.accounts.burn_status_account;
+        let user_address_account = &mut ctx.accounts.user_address_account; 
 
         require!(burn_status_account.burn_status, ErrorCode::BurnNotAvailable);
 
@@ -549,6 +560,8 @@ pub mod solana_contracts
         msg!("Closing associated token account...");
         close_account(cpi_context)?;
 
+        user_address_account.total_nodes_burnt +=1; 
+
             // emit!(NftBurningEvent{
             //     user_pubkey: *ctx.accounts.signer.key,
             //     user_email: email.clone(),
@@ -561,6 +574,7 @@ pub mod solana_contracts
         Ok(())
     }
 }
+
 
 #[derive(Accounts)]
 pub struct InitializeContext<'info>
@@ -881,6 +895,15 @@ pub struct BurnNFTContext<'info>
     #[account(
         init_if_needed,
         payer = signer,
+        seeds = [signer.key().as_ref()],
+        bump,
+        space = size_of::<UserAddress>() + 8
+    )]
+    pub user_address_account: Account<'info, UserAddress>,
+
+    #[account(
+        init_if_needed,
+        payer = signer,
         seeds = [b"burn_status_account"],
         bump,
         space = size_of::<BurnStatus>() + 8
@@ -901,13 +924,12 @@ pub struct BurnNFTContext<'info>
 }
 
 #[derive(Accounts)]
-#[instruction(user: Pubkey)]
 pub struct SetUserAddressContext<'info>
 {
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [user.key().as_ref()],
+        seeds = [payer.key().as_ref()],
         bump,
         space = size_of::<UserAddress>() + 8
     )]
@@ -940,7 +962,8 @@ pub struct UserAddress
 {
     pub email: String,
     pub evm_address: String,
-    pub status: bool
+    pub status: bool, 
+    pub total_nodes_burnt: u64 
 }
 
 #[account]
