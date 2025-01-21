@@ -211,15 +211,18 @@ pub mod solana_contracts
         let mut sale_type: String = String::new();
 
         require!(node_sale_account.early_sale_status || node_sale_account.gpu_net_sale, ErrorCode::SaleYetToBegin);
+        require!(quantity <= 770, ErrorCode::ExceededMaxPurchaseLimit);
+        require!(node_sale_account.funds_handler.key() == funds_handler_pubkey.key(), ErrorCode::UnauthorizedFundsHandler);
 
         current_tier_number = node_sale_account.current_tier_number;
         current_tier_price = node_sale_account.tier_price[current_tier_number as usize];
 
-        let next_tier_price = node_sale_account.tier_price[(current_tier_number.clone() + 1) as usize];
+        let next_tier_price = node_sale_account.tier_price[(current_tier_number + 1) as usize];
         let price_1: u64; 
         let price_2: u64; 
         let amount_1: u64;
-        let amount_2: u64;  
+        let amount_2: u64; 
+        let tier_spill: bool;  
 
         if quantity <= node_sale_account.tier_limit[current_tier_number as usize] 
         {
@@ -233,9 +236,12 @@ pub mod solana_contracts
             }
 
             amount = quantity * tier_price;
+
+            tier_spill = false; 
         }
         else 
         {
+            require!(current_tier_number != 11, ErrorCode::InsufficientTierLimit);
             if discount_code_account.discount_code == true
             {
                 price_1 =  (current_tier_price * 90 ) / 100;
@@ -249,12 +255,14 @@ pub mod solana_contracts
 
             amount_1 = current_tier_number * price_1;
             amount_2 = (quantity-current_tier_number) * price_2;
+
             amount = amount_1 + amount_2; 
+
+            tier_spill = true; 
         }
 
-        //require!(quantity <= node_sale_account.tier_limit[current_tier_number as usize], ErrorCode::QuantityOutOfBounds);
-        require!(node_sale_account.funds_handler.key() == funds_handler_pubkey.key(), ErrorCode::UnauthorizedFundsHandler);
         require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
+
         // @dev Turn this on to true at 2pm.Turn this off at 6pm.From 6pm the sale on magic eden happens for tier-5,6,7,8.
         if node_sale_account.early_sale_status
         {
@@ -280,8 +288,7 @@ pub mod solana_contracts
                     ],
                 )?;
 
-                user_account.total_nodes_held += quantity;
-                node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
+                // user_account.total_nodes_held += quantity;
                 nodes_bought = true;
                 sale_type = "White list-1 sale".to_string();
             }
@@ -304,8 +311,8 @@ pub mod solana_contracts
                     ],
                 )?;
 
-                user_account.total_nodes_held += quantity;
-                node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
+                //user_account.total_nodes_held += quantity;
+                //node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
                 nodes_bought = true;
                 sale_type = "White list-2 sale".to_string();
             }
@@ -330,30 +337,31 @@ pub mod solana_contracts
                  ],
             )?;
 
-            user_account.total_nodes_held += quantity;
-            node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
+            //user_account.total_nodes_held += quantity;
+            //node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
             nodes_bought = true;
             sale_type = "GPU sale".to_string();
         }
 
-        if node_sale_account.tier_limit[current_tier_number as usize] == 0
-        {
-            // // @dev Use this if-else block if Magic eden handles sale of Tier-5,6,7,8
-            // if current_tier_number == 4
-            // {
-            //     node_sale_account.current_tier_number = 9;
-            // }
-            // else
-            // {
-            //     node_sale_account.current_tier_number += 1;
-            // }
-
-            // @dev Use this block if GPU.net handles sale of Tier 5 6 7 8
-            node_sale_account.current_tier_number += 1;
-        }
-
         if nodes_bought
         {
+            if tier_spill 
+            {
+                let current_tier_limit = node_sale_account.tier_limit[current_tier_number as usize];
+                node_sale_account.tier_limit[current_tier_number as usize] = 0;
+                node_sale_account.tier_limit[(current_tier_number + 1) as usize] -= quantity - current_tier_limit;
+            }
+            else 
+            {
+                node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
+            }
+
+            if node_sale_account.tier_limit[current_tier_number as usize] == 0
+            {
+                node_sale_account.current_tier_number += 1;
+            }
+
+            user_account.total_nodes_held += quantity;
             discount_code_account.total_discount_code_usage +=1;    
             msg!("discount_code:{}",discount_code);
             msg!("total_discount_code_usage:{}",discount_code_account.total_discount_code_usage);
@@ -1333,11 +1341,11 @@ pub enum ErrorCode
     #[msg("Not Authorized!")]
     NotAuthorized,
 
-    #[msg("Out of tier limits!")]
-    TierLimit,
+    #[msg("Quantity exceedes available tier limtits!")]
+    InsufficientTierLimit,
 
-    #[msg("Quantity is more than the available nodes in the tier!")]
-    QuantityOutOfBounds,
+    #[msg("Cannot purchase more than 770 nodes in one single Tx!")]
+    ExceededMaxPurchaseLimit,
 
     #[msg("Not part of early sale!")]
     EarlySale,

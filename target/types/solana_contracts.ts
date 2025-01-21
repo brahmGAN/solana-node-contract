@@ -1247,13 +1247,13 @@ export type SolanaContracts = {
     },
     {
       "code": 6002,
-      "name": "TierLimit",
-      "msg": "Out of tier limits!"
+      "name": "InsufficientTierLimit",
+      "msg": "Quantity exceedes available tier limtits!"
     },
     {
       "code": 6003,
-      "name": "QuantityOutOfBounds",
-      "msg": "Quantity is more than the available nodes in the tier!"
+      "name": "ExceededMaxPurchaseLimit",
+      "msg": "Cannot purchase more than 770 nodes in one single Tx!"
     },
     {
       "code": 6004,
@@ -2617,13 +2617,13 @@ export const IDL: SolanaContracts = {
     },
     {
       "code": 6002,
-      "name": "TierLimit",
-      "msg": "Out of tier limits!"
+      "name": "InsufficientTierLimit",
+      "msg": "Quantity exceedes available tier limtits!"
     },
     {
       "code": 6003,
-      "name": "QuantityOutOfBounds",
-      "msg": "Quantity is more than the available nodes in the tier!"
+      "name": "ExceededMaxPurchaseLimit",
+      "msg": "Cannot purchase more than 770 nodes in one single Tx!"
     },
     {
       "code": 6004,
