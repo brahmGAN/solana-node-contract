@@ -141,8 +141,7 @@ export type SolanaContracts = {
     {
       "name": "discountCode",
       "docs": [
-        "@dev Add and remove a discount code by switching the boolean",
-        "@dev `gpunet` is a reserved discount code string to signify no discount code is being used"
+        "@dev Add and remove a discount code by switching the boolean"
       ],
       "accounts": [
         {
@@ -665,11 +664,6 @@ export type SolanaContracts = {
       "name": "initNft",
       "accounts": [
         {
-          "name": "mintStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "userAccount",
           "isMut": true,
           "isSigner": false
@@ -857,6 +851,10 @@ export type SolanaContracts = {
           {
             "name": "discountCode",
             "type": "bool"
+          },
+          {
+            "name": "totalDiscountCodeUsage",
+            "type": "u64"
           }
         ]
       }
@@ -1033,6 +1031,11 @@ export type SolanaContracts = {
           "name": "discountCodeStatus",
           "type": "bool",
           "index": false
+        },
+        {
+          "name": "totalDiscountCodeUsage",
+          "type": "u64",
+          "index": false
         }
       ]
     },
@@ -1077,6 +1080,11 @@ export type SolanaContracts = {
         {
           "name": "saleType",
           "type": "string",
+          "index": false
+        },
+        {
+          "name": "totalDiscountCodeUsage",
+          "type": "u64",
           "index": false
         }
       ]
@@ -1503,8 +1511,7 @@ export const IDL: SolanaContracts = {
     {
       "name": "discountCode",
       "docs": [
-        "@dev Add and remove a discount code by switching the boolean",
-        "@dev `gpunet` is a reserved discount code string to signify no discount code is being used"
+        "@dev Add and remove a discount code by switching the boolean"
       ],
       "accounts": [
         {
@@ -2027,11 +2034,6 @@ export const IDL: SolanaContracts = {
       "name": "initNft",
       "accounts": [
         {
-          "name": "mintStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
           "name": "userAccount",
           "isMut": true,
           "isSigner": false
@@ -2219,6 +2221,10 @@ export const IDL: SolanaContracts = {
           {
             "name": "discountCode",
             "type": "bool"
+          },
+          {
+            "name": "totalDiscountCodeUsage",
+            "type": "u64"
           }
         ]
       }
@@ -2395,6 +2401,11 @@ export const IDL: SolanaContracts = {
           "name": "discountCodeStatus",
           "type": "bool",
           "index": false
+        },
+        {
+          "name": "totalDiscountCodeUsage",
+          "type": "u64",
+          "index": false
         }
       ]
     },
@@ -2439,6 +2450,11 @@ export const IDL: SolanaContracts = {
         {
           "name": "saleType",
           "type": "string",
+          "index": false
+        },
+        {
+          "name": "totalDiscountCodeUsage",
+          "type": "u64",
           "index": false
         }
       ]

@@ -100,7 +100,6 @@ pub mod solana_contracts
     }
 
     /// @dev Add and remove a discount code by switching the boolean
-    /// @dev `gpunet` is a reserved discount code string to signify no discount code is being used
     pub fn discount_code(ctx: Context<DiscountCodeContext>, discount_code: String, discount_code_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
@@ -108,9 +107,11 @@ pub mod solana_contracts
         let discount_code_account = &mut ctx.accounts.discount_code_account;
         discount_code_account.discount_code = discount_code_status;
         msg!("Discount code:{}",discount_code);
+        msg!("total_discount_code_usage:{}",discount_code_account.total_discount_code_usage);
         emit!(DiscountCodeEvent{
             discount_code: discount_code,
-            discount_code_status: discount_code_account.discount_code
+            discount_code_status: discount_code_account.discount_code,
+            total_discount_code_usage: discount_code_account.total_discount_code_usage
         });
         msg!("Discount code status:{}",discount_code_account.discount_code);
         Ok(())
@@ -200,7 +201,7 @@ pub mod solana_contracts
     {
         let node_sale_account = &mut ctx.accounts.node_sale_account;
         let user_account = &mut ctx.accounts.user_account;
-        let discount_code_account = &ctx.accounts.discount_code_account;
+        let discount_code_account = &mut ctx.accounts.discount_code_account;
         let funds_handler_pubkey = &ctx.accounts.funds_handler_pubkey;
         let amount:u64;
         let tier_price:u64;
@@ -237,7 +238,6 @@ pub mod solana_contracts
             {
                 require!(user_account.in_white_list_1,ErrorCode::WhiteList);
                 require!(current_tier_number == 1, ErrorCode::ReservedForNextSale);
-                require!(quantity < 11, ErrorCode::ExceededMaxQuantity); 
                 let ix = system_instruction::transfer
                 (
                     &ctx.accounts.payer.key(),
@@ -328,7 +328,9 @@ pub mod solana_contracts
 
         if nodes_bought
         {
+            discount_code_account.total_discount_code_usage +=1;    
             msg!("discount_code:{}",discount_code);
+            msg!("total_discount_code_usage:{}",discount_code_account.total_discount_code_usage);
             msg!("sale_type:{}",sale_type);
             emit!(NodeBoughtEvent{
                 user: *ctx.accounts.payer.key,
@@ -338,7 +340,8 @@ pub mod solana_contracts
                 total_nodes_held: user_account.total_nodes_held,
                 pending_tier_limit: node_sale_account.tier_limit[current_tier_number as usize],
                 discount_code: discount_code,
-                sale_type: sale_type
+                sale_type: sale_type, 
+                total_discount_code_usage: discount_code_account.total_discount_code_usage
             });
             msg!("user:{}",*ctx.accounts.payer.key);
             msg!("quantity:{}",quantity);
@@ -535,9 +538,11 @@ pub mod solana_contracts
     {
         let discount_code_account = &ctx.accounts.discount_code_account;
         msg!("Discount code:{}",discount_code);
+        msg!("total_discount_code_usage:{}",discount_code_account.total_discount_code_usage);
         emit!(DiscountCodeEvent{
             discount_code: discount_code,
-            discount_code_status: discount_code_account.discount_code
+            discount_code_status: discount_code_account.discount_code,
+            total_discount_code_usage: discount_code_account.total_discount_code_usage
         });
         msg!("Discount code status:{}", discount_code_account.discount_code);
         Ok(())
@@ -570,10 +575,10 @@ pub mod solana_contracts
     pub fn init_nft(ctx: Context<InitNFTContext>,) -> Result<()> 
     {
 
-        //vipin
-        let mint_status_account = &ctx.accounts.mint_status_account;
+        // //vipin
+        // let mint_status_account = &ctx.accounts.mint_status_account;
 
-        require!(mint_status_account.mint_status, ErrorCode::MintNotAvailable);
+        // require!(mint_status_account.mint_status, ErrorCode::MintNotAvailable);
 
         let  user=&mut ctx.accounts.user_account;
 
@@ -960,14 +965,14 @@ pub struct GetDiscountCodeContext<'info>
 pub struct InitNFTContext<'info> 
 {
     //vipin
-    #[account(
-        init_if_needed,
-        payer = signer,
-        seeds = [b"mint_status_account"],
-        bump,
-        space = 8 + 8 
-    )]
-    pub mint_status_account: Account<'info, MintStatus>,
+    // #[account(
+    //     init_if_needed,
+    //     payer = signer,
+    //     seeds = [b"mint_status_account"],
+    //     bump,
+    //     space = 8 + 8 
+    // )]
+    // pub mint_status_account: Account<'info, MintStatus>,
 
     #[account(
         init_if_needed,
@@ -1142,7 +1147,8 @@ pub struct UserAddress
 #[account]
 pub struct DiscountCode
 {
-    pub discount_code: bool
+    pub discount_code: bool,
+    pub total_discount_code_usage: u64
 }
 
 #[account]
@@ -1214,7 +1220,8 @@ pub struct WhitelistEvent
 pub struct DiscountCodeEvent
 {
     pub discount_code: String,
-    pub discount_code_status: bool
+    pub discount_code_status: bool, 
+    pub total_discount_code_usage:u64 
 }
 
 #[event]
@@ -1228,6 +1235,7 @@ pub struct NodeBoughtEvent
     pub pending_tier_limit: u64,
     pub discount_code: String,
     pub sale_type: String,
+    pub total_discount_code_usage: u64
 }
 
 #[event]
