@@ -156,6 +156,36 @@ pub mod solana_contracts
         Ok(())
     }
 
+    pub fn set_swap_status(ctx: Context<SetSwapStatusContext>, types:u8,status:bool) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account;
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let swap_status_account = &mut ctx.accounts.swap_status_account;
+        match types
+        {
+            0 => 
+            {
+                swap_status_account.credits_status = status;
+            },
+
+            1 => 
+            {
+                swap_status_account.queen_status = status;
+            },
+
+            2 => 
+            {
+                swap_status_account.validators_status = status;
+            },
+
+            _ => 
+            {
+                swap_status_account.king_status = status;
+            },
+        }
+        Ok(())
+    }
+
     pub fn set_user_address(ctx: Context<SetUserAddressContext>, email:String, evm_address:String) -> Result<()>
     {
         let user_address_account = &mut ctx.accounts.user_address_account;
@@ -726,6 +756,32 @@ pub struct SetMintBurnStatusContext<'info>
         space = size_of::<MintStatus>() + 8 
     )]
     pub mint_status_account: Account<'info, MintStatus>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
+#[derive(Accounts)]
+pub struct SetSwapStatusContext<'info>
+{
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [b"owner"],
+        bump,
+        space = size_of::<Owner>() + 8
+    )]
+    pub owner_account: Account<'info, Owner>,
+
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [b"swap_status_account"],
+        bump,
+        space = size_of::<SwapStatus>() + 8
+    )]
+    pub swap_status_account: Account<'info, SwapStatus>,
 
     #[account(mut)]
     pub payer: Signer<'info>,

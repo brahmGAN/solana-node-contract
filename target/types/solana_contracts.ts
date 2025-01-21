@@ -253,6 +253,41 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "setSwapStatus",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "swapStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "types",
+          "type": "u8"
+        },
+        {
+          "name": "status",
+          "type": "bool"
+        }
+      ]
+    },
+    {
       "name": "setUserAddress",
       "accounts": [
         {
@@ -1567,6 +1602,41 @@ export const IDL: SolanaContracts = {
         {
           "name": "types",
           "type": "bool"
+        },
+        {
+          "name": "status",
+          "type": "bool"
+        }
+      ]
+    },
+    {
+      "name": "setSwapStatus",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "swapStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "types",
+          "type": "u8"
         },
         {
           "name": "status",
