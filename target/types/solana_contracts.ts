@@ -665,6 +665,11 @@ export type SolanaContracts = {
       "name": "initNft",
       "accounts": [
         {
+          "name": "mintStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "userAccount",
           "isMut": true,
           "isSigner": false
@@ -2021,6 +2026,11 @@ export const IDL: SolanaContracts = {
     {
       "name": "initNft",
       "accounts": [
+        {
+          "name": "mintStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
         {
           "name": "userAccount",
           "isMut": true,

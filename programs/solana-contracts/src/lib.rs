@@ -570,6 +570,11 @@ pub mod solana_contracts
     pub fn init_nft(ctx: Context<InitNFTContext>,) -> Result<()> 
     {
 
+        //vipin
+        let mint_status_account = &ctx.accounts.mint_status_account;
+
+        require!(mint_status_account.mint_status, ErrorCode::MintNotAvailable);
+
         let  user=&mut ctx.accounts.user_account;
 
         if user.total_nodes_held > 0
@@ -954,14 +959,15 @@ pub struct GetDiscountCodeContext<'info>
 #[derive(Accounts)]
 pub struct InitNFTContext<'info> 
 {
-    // #[account(
-    //     init_if_needed,
-    //     payer = signer,
-    //     seeds = [b"mint_burn_status_account"],
-    //     bump,
-    //     space = 1 
-    // )]
-    // pub mint_burn_status_account: Account<'info, MintBurnStatus>,
+    //vipin
+    #[account(
+        init_if_needed,
+        payer = signer,
+        seeds = [b"mint_status_account"],
+        bump,
+        space = 8 + 8 
+    )]
+    pub mint_status_account: Account<'info, MintStatus>,
 
     #[account(
         init_if_needed,
