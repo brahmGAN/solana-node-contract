@@ -69,19 +69,6 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_funds_handler(ctx: Context<SetNodeSaleContext>, funds_handler: Pubkey) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account;
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);
-        let node_sale_account = &mut ctx.accounts.node_sale_account;
-        node_sale_account.funds_handler = funds_handler;
-        emit!(FundsHandlerEvent{
-            funds_handler: node_sale_account.funds_handler
-        });
-        msg!("Funds handler:{}",node_sale_account.funds_handler);
-        Ok(())
-    }
-
     pub fn set_sale_status(ctx: Context<SetNodeSaleContext>, sale_type:u8, sale_status: bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;

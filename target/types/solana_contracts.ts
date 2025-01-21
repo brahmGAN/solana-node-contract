@@ -104,37 +104,6 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setFundsHandler",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "fundsHandler",
-          "type": "publicKey"
-        }
-      ]
-    },
-    {
       "name": "setSaleStatus",
       "accounts": [
         {
@@ -1164,37 +1133,6 @@ export const IDL: SolanaContracts = {
           "type": {
             "vec": "u64"
           }
-        }
-      ]
-    },
-    {
-      "name": "setFundsHandler",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "nodeSaleAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "fundsHandler",
-          "type": "publicKey"
         }
       ]
     },
