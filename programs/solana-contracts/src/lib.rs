@@ -156,6 +156,16 @@ pub mod solana_contracts
         Ok(())
     }
 
+    pub fn set_user_address(ctx: Context<SetUserAddressContext>, email:String, evm_address:String) -> Result<()>
+    {
+        let user_address_account = &mut ctx.accounts.user_address_account;
+        require!(!user_address_account.status,ErrorCode::UserAddressAlreadySet);
+        user_address_account.email = email; 
+        user_address_account.evm_address = evm_address;
+        user_address_account.status = true; 
+        Ok(())
+    }
+
     pub fn buy_node(ctx: Context<BuyNodeContext>, discount_code:String, quantity:u64) -> Result<()>
     {
         let node_sale_account = &mut ctx.accounts.node_sale_account;
@@ -890,6 +900,24 @@ pub struct BurnNFTContext<'info>
     pub system_program: Program<'info, System>,
 }
 
+#[derive(Accounts)]
+#[instruction(user: Pubkey)]
+pub struct SetUserAddressContext<'info>
+{
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [user.key().as_ref()],
+        bump,
+        space = size_of::<UserAddress>() + 8
+    )]
+    pub user_address_account: Account<'info, UserAddress>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
 //Variables structs
 
 #[account]
@@ -905,6 +933,14 @@ pub struct User
     pub total_nodes_held: u64,
     pub in_early_sale: bool,
     pub in_white_list_1: bool
+}
+
+#[account]
+pub struct UserAddress
+{
+    pub email: String,
+    pub evm_address: String,
+    pub status: bool
 }
 
 #[account]
@@ -1093,4 +1129,7 @@ pub enum ErrorCode
 
     #[msg("Cannot mint the NFT's yet!")]
     MintNotAvailable,
+
+    #[msg("User address already set!")]
+    UserAddressAlreadySet,
 }

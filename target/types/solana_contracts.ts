@@ -253,6 +253,36 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "setUserAddress",
+      "accounts": [
+        {
+          "name": "userAddressAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "evmAddress",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "buyNode",
       "accounts": [
         {
@@ -695,6 +725,26 @@ export type SolanaContracts = {
       }
     },
     {
+      "name": "userAddress",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "email",
+            "type": "string"
+          },
+          {
+            "name": "evmAddress",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
       "name": "discountCode",
       "type": {
         "kind": "struct",
@@ -1077,6 +1127,11 @@ export type SolanaContracts = {
       "code": 6015,
       "name": "MintNotAvailable",
       "msg": "Cannot mint the NFT's yet!"
+    },
+    {
+      "code": 6016,
+      "name": "UserAddressAlreadySet",
+      "msg": "User address already set!"
     }
   ]
 };
@@ -1336,6 +1391,36 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
+      "name": "setUserAddress",
+      "accounts": [
+        {
+          "name": "userAddressAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "name": "evmAddress",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "buyNode",
       "accounts": [
         {
@@ -1778,6 +1863,26 @@ export const IDL: SolanaContracts = {
       }
     },
     {
+      "name": "userAddress",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "email",
+            "type": "string"
+          },
+          {
+            "name": "evmAddress",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
       "name": "discountCode",
       "type": {
         "kind": "struct",
@@ -2160,6 +2265,11 @@ export const IDL: SolanaContracts = {
       "code": 6015,
       "name": "MintNotAvailable",
       "msg": "Cannot mint the NFT's yet!"
+    },
+    {
+      "code": 6016,
+      "name": "UserAddressAlreadySet",
+      "msg": "User address already set!"
     }
   ]
 };
