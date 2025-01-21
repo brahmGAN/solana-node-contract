@@ -320,15 +320,93 @@ pub mod solana_contracts
         Ok(())
     }
 
-    // pub fn swap_barrels(ctx: Context<SwapBarrelsContext>, role:u8, ) -> Result<()>
-    // {
-    //     let user_address_account = &mut ctx.accounts.user_address_account;
-    //     require!(!user_address_account.status,ErrorCode::UserAddressAlreadySet);
-    //     user_address_account.email = email; 
-    //     user_address_account.evm_address = evm_address;
-    //     user_address_account.status = true; 
-    //     Ok(())
-    // }
+    pub fn swap_barrels(ctx: Context<SwapBarrelsContext>, role:u8, quantity:u64) -> Result<()>
+    {
+        let user_address_account = &mut ctx.accounts.user_address_account;
+        let swap_status_account = &ctx.accounts.swap_status_account;
+        require!(!user_address_account.email.is_empty(),ErrorCode::UserEmailEvmNotFound);
+        require!(!user_address_account.evm_address.is_empty(),ErrorCode::UserEmailEvmNotFound);
+        match role 
+        {
+            0 => 
+            {
+                require!(swap_status_account.credits_status,ErrorCode::CreditsSwapNotYetAvailable);
+                require!(user_address_account.total_nodes_burnt > 0,ErrorCode::InsufficientNodesBurntForCredits);
+                let credits_to_be_claimed = (user_address_account.total_nodes_burnt) * 500; 
+                user_address_account.total_nodes_burnt = 0; 
+                user_address_account.total_credits_claimed += credits_to_be_claimed; 
+                emit!(SwapBarrelsEvent{
+                    user_pubkey: *ctx.accounts.payer.key,
+                    user_email: user_address_account.email.clone(),
+                    evm_address: user_address_account.evm_address.clone(),
+                    role: role,
+                    credits_to_be_claimed: credits_to_be_claimed,
+                    queen_to_be_claimed: 0,
+                    validators_to_be_claimed: 0, 
+                    king_to_be_claimed: 0, 
+                    quantity: 0,
+                });
+            },
+
+            1 => 
+            {
+                require!(swap_status_account.queen_status,ErrorCode::QueenSwapNotYetAvailable);
+                require!(user_address_account.total_nodes_burnt >= 33*quantity ,ErrorCode::InsufficientNodesBurntForQueen);
+                user_address_account.total_nodes_burnt -= 33 * quantity;
+                user_address_account.total_queens_held += quantity;
+                emit!(SwapBarrelsEvent{
+                    user_pubkey: *ctx.accounts.payer.key,
+                    user_email: user_address_account.email.clone(),
+                    evm_address: user_address_account.evm_address.clone(),
+                    role: role,
+                    credits_to_be_claimed: 0,
+                    queen_to_be_claimed: quantity,
+                    validators_to_be_claimed: 0, 
+                    king_to_be_claimed: 0, 
+                    quantity: quantity,
+                });
+            },
+
+            2 => 
+            {
+                require!(swap_status_account.validators_status,ErrorCode::ValidatorSwapNotYetAvailable);
+                require!(user_address_account.total_nodes_burnt >= 66*quantity ,ErrorCode::InsufficientNodesBurntForValidators);
+                user_address_account.total_nodes_burnt -= 66 * quantity;
+                user_address_account.total_validators_held += quantity * 6;
+                emit!(SwapBarrelsEvent{
+                    user_pubkey: *ctx.accounts.payer.key,
+                    user_email: user_address_account.email.clone(),
+                    evm_address: user_address_account.evm_address.clone(),
+                    role: role,
+                    credits_to_be_claimed: 0,
+                    queen_to_be_claimed: 0,
+                    validators_to_be_claimed: quantity * 6, 
+                    king_to_be_claimed: 0, 
+                    quantity: quantity,
+                });
+            },
+
+            _ => 
+            {
+                require!(swap_status_account.king_status,ErrorCode::KingSwapNotYetAvailable);
+                require!(user_address_account.total_nodes_burnt >= 99*quantity ,ErrorCode::InsufficientNodesBurntForQueen);
+                user_address_account.total_nodes_burnt -= 99 * quantity;
+                user_address_account.total_queens_held += quantity;
+                emit!(SwapBarrelsEvent{
+                    user_pubkey: *ctx.accounts.payer.key,
+                    user_email: user_address_account.email.clone(),
+                    evm_address: user_address_account.evm_address.clone(),
+                    role: role,
+                    credits_to_be_claimed: 0,
+                    queen_to_be_claimed: 0,
+                    validators_to_be_claimed: 0, 
+                    king_to_be_claimed: quantity, 
+                    quantity: quantity,
+                });
+            }
+        }
+        Ok(())
+    }
 
     /// @dev Getter functions
 
@@ -561,15 +639,6 @@ pub mod solana_contracts
         close_account(cpi_context)?;
 
         user_address_account.total_nodes_burnt +=1; 
-
-            // emit!(NftBurningEvent{
-            //     user_pubkey: *ctx.accounts.signer.key,
-            //     user_email: email.clone(),
-            //     evm_address: evm_address.clone()
-            // });
-            // msg!("User: {}",*ctx.accounts.signer.key);
-            // msg!("User email: {}", email);
-            // msg!("evm_address: {}", evm_address);
 
         Ok(())
     }
@@ -895,7 +964,8 @@ pub struct BurnNFTContext<'info>
     #[account(
         init_if_needed,
         payer = signer,
-        seeds = [signer.key().as_ref()],
+        seeds = [signer.key().as_ref(), 
+                b"user_address_account"],
         bump,
         space = size_of::<UserAddress>() + 8
     )]
@@ -929,11 +999,48 @@ pub struct SetUserAddressContext<'info>
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [payer.key().as_ref()],
+        seeds = [payer.key().as_ref(), 
+                b"user_address_account"],
         bump,
         space = size_of::<UserAddress>() + 8
     )]
     pub user_address_account: Account<'info, UserAddress>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
+#[derive(Accounts)]
+pub struct SwapBarrelsContext<'info>
+{
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [payer.key().as_ref(),
+                b"user_address_account"],
+        bump,
+        space = size_of::<UserAddress>() + 8
+    )]
+    pub user_address_account: Account<'info, UserAddress>,
+
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [payer.key().as_ref()],
+        bump,
+        space = size_of::<UserAddress>() + 8
+    )]
+    pub user_account: Account<'info, UserAddress>,
+
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [b"swap_status_account"],
+        bump,
+        space = size_of::<SwapStatus>() + 8
+    )]
+    pub swap_status_account: Account<'info, SwapStatus>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -954,7 +1061,7 @@ pub struct User
 {
     pub total_nodes_held: u64,
     pub in_early_sale: bool,
-    pub in_white_list_1: bool
+    pub in_white_list_1: bool,
 }
 
 #[account]
@@ -963,7 +1070,11 @@ pub struct UserAddress
     pub email: String,
     pub evm_address: String,
     pub status: bool, 
-    pub total_nodes_burnt: u64 
+    pub total_nodes_burnt: u64,
+    pub total_credits_claimed: u64, 
+    pub total_queens_held: u64, 
+    pub total_validators_held: u64, 
+    pub total_kings_held: u64 
 }
 
 #[account]
@@ -994,6 +1105,15 @@ pub struct MintStatus
 pub struct BurnStatus
 {
     pub burn_status: bool,
+}
+
+#[account]
+pub struct SwapStatus
+{
+    pub credits_status: bool,
+    pub queen_status: bool,
+    pub validators_status: bool,
+    pub king_status: bool,
 }
 
 //EVENTS
@@ -1094,13 +1214,19 @@ pub struct GetCurrentTierNumberEvent
     pub current_tier_number: u64
 }
 
-// #[event]
-// pub struct NftBurningEvent
-// {
-//     pub user_pubkey: Pubkey,
-//     pub user_email: String,
-//     pub evm_address: String,
-// }
+#[event]
+pub struct SwapBarrelsEvent
+{
+    pub user_pubkey: Pubkey,
+    pub user_email: String,
+    pub evm_address: String,
+    pub role: u8, 
+    pub credits_to_be_claimed: u64, 
+    pub queen_to_be_claimed: u64, 
+    pub validators_to_be_claimed: u64, 
+    pub king_to_be_claimed: u64, 
+    pub quantity: u64 
+}
 
 #[error_code]
 pub enum ErrorCode
@@ -1155,4 +1281,31 @@ pub enum ErrorCode
 
     #[msg("User address already set!")]
     UserAddressAlreadySet,
+
+    #[msg("Register your email and evm address!")]
+    UserEmailEvmNotFound,
+
+    #[msg("Credits Swap Not Yet Available!")]
+    CreditsSwapNotYetAvailable,
+
+    #[msg("Queen Swap Not Yet Available!")]
+    QueenSwapNotYetAvailable,
+
+    #[msg("Validator Swap Not Yet Available!")]
+    ValidatorSwapNotYetAvailable,
+
+    #[msg("King Swap Not Yet Available!")]
+    KingSwapNotYetAvailable,
+
+    #[msg("Insufficient Nodes Burnt for credits!")]
+    InsufficientNodesBurntForCredits,
+
+    #[msg("Insufficient Nodes Burnt for queen!")]
+    InsufficientNodesBurntForQueen,
+
+    #[msg("Insufficient Nodes Burnt for validators!")]
+    InsufficientNodesBurntForValidators,
+
+    #[msg("Insufficient Nodes Burnt for king!")]
+    InsufficientNodesBurntForking,
 }

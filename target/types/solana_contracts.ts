@@ -328,6 +328,46 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "swapBarrels",
+      "accounts": [
+        {
+          "name": "userAddressAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "swapStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "role",
+          "type": "u8"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
@@ -749,6 +789,22 @@ export type SolanaContracts = {
           {
             "name": "totalNodesBurnt",
             "type": "u64"
+          },
+          {
+            "name": "totalCreditsClaimed",
+            "type": "u64"
+          },
+          {
+            "name": "totalQueensHeld",
+            "type": "u64"
+          },
+          {
+            "name": "totalValidatorsHeld",
+            "type": "u64"
+          },
+          {
+            "name": "totalKingsHeld",
+            "type": "u64"
           }
         ]
       }
@@ -824,6 +880,30 @@ export type SolanaContracts = {
         "fields": [
           {
             "name": "burnStatus",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "swapStatus",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creditsStatus",
+            "type": "bool"
+          },
+          {
+            "name": "queenStatus",
+            "type": "bool"
+          },
+          {
+            "name": "validatorsStatus",
+            "type": "bool"
+          },
+          {
+            "name": "kingStatus",
             "type": "bool"
           }
         ]
@@ -1054,6 +1134,56 @@ export type SolanaContracts = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "SwapBarrelsEvent",
+      "fields": [
+        {
+          "name": "userPubkey",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "userEmail",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "evmAddress",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "role",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "creditsToBeClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "queenToBeClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "validatorsToBeClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "kingToBeClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "quantity",
+          "type": "u64",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -1141,6 +1271,51 @@ export type SolanaContracts = {
       "code": 6016,
       "name": "UserAddressAlreadySet",
       "msg": "User address already set!"
+    },
+    {
+      "code": 6017,
+      "name": "UserEmailEvmNotFound",
+      "msg": "Register your email and evm address!"
+    },
+    {
+      "code": 6018,
+      "name": "CreditsSwapNotYetAvailable",
+      "msg": "Credits Swap Not Yet Available!"
+    },
+    {
+      "code": 6019,
+      "name": "QueenSwapNotYetAvailable",
+      "msg": "Queen Swap Not Yet Available!"
+    },
+    {
+      "code": 6020,
+      "name": "ValidatorSwapNotYetAvailable",
+      "msg": "Validator Swap Not Yet Available!"
+    },
+    {
+      "code": 6021,
+      "name": "KingSwapNotYetAvailable",
+      "msg": "King Swap Not Yet Available!"
+    },
+    {
+      "code": 6022,
+      "name": "InsufficientNodesBurntForCredits",
+      "msg": "Insufficient Nodes Burnt for credits!"
+    },
+    {
+      "code": 6023,
+      "name": "InsufficientNodesBurntForQueen",
+      "msg": "Insufficient Nodes Burnt for queen!"
+    },
+    {
+      "code": 6024,
+      "name": "InsufficientNodesBurntForValidators",
+      "msg": "Insufficient Nodes Burnt for validators!"
+    },
+    {
+      "code": 6025,
+      "name": "InsufficientNodesBurntForking",
+      "msg": "Insufficient Nodes Burnt for king!"
     }
   ]
 };
@@ -1475,6 +1650,46 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
+      "name": "swapBarrels",
+      "accounts": [
+        {
+          "name": "userAddressAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "swapStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "role",
+          "type": "u8"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
+        }
+      ]
+    },
+    {
       "name": "getEarlySaleStatus",
       "docs": [
         "@dev Getter functions"
@@ -1896,6 +2111,22 @@ export const IDL: SolanaContracts = {
           {
             "name": "totalNodesBurnt",
             "type": "u64"
+          },
+          {
+            "name": "totalCreditsClaimed",
+            "type": "u64"
+          },
+          {
+            "name": "totalQueensHeld",
+            "type": "u64"
+          },
+          {
+            "name": "totalValidatorsHeld",
+            "type": "u64"
+          },
+          {
+            "name": "totalKingsHeld",
+            "type": "u64"
           }
         ]
       }
@@ -1971,6 +2202,30 @@ export const IDL: SolanaContracts = {
         "fields": [
           {
             "name": "burnStatus",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "swapStatus",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "creditsStatus",
+            "type": "bool"
+          },
+          {
+            "name": "queenStatus",
+            "type": "bool"
+          },
+          {
+            "name": "validatorsStatus",
+            "type": "bool"
+          },
+          {
+            "name": "kingStatus",
             "type": "bool"
           }
         ]
@@ -2201,6 +2456,56 @@ export const IDL: SolanaContracts = {
           "index": false
         }
       ]
+    },
+    {
+      "name": "SwapBarrelsEvent",
+      "fields": [
+        {
+          "name": "userPubkey",
+          "type": "publicKey",
+          "index": false
+        },
+        {
+          "name": "userEmail",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "evmAddress",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "role",
+          "type": "u8",
+          "index": false
+        },
+        {
+          "name": "creditsToBeClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "queenToBeClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "validatorsToBeClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "kingToBeClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "quantity",
+          "type": "u64",
+          "index": false
+        }
+      ]
     }
   ],
   "errors": [
@@ -2288,6 +2593,51 @@ export const IDL: SolanaContracts = {
       "code": 6016,
       "name": "UserAddressAlreadySet",
       "msg": "User address already set!"
+    },
+    {
+      "code": 6017,
+      "name": "UserEmailEvmNotFound",
+      "msg": "Register your email and evm address!"
+    },
+    {
+      "code": 6018,
+      "name": "CreditsSwapNotYetAvailable",
+      "msg": "Credits Swap Not Yet Available!"
+    },
+    {
+      "code": 6019,
+      "name": "QueenSwapNotYetAvailable",
+      "msg": "Queen Swap Not Yet Available!"
+    },
+    {
+      "code": 6020,
+      "name": "ValidatorSwapNotYetAvailable",
+      "msg": "Validator Swap Not Yet Available!"
+    },
+    {
+      "code": 6021,
+      "name": "KingSwapNotYetAvailable",
+      "msg": "King Swap Not Yet Available!"
+    },
+    {
+      "code": 6022,
+      "name": "InsufficientNodesBurntForCredits",
+      "msg": "Insufficient Nodes Burnt for credits!"
+    },
+    {
+      "code": 6023,
+      "name": "InsufficientNodesBurntForQueen",
+      "msg": "Insufficient Nodes Burnt for queen!"
+    },
+    {
+      "code": 6024,
+      "name": "InsufficientNodesBurntForValidators",
+      "msg": "Insufficient Nodes Burnt for validators!"
+    },
+    {
+      "code": 6025,
+      "name": "InsufficientNodesBurntForking",
+      "msg": "Insufficient Nodes Burnt for king!"
     }
   ]
 };
