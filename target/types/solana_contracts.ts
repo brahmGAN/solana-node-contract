@@ -213,6 +213,46 @@ export type SolanaContracts = {
       ]
     },
     {
+      "name": "setMintBurnStatus",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "burnStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mintStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "types",
+          "type": "bool"
+        },
+        {
+          "name": "status",
+          "type": "bool"
+        }
+      ]
+    },
+    {
       "name": "buyNode",
       "accounts": [
         {
@@ -584,6 +624,11 @@ export type SolanaContracts = {
       "name": "burntNft",
       "accounts": [
         {
+          "name": "burnStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "signer",
           "isMut": true,
           "isSigner": true
@@ -609,16 +654,7 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "email",
-          "type": "string"
-        },
-        {
-          "name": "evmAddress",
-          "type": "string"
-        }
-      ]
+      "args": []
     }
   ],
   "accounts": [
@@ -705,6 +741,30 @@ export type SolanaContracts = {
           },
           {
             "name": "gpuNetSale",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mintStatus",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mintStatus",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "burnStatus",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "burnStatus",
             "type": "bool"
           }
         ]
@@ -935,26 +995,6 @@ export type SolanaContracts = {
           "index": false
         }
       ]
-    },
-    {
-      "name": "NftBurningEvent",
-      "fields": [
-        {
-          "name": "userPubkey",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "userEmail",
-          "type": "string",
-          "index": false
-        },
-        {
-          "name": "evmAddress",
-          "type": "string",
-          "index": false
-        }
-      ]
     }
   ],
   "errors": [
@@ -1027,6 +1067,16 @@ export type SolanaContracts = {
       "code": 6013,
       "name": "ExceededMaxQuantity",
       "msg": "Exceeded Max Quantity of nodes that can be bought!"
+    },
+    {
+      "code": 6014,
+      "name": "BurnNotAvailable",
+      "msg": "Cannot burn the NFT's yet!"
+    },
+    {
+      "code": 6015,
+      "name": "MintNotAvailable",
+      "msg": "Cannot mint the NFT's yet!"
     }
   ]
 };
@@ -1246,6 +1296,46 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
+      "name": "setMintBurnStatus",
+      "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "burnStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "mintStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "types",
+          "type": "bool"
+        },
+        {
+          "name": "status",
+          "type": "bool"
+        }
+      ]
+    },
+    {
       "name": "buyNode",
       "accounts": [
         {
@@ -1617,6 +1707,11 @@ export const IDL: SolanaContracts = {
       "name": "burntNft",
       "accounts": [
         {
+          "name": "burnStatusAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "signer",
           "isMut": true,
           "isSigner": true
@@ -1642,16 +1737,7 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": [
-        {
-          "name": "email",
-          "type": "string"
-        },
-        {
-          "name": "evmAddress",
-          "type": "string"
-        }
-      ]
+      "args": []
     }
   ],
   "accounts": [
@@ -1738,6 +1824,30 @@ export const IDL: SolanaContracts = {
           },
           {
             "name": "gpuNetSale",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "mintStatus",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "mintStatus",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "burnStatus",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "burnStatus",
             "type": "bool"
           }
         ]
@@ -1968,26 +2078,6 @@ export const IDL: SolanaContracts = {
           "index": false
         }
       ]
-    },
-    {
-      "name": "NftBurningEvent",
-      "fields": [
-        {
-          "name": "userPubkey",
-          "type": "publicKey",
-          "index": false
-        },
-        {
-          "name": "userEmail",
-          "type": "string",
-          "index": false
-        },
-        {
-          "name": "evmAddress",
-          "type": "string",
-          "index": false
-        }
-      ]
     }
   ],
   "errors": [
@@ -2060,6 +2150,16 @@ export const IDL: SolanaContracts = {
       "code": 6013,
       "name": "ExceededMaxQuantity",
       "msg": "Exceeded Max Quantity of nodes that can be bought!"
+    },
+    {
+      "code": 6014,
+      "name": "BurnNotAvailable",
+      "msg": "Cannot burn the NFT's yet!"
+    },
+    {
+      "code": 6015,
+      "name": "MintNotAvailable",
+      "msg": "Cannot mint the NFT's yet!"
     }
   ]
 };

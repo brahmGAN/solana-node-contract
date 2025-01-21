@@ -138,6 +138,24 @@ pub mod solana_contracts
         Ok(())
     }
 
+    pub fn set_mint_burn_status(ctx: Context<SetMintBurnStatusContext>, types:bool,status:bool) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account;
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+        let mint_status_account = &mut ctx.accounts.mint_status_account;
+        let burn_status_account = &mut ctx.accounts.burn_status_account;
+
+        if types 
+        {
+            mint_status_account.mint_status = status;  
+        }
+        else 
+        {
+            burn_status_account.burn_status = status; 
+        }
+        Ok(())
+    }
+
     pub fn buy_node(ctx: Context<BuyNodeContext>, discount_code:String, quantity:u64) -> Result<()>
     {
         let node_sale_account = &mut ctx.accounts.node_sale_account;
@@ -421,7 +439,7 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn init_nft(ctx: Context<InitNFT>,) -> Result<()> 
+    pub fn init_nft(ctx: Context<InitNFTContext>,) -> Result<()> 
     {
 
         let  user=&mut ctx.accounts.user_account;
@@ -491,8 +509,12 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn burnt_nft(ctx: Context<BurnNFT>, email:String, evm_address: String) -> Result<()>
+    pub fn burnt_nft(ctx: Context<BurnNFTContext>) -> Result<()>
     {
+        let burn_status_account = &ctx.accounts.burn_status_account; 
+
+        require!(burn_status_account.burn_status, ErrorCode::BurnNotAvailable);
+
         let cpi_accounts= token::Burn{
             mint: ctx.accounts.mint.to_account_info(),
             authority:ctx.accounts.signer.to_account_info() ,
@@ -517,14 +539,14 @@ pub mod solana_contracts
         msg!("Closing associated token account...");
         close_account(cpi_context)?;
 
-            emit!(NftBurningEvent{
-                user_pubkey: *ctx.accounts.signer.key,
-                user_email: email.clone(),
-                evm_address: evm_address.clone()
-            });
-            msg!("User: {}",*ctx.accounts.signer.key);
-            msg!("User email: {}", email);
-            msg!("evm_address: {}", evm_address);
+            // emit!(NftBurningEvent{
+            //     user_pubkey: *ctx.accounts.signer.key,
+            //     user_email: email.clone(),
+            //     evm_address: evm_address.clone()
+            // });
+            // msg!("User: {}",*ctx.accounts.signer.key);
+            // msg!("User email: {}", email);
+            // msg!("evm_address: {}", evm_address);
 
         Ok(())
     }
@@ -576,6 +598,41 @@ pub struct SetNodeSaleContext<'info>
         space = size_of::<NodeSale>() + 8 + 240
     )]
     pub node_sale_account: Account<'info,NodeSale>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
+#[derive(Accounts)]
+pub struct SetMintBurnStatusContext<'info>
+{
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [b"owner"],
+        bump,
+        space = size_of::<Owner>() + 8
+    )]
+    pub owner_account: Account<'info, Owner>,
+
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [b"burn_status_account"],
+        bump,
+        space = size_of::<BurnStatus>() + 8
+    )]
+    pub burn_status_account: Account<'info, BurnStatus>,
+
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [b"mint_status_account"],
+        bump,
+        space = size_of::<MintStatus>() + 8 
+    )]
+    pub mint_status_account: Account<'info, MintStatus>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -746,14 +803,23 @@ pub struct GetDiscountCodeContext<'info>
 }
 
 #[derive(Accounts)]
-pub struct InitNFT<'info> {
+pub struct InitNFTContext<'info> 
+{
+    // #[account(
+    //     init_if_needed,
+    //     payer = signer,
+    //     seeds = [b"mint_burn_status_account"],
+    //     bump,
+    //     space = 1 
+    // )]
+    // pub mint_burn_status_account: Account<'info, MintBurnStatus>,
 
     #[account(
         init_if_needed,
         payer = signer,
         seeds = [signer.key.as_ref()],
         bump,
-        space = size_of::<User>() + 8
+        space = 8 + 8
     )]
     pub user_account: Account<'info, User>,
 
@@ -800,8 +866,17 @@ pub struct InitNFT<'info> {
 }
 
 #[derive(Accounts)]
-pub struct BurnNFT<'info> 
+pub struct BurnNFTContext<'info> 
 {
+    #[account(
+        init_if_needed,
+        payer = signer,
+        seeds = [b"burn_status_account"],
+        bump,
+        space = size_of::<BurnStatus>() + 8
+    )]
+    pub burn_status_account: Account<'info, BurnStatus>,
+
     #[account(mut)]
     pub signer: Signer<'info>,
 
@@ -848,6 +923,18 @@ pub struct NodeSale
     pub current_tier_number: u64,
     pub white_list_1_sale: bool,
     pub gpu_net_sale: bool,
+}
+
+#[account]
+pub struct MintStatus
+{
+    pub mint_status: bool,
+}
+
+#[account]
+pub struct BurnStatus
+{
+    pub burn_status: bool,
 }
 
 //EVENTS
@@ -948,13 +1035,13 @@ pub struct GetCurrentTierNumberEvent
     pub current_tier_number: u64
 }
 
-#[event]
-pub struct NftBurningEvent
-{
-    pub user_pubkey: Pubkey,
-    pub user_email: String,
-    pub evm_address: String,
-}
+// #[event]
+// pub struct NftBurningEvent
+// {
+//     pub user_pubkey: Pubkey,
+//     pub user_email: String,
+//     pub evm_address: String,
+// }
 
 #[error_code]
 pub enum ErrorCode
@@ -1000,4 +1087,10 @@ pub enum ErrorCode
 
     #[msg("Exceeded Max Quantity of nodes that can be bought!")]
     ExceededMaxQuantity,
+
+    #[msg("Cannot burn the NFT's yet!")]
+    BurnNotAvailable,
+
+    #[msg("Cannot mint the NFT's yet!")]
+    MintNotAvailable,
 }
