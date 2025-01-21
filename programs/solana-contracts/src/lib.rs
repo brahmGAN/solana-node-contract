@@ -215,18 +215,44 @@ pub mod solana_contracts
         current_tier_number = node_sale_account.current_tier_number;
         current_tier_price = node_sale_account.tier_price[current_tier_number as usize];
 
-        if discount_code_account.discount_code == true
+        let next_tier_price = node_sale_account.tier_price[(current_tier_number.clone() + 1) as usize];
+        let price_1: u64; 
+        let price_2: u64; 
+        let amount_1: u64;
+        let amount_2: u64;  
+
+        if quantity <= node_sale_account.tier_limit[current_tier_number as usize] 
         {
-            tier_price =  (current_tier_price * 90 ) / 100;
+            if discount_code_account.discount_code == true
+            {
+                tier_price =  (current_tier_price * 90 ) / 100;
+            }
+            else
+            {
+                tier_price = current_tier_price;
+            }
+
+            amount = quantity * tier_price;
         }
-        else
+        else 
         {
-            tier_price = current_tier_price;
+            if discount_code_account.discount_code == true
+            {
+                price_1 =  (current_tier_price * 90 ) / 100;
+                price_2 =  (next_tier_price * 90 ) / 100;
+            }
+            else
+            {
+                price_1 = current_tier_price;
+                price_2 = next_tier_price; 
+            }
+
+            amount_1 = current_tier_number * price_1;
+            amount_2 = (quantity-current_tier_number) * price_2;
+            amount = amount_1 + amount_2; 
         }
 
-        amount = quantity * tier_price;
-
-        require!(quantity <= node_sale_account.tier_limit[current_tier_number as usize], ErrorCode::QuantityOutOfBounds);
+        //require!(quantity <= node_sale_account.tier_limit[current_tier_number as usize], ErrorCode::QuantityOutOfBounds);
         require!(node_sale_account.funds_handler.key() == funds_handler_pubkey.key(), ErrorCode::UnauthorizedFundsHandler);
         require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
         // @dev Turn this on to true at 2pm.Turn this off at 6pm.From 6pm the sale on magic eden happens for tier-5,6,7,8.
