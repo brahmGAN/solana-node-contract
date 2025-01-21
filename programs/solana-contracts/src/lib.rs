@@ -986,7 +986,7 @@ pub enum ErrorCode
     #[msg("Unauthorized Funds Handler!")]
     UnauthorizedFundsHandler,
 
-    #[msg("WhiteList-1 sale yet to complete!")]
+    #[msg("You aren't a part of whitelist-1 sale!")]
     WhiteList,
 
     #[msg("Current tier onwards are reserved for next sale!")]

@@ -1006,7 +1006,7 @@ export type SolanaContracts = {
     {
       "code": 6009,
       "name": "WhiteList",
-      "msg": "WhiteList-1 sale yet to complete!"
+      "msg": "You aren't a part of whitelist-1 sale!"
     },
     {
       "code": 6010,
@@ -2039,7 +2039,7 @@ export const IDL: SolanaContracts = {
     {
       "code": 6009,
       "name": "WhiteList",
-      "msg": "WhiteList-1 sale yet to complete!"
+      "msg": "You aren't a part of whitelist-1 sale!"
     },
     {
       "code": 6010,
