@@ -242,6 +242,25 @@ pub mod solana_contracts
         else 
         {
             require!(current_tier_number != 11, ErrorCode::InsufficientTierLimit);
+
+            let allowed: bool; 
+
+            if current_tier_number == 1 
+            {
+                require!(!node_sale_account.white_list_1_sale,ErrorCode::ReservedForNextSale);
+                allowed = true; 
+            }
+            else if current_tier_number == 5 
+            {
+                require!(!node_sale_account.early_sale_status,ErrorCode::ReservedForNextSale);
+                allowed = true; 
+            }
+            else 
+            {
+                allowed = true
+            }
+            
+            require!(allowed,ErrorCode::ReservedForNextSale);
             if discount_code_account.discount_code == true
             {
                 price_1 =  (current_tier_price * 90 ) / 100;
@@ -294,7 +313,7 @@ pub mod solana_contracts
             }
             else
             {
-                require!(current_tier_number < 5, ErrorCode::ReservedForNextSale);
+                require!(current_tier_number < 6, ErrorCode::ReservedForNextSale);
                 let ix = system_instruction::transfer
                 (
                     &ctx.accounts.payer.key(),
