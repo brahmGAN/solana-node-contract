@@ -212,15 +212,10 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setMintBurnStatus",
+      "name": "setMintStatus",
       "accounts": [
         {
           "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "burnStatusAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -241,10 +236,6 @@ export type SolanaContracts = {
         }
       ],
       "args": [
-        {
-          "name": "types",
-          "type": "bool"
-        },
         {
           "name": "status",
           "type": "bool"
@@ -725,37 +716,22 @@ export type SolanaContracts = {
       "args": []
     },
     {
-      "name": "burntNft",
+      "name": "setTotalNodesBurnt",
       "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
         {
           "name": "userAddressAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "burnStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "signer",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
-        },
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -763,7 +739,16 @@ export type SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -906,18 +891,6 @@ export type SolanaContracts = {
         "fields": [
           {
             "name": "mintStatus",
-            "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "burnStatus",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "burnStatus",
             "type": "bool"
           }
         ]
@@ -1307,61 +1280,56 @@ export type SolanaContracts = {
     },
     {
       "code": 6014,
-      "name": "BurnNotAvailable",
-      "msg": "Cannot burn the NFT's yet!"
-    },
-    {
-      "code": 6015,
       "name": "MintNotAvailable",
       "msg": "Cannot mint the NFT's yet!"
     },
     {
-      "code": 6016,
+      "code": 6015,
       "name": "UserAddressAlreadySet",
       "msg": "User address already set!"
     },
     {
-      "code": 6017,
+      "code": 6016,
       "name": "UserEmailEvmNotFound",
       "msg": "Register your email and evm address!"
     },
     {
-      "code": 6018,
+      "code": 6017,
       "name": "CreditsSwapNotYetAvailable",
       "msg": "Credits Swap Not Yet Available!"
     },
     {
-      "code": 6019,
+      "code": 6018,
       "name": "QueenSwapNotYetAvailable",
       "msg": "Queen Swap Not Yet Available!"
     },
     {
-      "code": 6020,
+      "code": 6019,
       "name": "ValidatorSwapNotYetAvailable",
       "msg": "Validator Swap Not Yet Available!"
     },
     {
-      "code": 6021,
+      "code": 6020,
       "name": "KingSwapNotYetAvailable",
       "msg": "King Swap Not Yet Available!"
     },
     {
-      "code": 6022,
+      "code": 6021,
       "name": "InsufficientNodesBurntForCredits",
       "msg": "Insufficient Nodes Burnt for credits!"
     },
     {
-      "code": 6023,
+      "code": 6022,
       "name": "InsufficientNodesBurntForQueen",
       "msg": "Insufficient Nodes Burnt for queen!"
     },
     {
-      "code": 6024,
+      "code": 6023,
       "name": "InsufficientNodesBurntForValidators",
       "msg": "Insufficient Nodes Burnt for validators!"
     },
     {
-      "code": 6025,
+      "code": 6024,
       "name": "InsufficientNodesBurntForking",
       "msg": "Insufficient Nodes Burnt for king!"
     }
@@ -1582,15 +1550,10 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "setMintBurnStatus",
+      "name": "setMintStatus",
       "accounts": [
         {
           "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "burnStatusAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -1611,10 +1574,6 @@ export const IDL: SolanaContracts = {
         }
       ],
       "args": [
-        {
-          "name": "types",
-          "type": "bool"
-        },
         {
           "name": "status",
           "type": "bool"
@@ -2095,37 +2054,22 @@ export const IDL: SolanaContracts = {
       "args": []
     },
     {
-      "name": "burntNft",
+      "name": "setTotalNodesBurnt",
       "accounts": [
+        {
+          "name": "ownerAccount",
+          "isMut": true,
+          "isSigner": false
+        },
         {
           "name": "userAddressAccount",
           "isMut": true,
           "isSigner": false
         },
         {
-          "name": "burnStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "signer",
+          "name": "payer",
           "isMut": true,
           "isSigner": true
-        },
-        {
-          "name": "mint",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "associatedTokenAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "tokenProgram",
-          "isMut": false,
-          "isSigner": false
         },
         {
           "name": "systemProgram",
@@ -2133,7 +2077,16 @@ export const IDL: SolanaContracts = {
           "isSigner": false
         }
       ],
-      "args": []
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        },
+        {
+          "name": "quantity",
+          "type": "u64"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -2276,18 +2229,6 @@ export const IDL: SolanaContracts = {
         "fields": [
           {
             "name": "mintStatus",
-            "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "burnStatus",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "burnStatus",
             "type": "bool"
           }
         ]
@@ -2677,61 +2618,56 @@ export const IDL: SolanaContracts = {
     },
     {
       "code": 6014,
-      "name": "BurnNotAvailable",
-      "msg": "Cannot burn the NFT's yet!"
-    },
-    {
-      "code": 6015,
       "name": "MintNotAvailable",
       "msg": "Cannot mint the NFT's yet!"
     },
     {
-      "code": 6016,
+      "code": 6015,
       "name": "UserAddressAlreadySet",
       "msg": "User address already set!"
     },
     {
-      "code": 6017,
+      "code": 6016,
       "name": "UserEmailEvmNotFound",
       "msg": "Register your email and evm address!"
     },
     {
-      "code": 6018,
+      "code": 6017,
       "name": "CreditsSwapNotYetAvailable",
       "msg": "Credits Swap Not Yet Available!"
     },
     {
-      "code": 6019,
+      "code": 6018,
       "name": "QueenSwapNotYetAvailable",
       "msg": "Queen Swap Not Yet Available!"
     },
     {
-      "code": 6020,
+      "code": 6019,
       "name": "ValidatorSwapNotYetAvailable",
       "msg": "Validator Swap Not Yet Available!"
     },
     {
-      "code": 6021,
+      "code": 6020,
       "name": "KingSwapNotYetAvailable",
       "msg": "King Swap Not Yet Available!"
     },
     {
-      "code": 6022,
+      "code": 6021,
       "name": "InsufficientNodesBurntForCredits",
       "msg": "Insufficient Nodes Burnt for credits!"
     },
     {
-      "code": 6023,
+      "code": 6022,
       "name": "InsufficientNodesBurntForQueen",
       "msg": "Insufficient Nodes Burnt for queen!"
     },
     {
-      "code": 6024,
+      "code": 6023,
       "name": "InsufficientNodesBurntForValidators",
       "msg": "Insufficient Nodes Burnt for validators!"
     },
     {
-      "code": 6025,
+      "code": 6024,
       "name": "InsufficientNodesBurntForking",
       "msg": "Insufficient Nodes Burnt for king!"
     }

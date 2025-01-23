@@ -10,7 +10,7 @@ use anchor_spl::{
         CreateMetadataAccountsV3,
         Metadata,
     },
-    token::{ mint_to,CloseAccount,close_account, Mint, MintTo, Token, TokenAccount },token
+    token::{ mint_to, Mint, MintTo, Token, TokenAccount }
 };
 use mpl_token_metadata::accounts::{ MasterEdition, Metadata as MetadataAccount };
 
@@ -139,21 +139,12 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_mint_burn_status(ctx: Context<SetMintBurnStatusContext>, types:bool,status:bool) -> Result<()>
+    pub fn set_mint_status(ctx: Context<SetMintStatusContext>, status:bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
         let mint_status_account = &mut ctx.accounts.mint_status_account;
-        let burn_status_account = &mut ctx.accounts.burn_status_account;
-
-        if types 
-        {
-            mint_status_account.mint_status = status;  
-        }
-        else 
-        {
-            burn_status_account.burn_status = status; 
-        }
+        mint_status_account.mint_status = status;  
         Ok(())
     }
 
@@ -699,39 +690,13 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn burnt_nft(ctx: Context<BurnNFTContext>) -> Result<()>
+    pub fn set_total_nodes_burnt(ctx: Context<SetTotalNodesBurntcontext>, user: Pubkey, quantity: u64) -> Result<()>
     {
-        let burn_status_account = &ctx.accounts.burn_status_account;
-        let user_address_account = &mut ctx.accounts.user_address_account; 
-
-        require!(burn_status_account.burn_status, ErrorCode::BurnNotAvailable);
-
-        let cpi_accounts= token::Burn{
-            mint: ctx.accounts.mint.to_account_info(),
-            authority:ctx.accounts.signer.to_account_info() ,
-            from: ctx.accounts.associated_token_account.to_account_info(),
-        };
-
-        msg!("cpi");
-        let cpi_program= ctx.accounts.token_program.to_account_info();
-        let cpi_ctx=CpiContext::new(cpi_program, cpi_accounts);
-        msg!("tokrn Burning");
-
-        token::burn(cpi_ctx, 1)?;
-
-        let cpi_context = CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
-            CloseAccount {
-                account: ctx.accounts.associated_token_account.to_account_info(),
-                destination: ctx.accounts.signer.to_account_info(),
-                authority: ctx.accounts.signer.to_account_info(),
-            },
-        );
-        msg!("Closing associated token account...");
-        close_account(cpi_context)?;
-
-        user_address_account.total_nodes_burnt +=1; 
-
+        let owner_account = &ctx.accounts.owner_account;
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);
+        let user_address_account = &mut ctx.accounts.user_address_account;
+        user_address_account.total_nodes_burnt += quantity; 
+        msg!("User:{}",user.key());
         Ok(())
     }
 }
@@ -790,7 +755,7 @@ pub struct SetNodeSaleContext<'info>
 }
 
 #[derive(Accounts)]
-pub struct SetMintBurnStatusContext<'info>
+pub struct SetMintStatusContext<'info>
 {
     #[account(
         init_if_needed,
@@ -800,15 +765,6 @@ pub struct SetMintBurnStatusContext<'info>
         space = size_of::<Owner>() + 8
     )]
     pub owner_account: Account<'info, Owner>,
-
-    #[account(
-        init_if_needed,
-        payer = payer,
-        seeds = [b"burn_status_account"],
-        bump,
-        space = size_of::<BurnStatus>() + 8
-    )]
-    pub burn_status_account: Account<'info, BurnStatus>,
 
     #[account(
         init_if_needed,
@@ -1078,38 +1034,31 @@ pub struct InitNFTContext<'info>
 }
 
 #[derive(Accounts)]
-pub struct BurnNFTContext<'info> 
+#[instruction(user: Pubkey)]
+pub struct SetTotalNodesBurntcontext<'info>
 {
     #[account(
         init_if_needed,
-        payer = signer,
-        seeds = [signer.key().as_ref(), 
+        payer = payer,
+        seeds = [b"owner"],
+        bump,
+        space = size_of::<Owner>() + 8
+    )]
+    pub owner_account: Account<'info, Owner>,
+
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [payer.key().as_ref(), 
                 b"user_address_account"],
         bump,
         space = size_of::<UserAddress>() + 8
     )]
     pub user_address_account: Account<'info, UserAddress>,
 
-    #[account(
-        init_if_needed,
-        payer = signer,
-        seeds = [b"burn_status_account"],
-        bump,
-        space = size_of::<BurnStatus>() + 8
-    )]
-    pub burn_status_account: Account<'info, BurnStatus>,
-
     #[account(mut)]
-    pub signer: Signer<'info>,
-
-    #[account(mut)]
-    pub mint: Account<'info, Mint>,
-
-    #[account(mut)]
-    pub associated_token_account: Account<'info, TokenAccount>,
-
-    pub token_program: Program<'info, Token>,
-    pub system_program: Program<'info, System>,
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
 }
 
 #[derive(Accounts)]
@@ -1219,12 +1168,6 @@ pub struct NodeSale
 pub struct MintStatus
 {
     pub mint_status: bool,
-}
-
-#[account]
-pub struct BurnStatus
-{
-    pub burn_status: bool,
 }
 
 #[account]
@@ -1394,9 +1337,6 @@ pub enum ErrorCode
 
     #[msg("Exceeded Max Quantity of nodes that can be bought!")]
     ExceededMaxQuantity,
-
-    #[msg("Cannot burn the NFT's yet!")]
-    BurnNotAvailable,
 
     #[msg("Cannot mint the NFT's yet!")]
     MintNotAvailable,
