@@ -618,10 +618,10 @@ pub mod solana_contracts
     pub fn init_nft(ctx: Context<InitNFTContext>,) -> Result<()> 
     {
 
-        // //vipin
-        // let mint_status_account = &ctx.accounts.mint_status_account;
+        //vipin
+        let mint_status_account = &ctx.accounts.mint_status_account;
 
-        // require!(mint_status_account.mint_status, ErrorCode::MintNotAvailable);
+        require!(mint_status_account.mint_status, ErrorCode::MintNotAvailable);
 
         let  user=&mut ctx.accounts.user_account;
 
@@ -973,21 +973,21 @@ pub struct GetDiscountCodeContext<'info>
 pub struct InitNFTContext<'info> 
 {
     //vipin
-    // #[account(
-    //     init_if_needed,
-    //     payer = signer,
-    //     seeds = [b"mint_status_account"],
-    //     bump,
-    //     space = 8 + 8 
-    // )]
-    // pub mint_status_account: Account<'info, MintStatus>,
+    #[account(
+        init_if_needed,
+        payer = signer,
+        seeds = [b"mint_status_account"],
+        bump,
+        space = size_of::<MintStatus>() + 8
+    )]
+    pub mint_status_account: Account<'info, MintStatus>,
 
     #[account(
         init_if_needed,
         payer = signer,
         seeds = [signer.key.as_ref()],
         bump,
-        space = 8 + 8
+        space = size_of::<User>() + 8 
     )]
     pub user_account: Account<'info, User>,
 
