@@ -271,9 +271,8 @@ pub mod solana_contracts
                 price_1 = current_tier_price;
                 price_2 = next_tier_price; 
             }
-
-            amount_1 = current_tier_number * price_1;
-            amount_2 = (quantity-current_tier_number) * price_2;
+            amount_1 = node_sale_account.tier_limit[current_tier_number as usize] * price_1;
+            amount_2 = (quantity-node_sale_account.tier_limit[current_tier_number as usize]) * price_2;
 
             amount = amount_1 + amount_2; 
 
