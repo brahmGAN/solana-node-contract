@@ -1018,6 +1018,11 @@ export type SolanaContracts = {
           "name": "totalDiscountCodeUsage",
           "type": "u64",
           "index": false
+        },
+        {
+          "name": "totalAmount",
+          "type": "u64",
+          "index": false
         }
       ]
     },
@@ -2378,6 +2383,11 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "totalDiscountCodeUsage",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalAmount",
           "type": "u64",
           "index": false
         }

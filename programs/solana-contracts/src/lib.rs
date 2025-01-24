@@ -111,7 +111,8 @@ pub mod solana_contracts
         emit!(DiscountCodeEvent{
             discount_code: discount_code,
             discount_code_status: discount_code_account.discount_code,
-            total_discount_code_usage: discount_code_account.total_discount_code_usage
+            total_discount_code_usage: discount_code_account.total_discount_code_usage, 
+            total_amount: discount_code_account.total_amount 
         });
         msg!("Discount code status:{}",discount_code_account.discount_code);
         Ok(())
@@ -599,7 +600,8 @@ pub mod solana_contracts
         emit!(DiscountCodeEvent{
             discount_code: discount_code,
             discount_code_status: discount_code_account.discount_code,
-            total_discount_code_usage: discount_code_account.total_discount_code_usage
+            total_discount_code_usage: discount_code_account.total_discount_code_usage,
+            total_amount: discount_code_account.total_amount 
         });
         msg!("Discount code status:{}", discount_code_account.discount_code);
         Ok(())
@@ -1231,7 +1233,8 @@ pub struct DiscountCodeEvent
 {
     pub discount_code: String,
     pub discount_code_status: bool, 
-    pub total_discount_code_usage:u64 
+    pub total_discount_code_usage: u64,
+    pub total_amount: u64
 }
 
 #[event]
