@@ -140,14 +140,14 @@ pub mod solana_contracts
         Ok(())
     }
 
-    pub fn set_mint_status(ctx: Context<SetMintStatusContext>, status:bool) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account;
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
-        let mint_status_account = &mut ctx.accounts.mint_status_account;
-        mint_status_account.mint_status = status;  
-        Ok(())
-    }
+    // pub fn set_mint_status(ctx: Context<SetMintStatusContext>, status:bool) -> Result<()>
+    // {
+    //     let owner_account = &ctx.accounts.owner_account;
+    //     require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
+    //     let mint_status_account = &mut ctx.accounts.mint_status_account;
+    //     mint_status_account.mint_status = status;  
+    //     Ok(())
+    // }
 
     pub fn set_swap_status(ctx: Context<SetSwapStatusContext>, types:u8,status:bool) -> Result<()>
     {
@@ -635,9 +635,12 @@ pub mod solana_contracts
     {
 
         //vipin
-        let mint_status_account = &ctx.accounts.mint_status_account;
+        // @vipin : we don't need a mint_status since this is owner callable
+        // let mint_status_account = &ctx.accounts.mint_status_account;
+        // require!(mint_status_account.mint_status, ErrorCode::MintNotAvailable);
 
-        require!(mint_status_account.mint_status, ErrorCode::MintNotAvailable);
+        let owner_account = &ctx.accounts.owner_account;
+        require!(owner_account.owner_pubkey == ctx.accounts.signer.key(),ErrorCode::NotAuthorized);
 
         let  user=&mut ctx.accounts.user_account;
 
@@ -770,31 +773,31 @@ pub struct SetNodeSaleContext<'info>
     pub system_program: Program<'info,System>,
 }
 
-#[derive(Accounts)]
-pub struct SetMintStatusContext<'info>
-{
-    #[account(
-        init_if_needed,
-        payer = payer,
-        seeds = [b"owner"],
-        bump,
-        space = size_of::<Owner>() + 8
-    )]
-    pub owner_account: Account<'info, Owner>,
+// #[derive(Accounts)]
+// pub struct SetMintStatusContext<'info>
+// {
+//     #[account(
+//         init_if_needed,
+//         payer = payer,
+//         seeds = [b"owner"],
+//         bump,
+//         space = size_of::<Owner>() + 8
+//     )]
+//     pub owner_account: Account<'info, Owner>,
 
-    #[account(
-        init_if_needed,
-        payer = payer,
-        seeds = [b"mint_status_account"],
-        bump,
-        space = size_of::<MintStatus>() + 8 
-    )]
-    pub mint_status_account: Account<'info, MintStatus>,
+//     #[account(
+//         init_if_needed,
+//         payer = payer,
+//         seeds = [b"mint_status_account"],
+//         bump,
+//         space = size_of::<MintStatus>() + 8 
+//     )]
+//     pub mint_status_account: Account<'info, MintStatus>,
 
-    #[account(mut)]
-    pub payer: Signer<'info>,
-    pub system_program: Program<'info,System>,
-}
+//     #[account(mut)]
+//     pub payer: Signer<'info>,
+//     pub system_program: Program<'info,System>,
+// }
 
 #[derive(Accounts)]
 pub struct SetSwapStatusContext<'info>
@@ -992,11 +995,20 @@ pub struct InitNFTContext<'info>
     #[account(
         init_if_needed,
         payer = signer,
-        seeds = [b"mint_status_account"],
+        seeds = [b"owner"],
         bump,
-        space = size_of::<MintStatus>() + 8
+        space = size_of::<Owner>() + 8
     )]
-    pub mint_status_account: Account<'info, MintStatus>,
+    pub owner_account: Account<'info, Owner>,
+
+    // #[account(
+    //     init_if_needed,
+    //     payer = signer,
+    //     seeds = [b"mint_status_account"],
+    //     bump,
+    //     space = size_of::<MintStatus>() + 8
+    // )]
+    // pub mint_status_account: Account<'info, MintStatus>,
 
     #[account(
         init_if_needed,
@@ -1181,11 +1193,11 @@ pub struct NodeSale
     pub gpu_net_sale: bool,
 }
 
-#[account]
-pub struct MintStatus
-{
-    pub mint_status: bool,
-}
+// #[account]
+// pub struct MintStatus
+// {
+//     pub mint_status: bool,
+// }
 
 #[account]
 pub struct SwapStatus

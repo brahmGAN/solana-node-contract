@@ -212,37 +212,6 @@ export type SolanaContracts = {
       ]
     },
     {
-      "name": "setMintStatus",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "status",
-          "type": "bool"
-        }
-      ]
-    },
-    {
       "name": "setSwapStatus",
       "accounts": [
         {
@@ -655,7 +624,7 @@ export type SolanaContracts = {
       "name": "initNft",
       "accounts": [
         {
-          "name": "mintStatusAccount",
+          "name": "ownerAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -888,18 +857,6 @@ export type SolanaContracts = {
           },
           {
             "name": "gpuNetSale",
-            "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "mintStatus",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "mintStatus",
             "type": "bool"
           }
         ]
@@ -1579,37 +1536,6 @@ export const IDL: SolanaContracts = {
       ]
     },
     {
-      "name": "setMintStatus",
-      "accounts": [
-        {
-          "name": "ownerAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "mintStatusAccount",
-          "isMut": true,
-          "isSigner": false
-        },
-        {
-          "name": "payer",
-          "isMut": true,
-          "isSigner": true
-        },
-        {
-          "name": "systemProgram",
-          "isMut": false,
-          "isSigner": false
-        }
-      ],
-      "args": [
-        {
-          "name": "status",
-          "type": "bool"
-        }
-      ]
-    },
-    {
       "name": "setSwapStatus",
       "accounts": [
         {
@@ -2022,7 +1948,7 @@ export const IDL: SolanaContracts = {
       "name": "initNft",
       "accounts": [
         {
-          "name": "mintStatusAccount",
+          "name": "ownerAccount",
           "isMut": true,
           "isSigner": false
         },
@@ -2255,18 +2181,6 @@ export const IDL: SolanaContracts = {
           },
           {
             "name": "gpuNetSale",
-            "type": "bool"
-          }
-        ]
-      }
-    },
-    {
-      "name": "mintStatus",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "mintStatus",
             "type": "bool"
           }
         ]
