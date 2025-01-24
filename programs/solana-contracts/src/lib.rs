@@ -170,9 +170,14 @@ pub mod solana_contracts
                 swap_status_account.validators_status = status;
             },
 
-            _ => 
+            3 => 
             {
                 swap_status_account.king_status = status;
+            },
+
+            _ => 
+            {
+                return Err(ErrorCode::InvalidSwapStatus.into());   
             },
         }
         Ok(())
@@ -234,7 +239,7 @@ pub mod solana_contracts
         {
             require!(current_tier_number != 11, ErrorCode::InsufficientTierLimit);
 
-            let allowed: bool; 
+            //let allowed: bool; 
 
             // if current_tier_number == 1 
             // {
@@ -251,7 +256,7 @@ pub mod solana_contracts
             //     allowed = true
             // }
             
-            require!(allowed,ErrorCode::ReservedForNextSale);
+            //require!(allowed,ErrorCode::ReservedForNextSale);
             if discount_code_account.discount_code == true
             {
                 price_1 =  (current_tier_price * 90 ) / 100;
@@ -280,7 +285,7 @@ pub mod solana_contracts
             if node_sale_account.white_list_1_sale
             {
                 require!(user_account.in_white_list_1,ErrorCode::WhiteList);
-                require!(current_tier_number == 1, ErrorCode::ReservedForNextSale);
+                //require!(current_tier_number == 1, ErrorCode::ReservedForNextSale);
                 let ix = system_instruction::transfer
                 (
                     &ctx.accounts.payer.key(),
@@ -303,7 +308,7 @@ pub mod solana_contracts
             }
             else
             {
-                require!(current_tier_number < 6, ErrorCode::ReservedForNextSale);
+                //require!(current_tier_number < 6, ErrorCode::ReservedForNextSale);
                 let ix = system_instruction::transfer
                 (
                     &ctx.accounts.payer.key(),
@@ -371,9 +376,12 @@ pub mod solana_contracts
             }
 
             user_account.total_nodes_held += quantity;
-            discount_code_account.total_discount_code_usage +=1;    
+            discount_code_account.total_discount_code_usage += quantity; 
+            discount_code_account.total_amount += amount;  
+            
             msg!("discount_code:{}",discount_code);
             msg!("total_discount_code_usage:{}",discount_code_account.total_discount_code_usage);
+            msg!("total_discount_code_amount:{}",discount_code_account.total_amount);
             msg!("sale_type:{}",sale_type);
             emit!(NodeBoughtEvent{
                 user: *ctx.accounts.payer.key,
@@ -384,7 +392,8 @@ pub mod solana_contracts
                 pending_tier_limit: node_sale_account.tier_limit[current_tier_number as usize],
                 discount_code: discount_code,
                 sale_type: sale_type, 
-                total_discount_code_usage: discount_code_account.total_discount_code_usage
+                total_discount_code_usage: discount_code_account.total_discount_code_usage, 
+                total_discount_code_amount: discount_code_account.total_amount 
             });
             msg!("user:{}",*ctx.accounts.payer.key);
             msg!("quantity:{}",quantity);
@@ -462,12 +471,12 @@ pub mod solana_contracts
                 });
             },
 
-            _ => 
+            3 => 
             {
                 require!(swap_status_account.king_status,ErrorCode::KingSwapNotYetAvailable);
                 require!(user_address_account.total_nodes_burnt >= 99*quantity ,ErrorCode::InsufficientNodesBurntForQueen);
                 user_address_account.total_nodes_burnt -= 99 * quantity;
-                user_address_account.total_queens_held += quantity;
+                user_address_account.total_kings_held += quantity;
                 emit!(SwapBarrelsEvent{
                     user_pubkey: *ctx.accounts.payer.key,
                     user_email: user_address_account.email.clone(),
@@ -479,6 +488,11 @@ pub mod solana_contracts
                     king_to_be_claimed: quantity, 
                     quantity: quantity,
                 });
+            },
+
+            _ => 
+            {
+                return Err(ErrorCode::InvalidSwapRole.into());
             }
         }
         Ok(())
@@ -1149,7 +1163,8 @@ pub struct UserAddress
 pub struct DiscountCode
 {
     pub discount_code: bool,
-    pub total_discount_code_usage: u64
+    pub total_discount_code_usage: u64, 
+    pub total_amount: u64 
 }
 
 #[account]
@@ -1230,7 +1245,8 @@ pub struct NodeBoughtEvent
     pub pending_tier_limit: u64,
     pub discount_code: String,
     pub sale_type: String,
-    pub total_discount_code_usage: u64
+    pub total_discount_code_usage: u64, 
+    pub total_discount_code_amount: u64 
 }
 
 #[event]
@@ -1370,4 +1386,10 @@ pub enum ErrorCode
 
     #[msg("Insufficient Nodes Burnt for king!")]
     InsufficientNodesBurntForking,
+
+    #[msg("Invalid Type of swap status!")]
+    InvalidSwapStatus,
+
+    #[msg("Invalid swap role!")]
+    InvalidSwapRole,
 }

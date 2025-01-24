@@ -845,6 +845,10 @@ export type SolanaContracts = {
           {
             "name": "totalDiscountCodeUsage",
             "type": "u64"
+          },
+          {
+            "name": "totalAmount",
+            "type": "u64"
           }
         ]
       }
@@ -1062,6 +1066,11 @@ export type SolanaContracts = {
         },
         {
           "name": "totalDiscountCodeUsage",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalDiscountCodeAmount",
           "type": "u64",
           "index": false
         }
@@ -1337,6 +1346,16 @@ export type SolanaContracts = {
       "code": 6024,
       "name": "InsufficientNodesBurntForking",
       "msg": "Insufficient Nodes Burnt for king!"
+    },
+    {
+      "code": 6025,
+      "name": "InvalidSwapStatus",
+      "msg": "Invalid Type of swap status!"
+    },
+    {
+      "code": 6026,
+      "name": "InvalidSwapRole",
+      "msg": "Invalid swap role!"
     }
   ]
 };
@@ -2188,6 +2207,10 @@ export const IDL: SolanaContracts = {
           {
             "name": "totalDiscountCodeUsage",
             "type": "u64"
+          },
+          {
+            "name": "totalAmount",
+            "type": "u64"
           }
         ]
       }
@@ -2405,6 +2428,11 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "totalDiscountCodeUsage",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalDiscountCodeAmount",
           "type": "u64",
           "index": false
         }
@@ -2680,6 +2708,16 @@ export const IDL: SolanaContracts = {
       "code": 6024,
       "name": "InsufficientNodesBurntForking",
       "msg": "Insufficient Nodes Burnt for king!"
+    },
+    {
+      "code": 6025,
+      "name": "InvalidSwapStatus",
+      "msg": "Invalid Type of swap status!"
+    },
+    {
+      "code": 6026,
+      "name": "InvalidSwapRole",
+      "msg": "Invalid swap role!"
     }
   ]
 };
