@@ -631,6 +631,24 @@ pub mod solana_contracts
         Ok(())
     }
 
+    pub fn get_user_address(ctx: Context<GetUserAddressContext>, user: Pubkey) -> Result<()>
+    {
+        let user_address_account = &ctx.accounts.user_address_account; 
+        emit!(UseAddressEvent{
+            email: user_address_account.email.clone(), 
+            evm_address: user_address_account.evm_address.clone(), 
+            status: user_address_account.status, 
+            total_nodes_burnt: user_address_account.total_nodes_burnt, 
+            total_credits_claimed: user_address_account.total_credits_claimed, 
+            total_queens_held: user_address_account.total_queens_held, 
+            total_validators_held: user_address_account.total_validators_held, 
+            total_kings_held: user_address_account.total_kings_held,
+            user: user 
+        });
+        
+        Ok(())
+    }
+
     pub fn init_nft(ctx: Context<InitNFTContext>,) -> Result<()> 
     {
 
@@ -964,6 +982,25 @@ pub struct GetUserContext<'info>
         space = size_of::<User>() + 8
     )]
     pub user_account: Account<'info, User>,
+
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    pub system_program: Program<'info,System>,
+}
+
+#[derive(Accounts)]
+#[instruction(user: Pubkey)]
+pub struct GetUserAddressContext<'info>
+{
+    #[account(
+        init_if_needed,
+        payer = payer,
+        seeds = [user.key().as_ref(), 
+                b"user_address_account"],
+        bump,
+        space = size_of::<UserAddress>() + 8
+    )]
+    pub user_address_account: Account<'info, UserAddress>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -1322,6 +1359,20 @@ pub struct SwapBarrelsEvent
     pub validators_to_be_claimed: u64, 
     pub king_to_be_claimed: u64, 
     pub quantity: u64 
+}
+
+#[event] 
+pub struct UseAddressEvent 
+{
+    pub email: String,
+    pub evm_address: String,
+    pub status: bool, 
+    pub total_nodes_burnt: u64,
+    pub total_credits_claimed: u64, 
+    pub total_queens_held: u64, 
+    pub total_validators_held: u64, 
+    pub total_kings_held: u64, 
+    pub user: Pubkey 
 }
 
 #[error_code]

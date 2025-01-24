@@ -621,6 +621,32 @@ export type SolanaContracts = {
       "args": []
     },
     {
+      "name": "getUserAddress",
+      "accounts": [
+        {
+          "name": "userAddressAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "initNft",
       "accounts": [
         {
@@ -1178,6 +1204,56 @@ export type SolanaContracts = {
         {
           "name": "quantity",
           "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "UseAddressEvent",
+      "fields": [
+        {
+          "name": "email",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "evmAddress",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "status",
+          "type": "bool",
+          "index": false
+        },
+        {
+          "name": "totalNodesBurnt",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalCreditsClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalQueensHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalValidatorsHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalKingsHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "user",
+          "type": "publicKey",
           "index": false
         }
       ]
@@ -1945,6 +2021,32 @@ export const IDL: SolanaContracts = {
       "args": []
     },
     {
+      "name": "getUserAddress",
+      "accounts": [
+        {
+          "name": "userAddressAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "payer",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "user",
+          "type": "publicKey"
+        }
+      ]
+    },
+    {
       "name": "initNft",
       "accounts": [
         {
@@ -2502,6 +2604,56 @@ export const IDL: SolanaContracts = {
         {
           "name": "quantity",
           "type": "u64",
+          "index": false
+        }
+      ]
+    },
+    {
+      "name": "UseAddressEvent",
+      "fields": [
+        {
+          "name": "email",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "evmAddress",
+          "type": "string",
+          "index": false
+        },
+        {
+          "name": "status",
+          "type": "bool",
+          "index": false
+        },
+        {
+          "name": "totalNodesBurnt",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalCreditsClaimed",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalQueensHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalValidatorsHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "totalKingsHeld",
+          "type": "u64",
+          "index": false
+        },
+        {
+          "name": "user",
+          "type": "publicKey",
           "index": false
         }
       ]
