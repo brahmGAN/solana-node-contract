@@ -236,20 +236,20 @@ pub mod solana_contracts
 
             let allowed: bool; 
 
-            if current_tier_number == 1 
-            {
-                require!(!node_sale_account.white_list_1_sale,ErrorCode::ReservedForNextSale);
-                allowed = true; 
-            }
-            else if current_tier_number == 5 
-            {
-                require!(!node_sale_account.early_sale_status,ErrorCode::ReservedForNextSale);
-                allowed = true; 
-            }
-            else 
-            {
-                allowed = true
-            }
+            // if current_tier_number == 1 
+            // {
+            //     require!(!node_sale_account.white_list_1_sale,ErrorCode::ReservedForNextSale);
+            //     allowed = true; 
+            // }
+            // else if current_tier_number == 5 
+            // {
+            //     require!(!node_sale_account.early_sale_status,ErrorCode::ReservedForNextSale);
+            //     allowed = true; 
+            // }
+            // else 
+            // {
+            //     allowed = true
+            // }
             
             require!(allowed,ErrorCode::ReservedForNextSale);
             if discount_code_account.discount_code == true
