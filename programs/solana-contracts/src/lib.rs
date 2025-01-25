@@ -14,10 +14,10 @@ use anchor_spl::{
 };
 use mpl_token_metadata::accounts::{ MasterEdition, Metadata as MetadataAccount };
 
-declare_id!("CEgAFRtqR7jPeagKQuJyNGKtaMqtH1X4yL2JSyDmrjac");
+declare_id!("ALts46858kgc2UWFR35pskXPHStZrVc78mVURFC5aN1Z");
 
 #[program]
-pub mod solana_contracts 
+pub mod solana_node_contract
 {
     use super::*;
 
@@ -90,7 +90,7 @@ pub mod solana_contracts
             node_sale_account.gpu_net_sale = sale_status;
             sale_type_str = "GPU net sale".to_string();
         }
-        else 
+        else
         {
             return Err(ErrorCode::InvalidSaleStatus.into());
         }
@@ -115,8 +115,8 @@ pub mod solana_contracts
         emit!(DiscountCodeEvent{
             discount_code: discount_code,
             discount_code_status: discount_code_account.discount_code,
-            total_discount_code_usage: discount_code_account.total_discount_code_usage, 
-            total_amount: discount_code_account.total_amount 
+            total_discount_code_usage: discount_code_account.total_discount_code_usage,
+            total_amount: discount_code_account.total_amount
         });
         msg!("Discount code status:{}",discount_code_account.discount_code);
         Ok(())
@@ -149,7 +149,7 @@ pub mod solana_contracts
     //     let owner_account = &ctx.accounts.owner_account;
     //     require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
     //     let mint_status_account = &mut ctx.accounts.mint_status_account;
-    //     mint_status_account.mint_status = status;  
+    //     mint_status_account.mint_status = status;
     //     Ok(())
     // }
 
@@ -160,29 +160,29 @@ pub mod solana_contracts
         let swap_status_account = &mut ctx.accounts.swap_status_account;
         match types
         {
-            0 => 
+            0 =>
             {
                 swap_status_account.credits_status = status;
             },
 
-            1 => 
+            1 =>
             {
                 swap_status_account.queen_status = status;
             },
 
-            2 => 
+            2 =>
             {
                 swap_status_account.validators_status = status;
             },
 
-            3 => 
+            3 =>
             {
                 swap_status_account.king_status = status;
             },
 
-            _ => 
+            _ =>
             {
-                return Err(ErrorCode::InvalidSwapStatus.into());   
+                return Err(ErrorCode::InvalidSwapStatus.into());
             },
         }
         Ok(())
@@ -192,9 +192,9 @@ pub mod solana_contracts
     {
         let user_address_account = &mut ctx.accounts.user_address_account;
         require!(!user_address_account.status,ErrorCode::UserAddressAlreadySet);
-        user_address_account.email = email; 
+        user_address_account.email = email;
         user_address_account.evm_address = evm_address;
-        user_address_account.status = true; 
+        user_address_account.status = true;
         Ok(())
     }
 
@@ -219,13 +219,13 @@ pub mod solana_contracts
         current_tier_price = node_sale_account.tier_price[current_tier_number as usize];
 
         let next_tier_price = node_sale_account.tier_price[(current_tier_number + 1) as usize];
-        let price_1: u64; 
-        let price_2: u64; 
+        let price_1: u64;
+        let price_2: u64;
         let amount_1: u64;
-        let amount_2: u64; 
-        let tier_spill: bool;  
+        let amount_2: u64;
+        let tier_spill: bool;
 
-        if quantity <= node_sale_account.tier_limit[current_tier_number as usize] 
+        if quantity <= node_sale_account.tier_limit[current_tier_number as usize]
         {
             if discount_code_account.discount_code == true
             {
@@ -238,29 +238,29 @@ pub mod solana_contracts
 
             amount = quantity * tier_price;
 
-            tier_spill = false; 
+            tier_spill = false;
         }
-        else 
+        else
         {
             require!(current_tier_number != 11, ErrorCode::InsufficientTierLimit);
 
-            //let allowed: bool; 
+            //let allowed: bool;
 
-            // if current_tier_number == 1 
+            // if current_tier_number == 1
             // {
             //     require!(!node_sale_account.white_list_1_sale,ErrorCode::ReservedForNextSale);
-            //     allowed = true; 
+            //     allowed = true;
             // }
-            // else if current_tier_number == 5 
+            // else if current_tier_number == 5
             // {
             //     require!(!node_sale_account.early_sale_status,ErrorCode::ReservedForNextSale);
-            //     allowed = true; 
+            //     allowed = true;
             // }
-            // else 
+            // else
             // {
             //     allowed = true
             // }
-            
+
             //require!(allowed,ErrorCode::ReservedForNextSale);
             if discount_code_account.discount_code == true
             {
@@ -270,14 +270,14 @@ pub mod solana_contracts
             else
             {
                 price_1 = current_tier_price;
-                price_2 = next_tier_price; 
+                price_2 = next_tier_price;
             }
             amount_1 = node_sale_account.tier_limit[current_tier_number as usize] * price_1;
             amount_2 = (quantity-node_sale_account.tier_limit[current_tier_number as usize]) * price_2;
 
-            amount = amount_1 + amount_2; 
+            amount = amount_1 + amount_2;
 
-            tier_spill = true; 
+            tier_spill = true;
         }
 
         require!(ctx.accounts.payer.lamports() > amount, ErrorCode::InsufficientBalance);
@@ -364,13 +364,13 @@ pub mod solana_contracts
 
         if nodes_bought
         {
-            if tier_spill 
+            if tier_spill
             {
                 let current_tier_limit = node_sale_account.tier_limit[current_tier_number as usize];
                 node_sale_account.tier_limit[current_tier_number as usize] = 0;
                 node_sale_account.tier_limit[(current_tier_number + 1) as usize] -= quantity - current_tier_limit;
             }
-            else 
+            else
             {
                 node_sale_account.tier_limit[current_tier_number as usize] -= quantity;
             }
@@ -381,9 +381,9 @@ pub mod solana_contracts
             }
 
             user_account.total_nodes_held += quantity;
-            discount_code_account.total_discount_code_usage += quantity; 
-            discount_code_account.total_amount += amount;  
-            
+            discount_code_account.total_discount_code_usage += quantity;
+            discount_code_account.total_amount += amount;
+
             msg!("discount_code:{}",discount_code);
             msg!("total_discount_code_usage:{}",discount_code_account.total_discount_code_usage);
             msg!("total_discount_code_amount:{}",discount_code_account.total_amount);
@@ -396,9 +396,9 @@ pub mod solana_contracts
                 total_nodes_held: user_account.total_nodes_held,
                 pending_tier_limit: node_sale_account.tier_limit[current_tier_number as usize],
                 discount_code: discount_code,
-                sale_type: sale_type, 
-                total_discount_code_usage: discount_code_account.total_discount_code_usage, 
-                total_discount_code_amount: discount_code_account.total_amount 
+                sale_type: sale_type,
+                total_discount_code_usage: discount_code_account.total_discount_code_usage,
+                total_discount_code_amount: discount_code_account.total_amount
             });
             msg!("user:{}",*ctx.accounts.payer.key);
             msg!("quantity:{}",quantity);
@@ -416,15 +416,15 @@ pub mod solana_contracts
         let swap_status_account = &ctx.accounts.swap_status_account;
         require!(!user_address_account.email.is_empty(),ErrorCode::UserEmailEvmNotFound);
         require!(!user_address_account.evm_address.is_empty(),ErrorCode::UserEmailEvmNotFound);
-        match role 
+        match role
         {
-            0 => 
+            0 =>
             {
                 require!(swap_status_account.credits_status,ErrorCode::CreditsSwapNotYetAvailable);
                 require!(user_address_account.total_nodes_burnt > 0,ErrorCode::InsufficientNodesBurntForCredits);
-                let credits_to_be_claimed = (user_address_account.total_nodes_burnt) * 500; 
-                user_address_account.total_nodes_burnt = 0; 
-                user_address_account.total_credits_claimed += credits_to_be_claimed; 
+                let credits_to_be_claimed = (user_address_account.total_nodes_burnt) * 500;
+                user_address_account.total_nodes_burnt = 0;
+                user_address_account.total_credits_claimed += credits_to_be_claimed;
                 emit!(SwapBarrelsEvent{
                     user_pubkey: *ctx.accounts.payer.key,
                     user_email: user_address_account.email.clone(),
@@ -432,13 +432,13 @@ pub mod solana_contracts
                     role: role,
                     credits_to_be_claimed: credits_to_be_claimed,
                     queen_to_be_claimed: 0,
-                    validators_to_be_claimed: 0, 
-                    king_to_be_claimed: 0, 
+                    validators_to_be_claimed: 0,
+                    king_to_be_claimed: 0,
                     quantity: 0,
                 });
             },
 
-            1 => 
+            1 =>
             {
                 require!(swap_status_account.queen_status,ErrorCode::QueenSwapNotYetAvailable);
                 require!(user_address_account.total_nodes_burnt >= 33*quantity ,ErrorCode::InsufficientNodesBurntForQueen);
@@ -451,13 +451,13 @@ pub mod solana_contracts
                     role: role,
                     credits_to_be_claimed: 0,
                     queen_to_be_claimed: quantity,
-                    validators_to_be_claimed: 0, 
-                    king_to_be_claimed: 0, 
+                    validators_to_be_claimed: 0,
+                    king_to_be_claimed: 0,
                     quantity: quantity,
                 });
             },
 
-            2 => 
+            2 =>
             {
                 require!(swap_status_account.validators_status,ErrorCode::ValidatorSwapNotYetAvailable);
                 require!(user_address_account.total_nodes_burnt >= 66*quantity ,ErrorCode::InsufficientNodesBurntForValidators);
@@ -470,13 +470,13 @@ pub mod solana_contracts
                     role: role,
                     credits_to_be_claimed: 0,
                     queen_to_be_claimed: 0,
-                    validators_to_be_claimed: quantity * 6, 
-                    king_to_be_claimed: 0, 
+                    validators_to_be_claimed: quantity * 6,
+                    king_to_be_claimed: 0,
                     quantity: quantity,
                 });
             },
 
-            3 => 
+            3 =>
             {
                 require!(swap_status_account.king_status,ErrorCode::KingSwapNotYetAvailable);
                 require!(user_address_account.total_nodes_burnt >= 99*quantity ,ErrorCode::InsufficientNodesBurntForQueen);
@@ -489,13 +489,13 @@ pub mod solana_contracts
                     role: role,
                     credits_to_be_claimed: 0,
                     queen_to_be_claimed: 0,
-                    validators_to_be_claimed: 0, 
-                    king_to_be_claimed: quantity, 
+                    validators_to_be_claimed: 0,
+                    king_to_be_claimed: quantity,
                     quantity: quantity,
                 });
             },
 
-            _ => 
+            _ =>
             {
                 return Err(ErrorCode::InvalidSwapRole.into());
             }
@@ -605,7 +605,7 @@ pub mod solana_contracts
             discount_code: discount_code,
             discount_code_status: discount_code_account.discount_code,
             total_discount_code_usage: discount_code_account.total_discount_code_usage,
-            total_amount: discount_code_account.total_amount 
+            total_amount: discount_code_account.total_amount
         });
         msg!("Discount code status:{}", discount_code_account.discount_code);
         Ok(())
@@ -637,23 +637,23 @@ pub mod solana_contracts
 
     pub fn get_user_address(ctx: Context<GetUserAddressContext>, user: Pubkey) -> Result<()>
     {
-        let user_address_account = &ctx.accounts.user_address_account; 
+        let user_address_account = &ctx.accounts.user_address_account;
         emit!(UseAddressEvent{
-            email: user_address_account.email.clone(), 
-            evm_address: user_address_account.evm_address.clone(), 
-            status: user_address_account.status, 
-            total_nodes_burnt: user_address_account.total_nodes_burnt, 
-            total_credits_claimed: user_address_account.total_credits_claimed, 
-            total_queens_held: user_address_account.total_queens_held, 
-            total_validators_held: user_address_account.total_validators_held, 
+            email: user_address_account.email.clone(),
+            evm_address: user_address_account.evm_address.clone(),
+            status: user_address_account.status,
+            total_nodes_burnt: user_address_account.total_nodes_burnt,
+            total_credits_claimed: user_address_account.total_credits_claimed,
+            total_queens_held: user_address_account.total_queens_held,
+            total_validators_held: user_address_account.total_validators_held,
             total_kings_held: user_address_account.total_kings_held,
-            user: user 
+            user: user
         });
-        
+
         Ok(())
     }
 
-    pub fn init_nft(ctx: Context<InitNFTContext>,) -> Result<()> 
+    pub fn init_nft(ctx: Context<InitNFTContext>,) -> Result<()>
     {
 
         //vipin
@@ -736,8 +736,15 @@ pub mod solana_contracts
         let owner_account = &ctx.accounts.owner_account;
         require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);
         let user_address_account = &mut ctx.accounts.user_address_account;
-        user_address_account.total_nodes_burnt += quantity; 
+        user_address_account.total_nodes_burnt += quantity;
         msg!("User:{}",user.key());
+        Ok(())
+    }
+
+    pub fn set_total_nodes_held(ctx: Context<GetUserContext>, user: Pubkey) -> Result<()>
+    {
+        let user_account = &mut ctx.accounts.user_account;
+        user_account.total_nodes_held = 10;
         Ok(())
     }
 }
@@ -812,7 +819,7 @@ pub struct SetNodeSaleContext<'info>
 //         payer = payer,
 //         seeds = [b"mint_status_account"],
 //         bump,
-//         space = size_of::<MintStatus>() + 8 
+//         space = size_of::<MintStatus>() + 8
 //     )]
 //     pub mint_status_account: Account<'info, MintStatus>,
 
@@ -999,7 +1006,7 @@ pub struct GetUserAddressContext<'info>
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [user.key().as_ref(), 
+        seeds = [user.key().as_ref(),
                 b"user_address_account"],
         bump,
         space = size_of::<UserAddress>() + 8
@@ -1030,7 +1037,7 @@ pub struct GetDiscountCodeContext<'info>
 }
 
 #[derive(Accounts)]
-pub struct InitNFTContext<'info> 
+pub struct InitNFTContext<'info>
 {
     //vipin
     #[account(
@@ -1042,31 +1049,23 @@ pub struct InitNFTContext<'info>
     )]
     pub owner_account: Box<Account<'info, Owner>>,
 
-    #[account(
-        init_if_needed,
-        payer = signer,
-        seeds = [user.key.as_ref()],
-        bump,
-        space = size_of::<User>() + 8 
-    )]
+    #[account(mut )]
     pub user_account: Box<Account<'info, User>>,
-    
+
     /// CHECK: User receiving the NFT
     #[account(mut)]
     pub user: AccountInfo<'info>,
 
 
     /// CHECK: ok, we are passing in this account ourselves
-    #[account(mut, signer)]
-    pub signer: AccountInfo<'info>,
+    #[account(mut, )]
+    pub signer: Signer<'info>,
 
-    #[account(
-        init,
+    #[account(init,
         payer = signer,
         mint::decimals = 0,
         mint::authority = signer.key(),
-        mint::freeze_authority = signer.key()
-    )]
+        mint::freeze_authority = signer.key())]
     pub mint: Box< Account<'info, Mint>>,
 
     #[account(
@@ -1079,15 +1078,13 @@ pub struct InitNFTContext<'info>
 
     /// CHECK - address
     #[account(
-        mut,
-        address = MetadataAccount::find_pda(&mint.key()).0,
+        mut
     )]
     pub metadata_account:  AccountInfo<'info>,
 
     /// CHECK: address
     #[account(
         mut,
-        address = MasterEdition::find_pda(&mint.key()).0,
     )]
     pub master_edition_account: AccountInfo<'info>,
 
@@ -1114,7 +1111,7 @@ pub struct SetTotalNodesBurntcontext<'info>
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [payer.key().as_ref(), 
+        seeds = [payer.key().as_ref(),
                 b"user_address_account"],
         bump,
         space = size_of::<UserAddress>() + 8
@@ -1132,7 +1129,7 @@ pub struct SetUserAddressContext<'info>
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [payer.key().as_ref(), 
+        seeds = [payer.key().as_ref(),
                 b"user_address_account"],
         bump,
         space = size_of::<UserAddress>() + 8
@@ -1202,20 +1199,20 @@ pub struct UserAddress
 {
     pub email: String,
     pub evm_address: String,
-    pub status: bool, 
+    pub status: bool,
     pub total_nodes_burnt: u64,
-    pub total_credits_claimed: u64, 
-    pub total_queens_held: u64, 
-    pub total_validators_held: u64, 
-    pub total_kings_held: u64 
+    pub total_credits_claimed: u64,
+    pub total_queens_held: u64,
+    pub total_validators_held: u64,
+    pub total_kings_held: u64
 }
 
 #[account]
 pub struct DiscountCode
 {
     pub discount_code: bool,
-    pub total_discount_code_usage: u64, 
-    pub total_amount: u64 
+    pub total_discount_code_usage: u64,
+    pub total_amount: u64
 }
 
 #[account]
@@ -1281,7 +1278,7 @@ pub struct WhitelistEvent
 pub struct DiscountCodeEvent
 {
     pub discount_code: String,
-    pub discount_code_status: bool, 
+    pub discount_code_status: bool,
     pub total_discount_code_usage: u64,
     pub total_amount: u64
 }
@@ -1297,8 +1294,8 @@ pub struct NodeBoughtEvent
     pub pending_tier_limit: u64,
     pub discount_code: String,
     pub sale_type: String,
-    pub total_discount_code_usage: u64, 
-    pub total_discount_code_amount: u64 
+    pub total_discount_code_usage: u64,
+    pub total_discount_code_amount: u64
 }
 
 #[event]
@@ -1353,26 +1350,26 @@ pub struct SwapBarrelsEvent
     pub user_pubkey: Pubkey,
     pub user_email: String,
     pub evm_address: String,
-    pub role: u8, 
-    pub credits_to_be_claimed: u64, 
-    pub queen_to_be_claimed: u64, 
-    pub validators_to_be_claimed: u64, 
-    pub king_to_be_claimed: u64, 
-    pub quantity: u64 
+    pub role: u8,
+    pub credits_to_be_claimed: u64,
+    pub queen_to_be_claimed: u64,
+    pub validators_to_be_claimed: u64,
+    pub king_to_be_claimed: u64,
+    pub quantity: u64
 }
 
-#[event] 
-pub struct UseAddressEvent 
+#[event]
+pub struct UseAddressEvent
 {
     pub email: String,
     pub evm_address: String,
-    pub status: bool, 
+    pub status: bool,
     pub total_nodes_burnt: u64,
-    pub total_credits_claimed: u64, 
-    pub total_queens_held: u64, 
-    pub total_validators_held: u64, 
-    pub total_kings_held: u64, 
-    pub user: Pubkey 
+    pub total_credits_claimed: u64,
+    pub total_queens_held: u64,
+    pub total_validators_held: u64,
+    pub total_kings_held: u64,
+    pub user: Pubkey
 }
 
 #[error_code]

@@ -672,7 +672,7 @@ export type SolanaContracts = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "associatedTokenAccount",
@@ -2082,7 +2082,7 @@ export const IDL: SolanaContracts = {
         {
           "name": "mint",
           "isMut": true,
-          "isSigner": true
+          "isSigner": false
         },
         {
           "name": "associatedTokenAccount",
