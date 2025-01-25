@@ -660,6 +660,11 @@ export type SolanaContracts = {
           "isSigner": false
         },
         {
+          "name": "user",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
           "name": "signer",
           "isMut": true,
           "isSigner": true
@@ -2061,6 +2066,11 @@ export const IDL: SolanaContracts = {
         },
         {
           "name": "userAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "user",
           "isMut": true,
           "isSigner": false
         },

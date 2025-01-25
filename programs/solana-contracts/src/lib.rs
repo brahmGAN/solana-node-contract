@@ -1045,11 +1045,16 @@ pub struct InitNFTContext<'info>
     #[account(
         init_if_needed,
         payer = signer,
-        seeds = [signer.key.as_ref()],
+        seeds = [user.key.as_ref()],
         bump,
         space = size_of::<User>() + 8 
     )]
     pub user_account: Box<Account<'info, User>>,
+    
+    /// CHECK: User receiving the NFT
+    #[account(mut)]
+    pub user: AccountInfo<'info>,
+
 
     /// CHECK: ok, we are passing in this account ourselves
     #[account(mut, signer)]
@@ -1068,7 +1073,7 @@ pub struct InitNFTContext<'info>
         init_if_needed,
         payer = signer,
         associated_token::mint = mint,
-        associated_token::authority = signer
+        associated_token::authority = user
     )]
     pub associated_token_account: Box< Account<'info, TokenAccount>>,
 
