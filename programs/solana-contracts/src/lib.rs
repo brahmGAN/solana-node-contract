@@ -85,10 +85,14 @@ pub mod solana_contracts
             node_sale_account.white_list_1_sale = sale_status;
             sale_type_str = "White list-1 sale".to_string();
         }
-        else
+        else if sale_type == 2
         {
             node_sale_account.gpu_net_sale = sale_status;
             sale_type_str = "GPU net sale".to_string();
+        }
+        else 
+        {
+            return Err(ErrorCode::InvalidSaleStatus.into());
         }
         msg!("sale_type:{}",sale_type_str);
         msg!("sale_status:{}",sale_status);
@@ -1458,4 +1462,7 @@ pub enum ErrorCode
 
     #[msg("Invalid swap role!")]
     InvalidSwapRole,
+
+    #[msg("Invalid Sale Status!")]
+    InvalidSaleStatus,
 }

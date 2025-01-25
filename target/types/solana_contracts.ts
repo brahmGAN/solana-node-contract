@@ -1394,6 +1394,11 @@ export type SolanaContracts = {
       "code": 6026,
       "name": "InvalidSwapRole",
       "msg": "Invalid swap role!"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidSaleStatus",
+      "msg": "Invalid Sale Status!"
     }
   ]
 };
@@ -2794,6 +2799,11 @@ export const IDL: SolanaContracts = {
       "code": 6026,
       "name": "InvalidSwapRole",
       "msg": "Invalid swap role!"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidSaleStatus",
+      "msg": "Invalid Sale Status!"
     }
   ]
 };
