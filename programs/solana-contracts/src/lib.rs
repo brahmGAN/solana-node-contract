@@ -1040,16 +1040,7 @@ pub struct InitNFTContext<'info>
         bump,
         space = size_of::<Owner>() + 8
     )]
-    pub owner_account: Account<'info, Owner>,
-
-    // #[account(
-    //     init_if_needed,
-    //     payer = signer,
-    //     seeds = [b"mint_status_account"],
-    //     bump,
-    //     space = size_of::<MintStatus>() + 8
-    // )]
-    // pub mint_status_account: Account<'info, MintStatus>,
+    pub owner_account: Box<Account<'info, Owner>>,
 
     #[account(
         init_if_needed,
@@ -1058,7 +1049,7 @@ pub struct InitNFTContext<'info>
         bump,
         space = size_of::<User>() + 8 
     )]
-    pub user_account: Account<'info, User>,
+    pub user_account: Box<Account<'info, User>>,
 
     /// CHECK: ok, we are passing in this account ourselves
     #[account(mut, signer)]
@@ -1071,7 +1062,7 @@ pub struct InitNFTContext<'info>
         mint::authority = signer.key(),
         mint::freeze_authority = signer.key()
     )]
-    pub mint: Account<'info, Mint>,
+    pub mint: Box< Account<'info, Mint>>,
 
     #[account(
         init_if_needed,
@@ -1079,14 +1070,14 @@ pub struct InitNFTContext<'info>
         associated_token::mint = mint,
         associated_token::authority = signer
     )]
-    pub associated_token_account: Account<'info, TokenAccount>,
+    pub associated_token_account: Box< Account<'info, TokenAccount>>,
 
     /// CHECK - address
     #[account(
         mut,
         address = MetadataAccount::find_pda(&mint.key()).0,
     )]
-    pub metadata_account: AccountInfo<'info>,
+    pub metadata_account:  AccountInfo<'info>,
 
     /// CHECK: address
     #[account(
