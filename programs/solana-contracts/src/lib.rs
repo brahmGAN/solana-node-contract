@@ -236,24 +236,6 @@ pub mod solana_node_contract
         {
             require!(current_tier_number != 11, ErrorCode::InsufficientTierLimit);
 
-            //let allowed: bool;
-
-            // if current_tier_number == 1
-            // {
-            //     require!(!node_sale_account.white_list_1_sale,ErrorCode::ReservedForNextSale);
-            //     allowed = true;
-            // }
-            // else if current_tier_number == 5
-            // {
-            //     require!(!node_sale_account.early_sale_status,ErrorCode::ReservedForNextSale);
-            //     allowed = true;
-            // }
-            // else
-            // {
-            //     allowed = true
-            // }
-
-            //require!(allowed,ErrorCode::ReservedForNextSale);
             if discount_code_account.discount_code == true
             {
                 price_1 =  (current_tier_price * 90 ) / 100;
@@ -413,8 +395,8 @@ pub mod solana_node_contract
             0 =>
             {
                 require!(swap_status_account.credits_status,ErrorCode::CreditsSwapNotYetAvailable);
-                require!(user_address_account.total_nodes_burnt > 0,ErrorCode::InsufficientNodesBurntForCredits);
-                let credits_to_be_claimed = (user_address_account.total_nodes_burnt) * 500;
+                require!(user_address_account.total_nodes_burnt >= quantity,ErrorCode::InsufficientNodesBurntForCredits);
+                let credits_to_be_claimed = quantity * 500;
                 user_address_account.total_nodes_burnt -= quantity;
                 user_address_account.total_credits_claimed += credits_to_be_claimed;
                 emit!(SwapBarrelsEvent{
