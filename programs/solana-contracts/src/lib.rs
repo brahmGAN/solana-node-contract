@@ -415,7 +415,7 @@ pub mod solana_node_contract
                 require!(swap_status_account.credits_status,ErrorCode::CreditsSwapNotYetAvailable);
                 require!(user_address_account.total_nodes_burnt > 0,ErrorCode::InsufficientNodesBurntForCredits);
                 let credits_to_be_claimed = (user_address_account.total_nodes_burnt) * 500;
-                user_address_account.total_nodes_burnt = 0;
+                user_address_account.total_nodes_burnt -= quantity;
                 user_address_account.total_credits_claimed += credits_to_be_claimed;
                 emit!(SwapBarrelsEvent{
                     user_pubkey: *ctx.accounts.payer.key,
