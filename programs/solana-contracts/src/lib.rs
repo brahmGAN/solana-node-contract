@@ -12,7 +12,7 @@ use anchor_spl::{
     },
     token::{ mint_to, Mint, MintTo, Token, TokenAccount }
 };
-use mpl_token_metadata::accounts::{ MasterEdition, Metadata as MetadataAccount };
+//use mpl_token_metadata::accounts::{ MasterEdition, Metadata as MetadataAccount };
 
 declare_id!("ALts46858kgc2UWFR35pskXPHStZrVc78mVURFC5aN1Z");
 
@@ -85,7 +85,8 @@ pub mod solana_node_contract
             node_sale_account.white_list_1_sale = sale_status;
             sale_type_str = "White list-1 sale".to_string();
         }
-        else if sale_type == 2
+        // @dev use only this sale 
+        else if sale_type == 2 
         {
             node_sale_account.gpu_net_sale = sale_status;
             sale_type_str = "GPU net sale".to_string();
@@ -144,15 +145,6 @@ pub mod solana_node_contract
         Ok(())
     }
 
-    // pub fn set_mint_status(ctx: Context<SetMintStatusContext>, status:bool) -> Result<()>
-    // {
-    //     let owner_account = &ctx.accounts.owner_account;
-    //     require!(owner_account.owner_pubkey == ctx.accounts.payer.key(),ErrorCode::NotAuthorized);
-    //     let mint_status_account = &mut ctx.accounts.mint_status_account;
-    //     mint_status_account.mint_status = status;
-    //     Ok(())
-    // }
-
     pub fn set_swap_status(ctx: Context<SetSwapStatusContext>, types:u8,status:bool) -> Result<()>
     {
         let owner_account = &ctx.accounts.owner_account;
@@ -183,7 +175,7 @@ pub mod solana_node_contract
             _ =>
             {
                 return Err(ErrorCode::InvalidSwapStatus.into());
-            },
+            }
         }
         Ok(())
     }
@@ -344,7 +336,7 @@ pub mod solana_node_contract
             (
                 &ctx.accounts.payer.key(),
                 &ctx.accounts.funds_handler_pubkey.key(),
-                amount
+                amount 
             );
 
             anchor_lang::solana_program::program::invoke
@@ -429,7 +421,7 @@ pub mod solana_node_contract
                     user_pubkey: *ctx.accounts.payer.key,
                     user_email: user_address_account.email.clone(),
                     evm_address: user_address_account.evm_address.clone(),
-                    role: role,
+                    role: 0,
                     credits_to_be_claimed: credits_to_be_claimed,
                     queen_to_be_claimed: 0,
                     validators_to_be_claimed: 0,
@@ -448,7 +440,7 @@ pub mod solana_node_contract
                     user_pubkey: *ctx.accounts.payer.key,
                     user_email: user_address_account.email.clone(),
                     evm_address: user_address_account.evm_address.clone(),
-                    role: role,
+                    role: 1,
                     credits_to_be_claimed: 0,
                     queen_to_be_claimed: quantity,
                     validators_to_be_claimed: 0,
@@ -467,7 +459,7 @@ pub mod solana_node_contract
                     user_pubkey: *ctx.accounts.payer.key,
                     user_email: user_address_account.email.clone(),
                     evm_address: user_address_account.evm_address.clone(),
-                    role: role,
+                    role: 2,
                     credits_to_be_claimed: 0,
                     queen_to_be_claimed: 0,
                     validators_to_be_claimed: quantity * 6,
@@ -486,7 +478,7 @@ pub mod solana_node_contract
                     user_pubkey: *ctx.accounts.payer.key,
                     user_email: user_address_account.email.clone(),
                     evm_address: user_address_account.evm_address.clone(),
-                    role: role,
+                    role: 3,
                     credits_to_be_claimed: 0,
                     queen_to_be_claimed: 0,
                     validators_to_be_claimed: 0,
@@ -653,14 +645,10 @@ pub mod solana_node_contract
         Ok(())
     }
 
-    pub fn init_nft(ctx: Context<InitNFTContext>,) -> Result<()>
+    pub fn init_nft(ctx: Context<InitNFTContext>, name: String, symbol: String, uri: String) -> Result<()>
     {
 
         //vipin
-        // @vipin : we don't need a mint_status since this is owner callable
-        // let mint_status_account = &ctx.accounts.mint_status_account;
-        // require!(mint_status_account.mint_status, ErrorCode::MintNotAvailable);
-
         let owner_account = &ctx.accounts.owner_account;
         require!(owner_account.owner_pubkey == ctx.accounts.signer.key(),ErrorCode::NotAuthorized);
 
@@ -669,9 +657,9 @@ pub mod solana_node_contract
         if user.total_nodes_held > 0
         {
 
-                let name="Gpu.net".into();
-                let symbol="GPU".into();
-                let uri= "https://raw.githubusercontent.com/687c/solana-nft-native-client/main/metadata.json".into();
+                // let name="Gpu.net".into();
+                // let symbol="GPU".into();
+                // let uri= "https://raw.githubusercontent.com/687c/solana-nft-native-client/main/metadata.json".into();
 
             // create mint account
             let cpi_context = CpiContext::new(ctx.accounts.token_program.to_account_info(), MintTo {
@@ -740,13 +728,6 @@ pub mod solana_node_contract
         msg!("User:{}",user.key());
         Ok(())
     }
-
-    pub fn set_total_nodes_held(ctx: Context<GetUserContext>, user: Pubkey) -> Result<()>
-    {
-        let user_account = &mut ctx.accounts.user_account;
-        user_account.total_nodes_held = 10;
-        Ok(())
-    }
 }
 
 
@@ -801,32 +782,6 @@ pub struct SetNodeSaleContext<'info>
     pub payer: Signer<'info>,
     pub system_program: Program<'info,System>,
 }
-
-// #[derive(Accounts)]
-// pub struct SetMintStatusContext<'info>
-// {
-//     #[account(
-//         init_if_needed,
-//         payer = payer,
-//         seeds = [b"owner"],
-//         bump,
-//         space = size_of::<Owner>() + 8
-//     )]
-//     pub owner_account: Account<'info, Owner>,
-
-//     #[account(
-//         init_if_needed,
-//         payer = payer,
-//         seeds = [b"mint_status_account"],
-//         bump,
-//         space = size_of::<MintStatus>() + 8
-//     )]
-//     pub mint_status_account: Account<'info, MintStatus>,
-
-//     #[account(mut)]
-//     pub payer: Signer<'info>,
-//     pub system_program: Program<'info,System>,
-// }
 
 #[derive(Accounts)]
 pub struct SetSwapStatusContext<'info>
@@ -1226,12 +1181,6 @@ pub struct NodeSale
     pub white_list_1_sale: bool,
     pub gpu_net_sale: bool,
 }
-
-// #[account]
-// pub struct MintStatus
-// {
-//     pub mint_status: bool,
-// }
 
 #[account]
 pub struct SwapStatus
