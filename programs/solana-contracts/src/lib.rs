@@ -654,8 +654,7 @@ pub mod solana_node_contract
 
         let  user=&mut ctx.accounts.user_account;
 
-        if user.total_nodes_held > 0
-        {
+        require!(user.total_nodes_held > 0, ErrorCode::NotEnoughBarrelsToMint);
 
                 // let name="Gpu.net".into();
                 // let symbol="GPU".into();
@@ -715,7 +714,6 @@ pub mod solana_node_contract
             create_master_edition_v3(cpi_context, None)?;
 
             user.total_nodes_held -=1;
-        }
         Ok(())
     }
 
@@ -1066,7 +1064,7 @@ pub struct SetTotalNodesBurntcontext<'info>
     #[account(
         init_if_needed,
         payer = payer,
-        seeds = [payer.key().as_ref(),
+        seeds = [user.key().as_ref(),
                 b"user_address_account"],
         bump,
         space = size_of::<UserAddress>() + 8
@@ -1109,14 +1107,14 @@ pub struct SwapBarrelsContext<'info>
     )]
     pub user_address_account: Account<'info, UserAddress>,
 
-    #[account(
-        init_if_needed,
-        payer = payer,
-        seeds = [payer.key().as_ref()],
-        bump,
-        space = size_of::<UserAddress>() + 8
-    )]
-    pub user_account: Account<'info, UserAddress>,
+    // #[account(
+    //     init_if_needed,
+    //     payer = payer,
+    //     seeds = [payer.key().as_ref()],
+    //     bump,
+    //     space = size_of::<UserAddress>() + 8
+    // )]
+    // pub user_account: Account<'info, UserAddress>,
 
     #[account(
         init_if_needed,
@@ -1407,4 +1405,7 @@ pub enum ErrorCode
 
     #[msg("Invalid Sale Status!")]
     InvalidSaleStatus,
+
+    #[msg("Not Enough Barrels To Mint!")]
+    NotEnoughBarrelsToMint,
 }
