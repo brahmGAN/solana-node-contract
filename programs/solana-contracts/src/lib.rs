@@ -14,7 +14,7 @@ use anchor_spl::{
 };
 //use mpl_token_metadata::accounts::{ MasterEdition, Metadata as MetadataAccount };
 
-declare_id!("ALts46858kgc2UWFR35pskXPHStZrVc78mVURFC5aN1Z");
+declare_id!("2DCyrhmoXMHqykcoXCHQfsNamrJMT6p2QKYAofXU8QQ6");
 
 #[program]
 pub mod solana_node_contract
@@ -199,9 +199,15 @@ pub mod solana_node_contract
         let amount:u64;
         let tier_price:u64;
         let current_tier_price:u64;
+        let next_tier_price:u64; 
         let current_tier_number:u64;
         let mut nodes_bought: bool = false;
         let mut sale_type: String = String::new();
+        let price_1: u64;
+        let price_2: u64;
+        let amount_1: u64;
+        let amount_2: u64;
+        let tier_spill: bool;
 
         require!(node_sale_account.early_sale_status || node_sale_account.gpu_net_sale, ErrorCode::SaleYetToBegin);
         require!(quantity <= 770, ErrorCode::ExceededMaxPurchaseLimit);
@@ -210,12 +216,7 @@ pub mod solana_node_contract
         current_tier_number = node_sale_account.current_tier_number;
         current_tier_price = node_sale_account.tier_price[current_tier_number as usize];
 
-        let next_tier_price = node_sale_account.tier_price[(current_tier_number + 1) as usize];
-        let price_1: u64;
-        let price_2: u64;
-        let amount_1: u64;
-        let amount_2: u64;
-        let tier_spill: bool;
+        
 
         if quantity <= node_sale_account.tier_limit[current_tier_number as usize]
         {
@@ -235,6 +236,7 @@ pub mod solana_node_contract
         else
         {
             require!(current_tier_number != 11, ErrorCode::InsufficientTierLimit);
+            next_tier_price = node_sale_account.tier_price[(current_tier_number + 1) as usize];
 
             if discount_code_account.discount_code == true
             {
