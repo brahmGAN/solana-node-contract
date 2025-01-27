@@ -190,6 +190,16 @@ pub mod solana_node_contract
         Ok(())
     }
 
+    pub fn set_total_nodes_burnt(ctx: Context<SetTotalNodesBurntcontext>, user: Pubkey, quantity: u64) -> Result<()>
+    {
+        let owner_account = &ctx.accounts.owner_account;
+        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);
+        let user_address_account = &mut ctx.accounts.user_address_account;
+        user_address_account.total_nodes_burnt += quantity;
+        msg!("User:{}",user.key());
+        Ok(())
+    }
+
     pub fn buy_node(ctx: Context<BuyNodeContext>, discount_code:String, quantity:u64) -> Result<()>
     {
         let node_sale_account = &mut ctx.accounts.node_sale_account;
@@ -383,6 +393,78 @@ pub mod solana_node_contract
             msg!("total_nodes_held:{}",user_account.total_nodes_held);
             msg!("pending_tier_limit:{}",node_sale_account.tier_limit[current_tier_number as usize]);
         }
+        Ok(())
+    }
+
+    pub fn init_nft(ctx: Context<InitNFTContext>, name: String, symbol: String, uri: String) -> Result<()>
+    {
+
+        //vipin
+        let owner_account = &ctx.accounts.owner_account;
+        require!(owner_account.owner_pubkey == ctx.accounts.signer.key(),ErrorCode::NotAuthorized);
+
+        let  user=&mut ctx.accounts.user_account;
+
+        require!(user.total_nodes_held > 0, ErrorCode::NotEnoughBarrelsToMint);
+
+                // let name="Gpu.net".into();
+                // let symbol="GPU".into();
+                // let uri= "https://raw.githubusercontent.com/687c/solana-nft-native-client/main/metadata.json".into();
+
+            // create mint account
+            let cpi_context = CpiContext::new(ctx.accounts.token_program.to_account_info(), MintTo {
+                mint: ctx.accounts.mint.to_account_info(),
+                to: ctx.accounts.associated_token_account.to_account_info(),
+                authority: ctx.accounts.signer.to_account_info(),
+            });
+
+            mint_to(cpi_context, 1)?;
+
+            // create metadata account
+            let cpi_context = CpiContext::new(
+                ctx.accounts.token_metadata_program.to_account_info(),
+                CreateMetadataAccountsV3 {
+                    metadata: ctx.accounts.metadata_account.to_account_info(),
+                    mint: ctx.accounts.mint.to_account_info(),
+                    mint_authority: ctx.accounts.signer.to_account_info(),
+                    update_authority: ctx.accounts.signer.to_account_info(),
+                    payer: ctx.accounts.signer.to_account_info(),
+                    system_program: ctx.accounts.system_program.to_account_info(),
+                    rent: ctx.accounts.rent.to_account_info(),
+                }
+            );
+
+            let data_v2 = DataV2 {
+                name: name,
+                symbol: symbol,
+                uri: uri,
+                seller_fee_basis_points: 0,
+                creators: None,
+                collection: None,    // create metadata account
+                uses: None,
+            };
+
+            create_metadata_accounts_v3(cpi_context, data_v2, false, true, None)?;
+
+            //create master edition account
+            let cpi_context = CpiContext::new(
+                ctx.accounts.token_metadata_program.to_account_info(),
+                CreateMasterEditionV3 {
+                    edition: ctx.accounts.master_edition_account.to_account_info(),
+                    mint: ctx.accounts.mint.to_account_info(),
+                    update_authority: ctx.accounts.signer.to_account_info(),
+                    mint_authority: ctx.accounts.signer.to_account_info(),
+                    payer: ctx.accounts.signer.to_account_info(),
+                    metadata: ctx.accounts.metadata_account.to_account_info(),
+                    token_program: ctx.accounts.token_program.to_account_info(),
+                    system_program: ctx.accounts.system_program.to_account_info(),
+                    rent: ctx.accounts.rent.to_account_info(),
+                }
+            );
+
+            create_master_edition_v3(cpi_context, None)?;
+
+            user.total_nodes_held -=1;
         Ok(())
     }
 
@@ -628,88 +710,7 @@ pub mod solana_node_contract
 
         Ok(())
     }
-
-    pub fn init_nft(ctx: Context<InitNFTContext>, name: String, symbol: String, uri: String) -> Result<()>
-    {
-
-        //vipin
-        let owner_account = &ctx.accounts.owner_account;
-        require!(owner_account.owner_pubkey == ctx.accounts.signer.key(),ErrorCode::NotAuthorized);
-
-        let  user=&mut ctx.accounts.user_account;
-
-        require!(user.total_nodes_held > 0, ErrorCode::NotEnoughBarrelsToMint);
-
-                // let name="Gpu.net".into();
-                // let symbol="GPU".into();
-                // let uri= "https://raw.githubusercontent.com/687c/solana-nft-native-client/main/metadata.json".into();
-
-            // create mint account
-            let cpi_context = CpiContext::new(ctx.accounts.token_program.to_account_info(), MintTo {
-                mint: ctx.accounts.mint.to_account_info(),
-                to: ctx.accounts.associated_token_account.to_account_info(),
-                authority: ctx.accounts.signer.to_account_info(),
-            });
-
-            mint_to(cpi_context, 1)?;
-
-            // create metadata account
-            let cpi_context = CpiContext::new(
-                ctx.accounts.token_metadata_program.to_account_info(),
-                CreateMetadataAccountsV3 {
-                    metadata: ctx.accounts.metadata_account.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    mint_authority: ctx.accounts.signer.to_account_info(),
-                    update_authority: ctx.accounts.signer.to_account_info(),
-                    payer: ctx.accounts.signer.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    rent: ctx.accounts.rent.to_account_info(),
-                }
-            );
-
-            let data_v2 = DataV2 {
-                name: name,
-                symbol: symbol,
-                uri: uri,
-                seller_fee_basis_points: 0,
-                creators: None,
-                collection: None,    // create metadata account
-                uses: None,
-            };
-
-            create_metadata_accounts_v3(cpi_context, data_v2, false, true, None)?;
-
-            //create master edition account
-            let cpi_context = CpiContext::new(
-                ctx.accounts.token_metadata_program.to_account_info(),
-                CreateMasterEditionV3 {
-                    edition: ctx.accounts.master_edition_account.to_account_info(),
-                    mint: ctx.accounts.mint.to_account_info(),
-                    update_authority: ctx.accounts.signer.to_account_info(),
-                    mint_authority: ctx.accounts.signer.to_account_info(),
-                    payer: ctx.accounts.signer.to_account_info(),
-                    metadata: ctx.accounts.metadata_account.to_account_info(),
-                    token_program: ctx.accounts.token_program.to_account_info(),
-                    system_program: ctx.accounts.system_program.to_account_info(),
-                    rent: ctx.accounts.rent.to_account_info(),
-                }
-            );
-
-            create_master_edition_v3(cpi_context, None)?;
-
-            user.total_nodes_held -=1;
-        Ok(())
-    }
-
-    pub fn set_total_nodes_burnt(ctx: Context<SetTotalNodesBurntcontext>, user: Pubkey, quantity: u64) -> Result<()>
-    {
-        let owner_account = &ctx.accounts.owner_account;
-        require!(owner_account.owner_pubkey == ctx.accounts.payer.key(), ErrorCode::NotAuthorized);
-        let user_address_account = &mut ctx.accounts.user_address_account;
-        user_address_account.total_nodes_burnt += quantity;
-        msg!("User:{}",user.key());
-        Ok(())
-    }
+    
 }
 
 
